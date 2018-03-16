@@ -1,0 +1,59 @@
+/*
+ * Copyright 2018 Alex Thomson
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.github.lxgaming.discordmusic.commands;
+
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import io.github.lxgaming.discordmusic.managers.AudioManager;
+import io.github.lxgaming.discordmusic.managers.MessageManager;
+import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.TextChannel;
+
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+
+public class ClearCommand extends AbstractCommand {
+    
+    public ClearCommand() {
+        addAlias("clear");
+        setDescription("Clears all of the media that is queued.");
+        setPermission("command.clear");
+    }
+    
+    @Override
+    public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setAuthor(textChannel.getJDA().getSelfUser().getName(), null, textChannel.getJDA().getSelfUser().getEffectiveAvatarUrl());
+        embedBuilder.setColor(DiscordUtil.DEFAULT);
+        
+        BlockingQueue<AudioTrack> audioQueue = AudioManager.getAudioQueue(member.getGuild());
+        if (audioQueue == null || audioQueue.isEmpty()) {
+            embedBuilder.setColor(DiscordUtil.WARNING);
+            embedBuilder.setTitle("Nothing queued");
+            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            return;
+        }
+        
+        audioQueue.clear();
+        AudioManager.playNext(member.getGuild());
+        embedBuilder.setColor(DiscordUtil.SUCCESS);
+        embedBuilder.setTitle("Queue cleared");
+        MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+    }
+}
