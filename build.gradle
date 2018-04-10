@@ -6,7 +6,7 @@ targetCompatibility = 1.8
 
 group = "io.github.lxgaming"
 archivesBaseName = "DiscordMusic"
-version = "2.0.1"
+version = "2.0.2"
 
 configurations {
     provided {
@@ -20,8 +20,8 @@ repositories {
 
 dependencies {
     compile("com.google.code.gson:gson:2.8.2")
-    compile("com.sedmelluq:lavaplayer:1.2.58")
-    compile("net.dv8tion:JDA:3.6.0_354")
+    compile("com.sedmelluq:lavaplayer:1.2.62")
+    compile("net.dv8tion:JDA:3.6.0_355")
     compile("org.apache.commons:commons-lang3:3.7")
     compile("org.apache.logging.log4j:log4j-core:2.11.0")
     annotationProcessor("org.apache.logging.log4j:log4j-core:2.11.0")
