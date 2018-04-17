@@ -24,7 +24,6 @@ import io.github.lxgaming.discordmusic.managers.ServiceManager;
 import io.github.lxgaming.discordmusic.util.DiscordUtil;
 import io.github.lxgaming.discordmusic.util.Reference;
 import io.github.lxgaming.discordmusic.util.ShutdownHook;
-import net.dv8tion.jda.core.JDA;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,7 +40,6 @@ public class DiscordMusic {
     private final Logger logger;
     private final Path path;
     private final Configuration configuration;
-    private JDA jda;
     
     public DiscordMusic() {
         instance = this;
@@ -99,13 +97,5 @@ public class DiscordMusic {
         }
         
         return Optional.empty();
-    }
-    
-    public JDA getJDA() {
-        return jda;
-    }
-    
-    private void setJDA(JDA jda) {
-        this.jda = jda;
     }
 }
