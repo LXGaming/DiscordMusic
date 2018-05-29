@@ -23,7 +23,7 @@ import io.github.lxgaming.discordmusic.configuration.config.Server;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.CommandManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.managers.PermissionManager;
+import io.github.lxgaming.discordmusic.managers.GroupManager;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Game;
@@ -50,8 +50,8 @@ public class DiscordListener extends ListenerAdapter {
         AudioSourceManagers.registerRemoteSources(AudioManager.getAudioPlayerManager());
         for (Guild guild : event.getJDA().getGuilds()) {
             AudioManager.registerAudioPlayer(guild);
-            PermissionManager.registerServer(guild);
-            PermissionManager.getServer(guild).map(Server::getAutoJoinChannel).map(guild::getVoiceChannelById).ifPresent(guild.getAudioManager()::openAudioConnection);
+            GroupManager.registerServer(guild);
+            GroupManager.getServer(guild).map(Server::getAutoJoinChannel).map(guild::getVoiceChannelById).ifPresent(guild.getAudioManager()::openAudioConnection);
         }
     }
     

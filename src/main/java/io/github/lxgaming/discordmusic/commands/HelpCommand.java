@@ -18,7 +18,7 @@ package io.github.lxgaming.discordmusic.commands;
 
 import io.github.lxgaming.discordmusic.managers.CommandManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.managers.PermissionManager;
+import io.github.lxgaming.discordmusic.managers.GroupManager;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
@@ -46,7 +46,7 @@ public class HelpCommand extends AbstractCommand {
         
         if (arguments.isEmpty()) {
             for (AbstractCommand command : CommandManager.getCommands()) {
-                if (command.getAliases().isEmpty() || !PermissionManager.hasPermission(member, command.getPermission())) {
+                if (command.getAliases().isEmpty() || !GroupManager.hasPermission(member, command.getPermission())) {
                     continue;
                 }
                 
@@ -74,7 +74,7 @@ public class HelpCommand extends AbstractCommand {
             return;
         }
         
-        if (!PermissionManager.hasPermission(member, command.get().getPermission())) {
+        if (!GroupManager.hasPermission(member, command.get().getPermission())) {
             embedBuilder.setColor(Toolbox.WARNING);
             embedBuilder.setTitle("You do not have permission to view this command");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);

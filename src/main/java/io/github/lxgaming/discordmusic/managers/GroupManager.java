@@ -30,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Optional;
 import java.util.Set;
 
-public class PermissionManager {
+public class GroupManager {
     
     public static void registerServer(Guild guild) {
         Set<Group> groups = Toolbox.newLinkedHashSet();

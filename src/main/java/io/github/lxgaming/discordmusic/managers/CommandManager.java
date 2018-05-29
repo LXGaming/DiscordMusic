@@ -83,7 +83,7 @@ public class CommandManager {
             MessageManager.getMessages().add(message);
         }
         
-        if (StringUtils.isBlank(command.get().getPermission()) || !PermissionManager.hasPermission(member, command.get().getPermission())) {
+        if (StringUtils.isBlank(command.get().getPermission()) || !GroupManager.hasPermission(member, command.get().getPermission())) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(Toolbox.ERROR);
             embedBuilder.setTitle("You do not have permission to execute this command");
@@ -92,7 +92,7 @@ public class CommandManager {
             return false;
         }
         
-        DiscordMusic.getInstance().getLogger().debug("Processing {} for {}", command.get().getPrimaryAlias().orElse("Unknown"), PermissionManager.getUsername(member.getUser()));
+        DiscordMusic.getInstance().getLogger().debug("Processing {} for {}", command.get().getPrimaryAlias().orElse("Unknown"), GroupManager.getUsername(member.getUser()));
         command.get().execute(textChannel, member, message, arguments.get());
         return true;
     }
