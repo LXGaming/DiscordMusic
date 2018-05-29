@@ -27,7 +27,7 @@ import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.handlers.AudioPlayerSendHandler;
 import io.github.lxgaming.discordmusic.listeners.AudioListener;
 import io.github.lxgaming.discordmusic.util.DiscordData;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -43,9 +43,9 @@ import java.util.concurrent.BlockingQueue;
 public class AudioManager {
     
     private static final AudioPlayerManager AUDIO_PLAYER_MANAGER = new DefaultAudioPlayerManager();
-    private static final Map<Long, AudioPlayer> AUDIO_PLAYERS = Collections.synchronizedMap(DiscordUtil.newHashMap());
-    private static final Map<Long, BlockingQueue<AudioTrack>> AUDIO_QUEUES = Collections.synchronizedMap(DiscordUtil.newHashMap());
-    private static final Map<Long, Map<DiscordData, List<AudioTrack>>> SEARCH_RESULTS = Collections.synchronizedMap(DiscordUtil.newHashMap());
+    private static final Map<Long, AudioPlayer> AUDIO_PLAYERS = Collections.synchronizedMap(Toolbox.newHashMap());
+    private static final Map<Long, BlockingQueue<AudioTrack>> AUDIO_QUEUES = Collections.synchronizedMap(Toolbox.newHashMap());
+    private static final Map<Long, Map<DiscordData, List<AudioTrack>>> SEARCH_RESULTS = Collections.synchronizedMap(Toolbox.newHashMap());
     
     public static void registerAudioPlayer(Guild guild) {
         if (!(guild.getAudioManager().getSendingHandler() instanceof AudioPlayerSendHandler)) {
@@ -61,8 +61,8 @@ public class AudioManager {
         audioPlayer.addListener(new AudioListener());
         audioPlayer.setVolume(DiscordMusic.getInstance().getConfig().map(Config::getDefaultVolume).orElse(25));
         getAudioPlayers().put(guild.getIdLong(), audioPlayer);
-        getAudioQueues().put(guild.getIdLong(), DiscordUtil.newLinkedBlockingQueue());
-        getSearchResults().put(guild.getIdLong(), DiscordUtil.newHashMap());
+        getAudioQueues().put(guild.getIdLong(), Toolbox.newLinkedBlockingQueue());
+        getSearchResults().put(guild.getIdLong(), Toolbox.newHashMap());
     }
     
     public static void unregisterAudioPlayer(Guild guild) {
@@ -95,7 +95,7 @@ public class AudioManager {
         audioPlayer.playTrack(audioTrack);
         
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(DiscordUtil.DEFAULT);
+        embedBuilder.setColor(Toolbox.DEFAULT);
         embedBuilder.setTitle("Now playing");
         embedBuilder.getDescriptionBuilder().append("[").append(audioTrack.getInfo().title).append("](").append(audioTrack.getInfo().uri).append(")");
         MessageManager.sendMessage(discordData.getTextChannel(), embedBuilder.build(), true);
@@ -113,7 +113,7 @@ public class AudioManager {
         }
         
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(DiscordUtil.ERROR);
+        embedBuilder.setColor(Toolbox.ERROR);
         embedBuilder.setTitle("Encountered an error");
         embedBuilder.getDescriptionBuilder().append(StringUtils.defaultIfBlank(exception.getMessage(), "Unknown"));
         embedBuilder.setFooter("Details available in console", null);
@@ -129,9 +129,9 @@ public class AudioManager {
             }
             
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setColor(DiscordUtil.DEFAULT);
+            embedBuilder.setColor(Toolbox.DEFAULT);
             if (audioPlaylist.isSearchResult()) {
-                List<AudioTrack> audioTracks = DiscordUtil.newArrayList();
+                List<AudioTrack> audioTracks = Toolbox.newArrayList();
                 for (int index = 0; index < Math.min(audioPlaylist.getTracks().size(), 5); index++) {
                     AudioTrack audioTrack = audioPlaylist.getTracks().get(index);
                     audioTrack.setUserData(discordData);
@@ -167,7 +167,7 @@ public class AudioManager {
                 playNext(discordData.getGuild());
             }
             
-            embedBuilder.setColor(DiscordUtil.SUCCESS);
+            embedBuilder.setColor(Toolbox.SUCCESS);
             embedBuilder.setTitle(audioPlaylist.getTracks().size() + " tracks added to queue");
             MessageManager.sendMessage(discordData.getTextChannel(), embedBuilder.build(), true);
         } catch (RuntimeException ex) {
@@ -191,7 +191,7 @@ public class AudioManager {
             }
             
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setColor(DiscordUtil.SUCCESS);
+            embedBuilder.setColor(Toolbox.SUCCESS);
             embedBuilder.setTitle("Track added to queue");
             embedBuilder.getDescriptionBuilder().append("[").append(audioTrack.getInfo().title).append("](").append(audioTrack.getInfo().uri).append(")");
             MessageManager.sendMessage(discordData.getTextChannel(), embedBuilder.build(), true);

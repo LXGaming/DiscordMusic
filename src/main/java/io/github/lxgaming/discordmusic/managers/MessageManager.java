@@ -18,7 +18,7 @@ package io.github.lxgaming.discordmusic.managers;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -31,7 +31,7 @@ import java.util.Set;
 
 public class MessageManager {
     
-    private static final Set<Message> MESSAGES = Collections.synchronizedSet(DiscordUtil.newLinkedHashSet());
+    private static final Set<Message> MESSAGES = Collections.synchronizedSet(Toolbox.newLinkedHashSet());
     
     public static void sendMessage(TextChannel textChannel, MessageEmbed messageEmbed, boolean delete) {
         sendMessage(textChannel, new MessageBuilder().setEmbed(messageEmbed).build(), delete);

@@ -19,7 +19,7 @@ package io.github.lxgaming.discordmusic.commands;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -38,17 +38,17 @@ public class SkipCommand extends AbstractCommand {
     @Override
     public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(DiscordUtil.DEFAULT);
+        embedBuilder.setColor(Toolbox.DEFAULT);
         
         AudioTrack audioTrack = AudioManager.getAudioPlayer(member.getGuild()).getPlayingTrack();
         if (audioTrack == null) {
-            embedBuilder.setColor(DiscordUtil.WARNING);
+            embedBuilder.setColor(Toolbox.WARNING);
             embedBuilder.setTitle("Nothing is currently playing.");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
         }
         
-        embedBuilder.setColor(DiscordUtil.SUCCESS);
+        embedBuilder.setColor(Toolbox.SUCCESS);
         embedBuilder.setTitle("Skipped");
         embedBuilder.getDescriptionBuilder().append("[").append(audioTrack.getInfo().title).append("](").append(audioTrack.getInfo().uri).append(")");
         MessageManager.sendMessage(textChannel, embedBuilder.build(), true);

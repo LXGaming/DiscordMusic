@@ -69,10 +69,10 @@ public final class DiscordData {
     @Override
     public String toString() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("guild", DiscordUtil.getIdLong(getGuild()).orElse(0L));
-        jsonObject.addProperty("message", DiscordUtil.getIdLong(getMessage()).orElse(0L));
-        jsonObject.addProperty("textChannel", DiscordUtil.getIdLong(getTextChannel()).orElse(0L));
-        jsonObject.addProperty("user", DiscordUtil.getIdLong(getUser()).orElse(0L));
+        jsonObject.addProperty("guild", Toolbox.getIdLong(getGuild()).orElse(0L));
+        jsonObject.addProperty("message", Toolbox.getIdLong(getMessage()).orElse(0L));
+        jsonObject.addProperty("textChannel", Toolbox.getIdLong(getTextChannel()).orElse(0L));
+        jsonObject.addProperty("user", Toolbox.getIdLong(getUser()).orElse(0L));
         return new Gson().toJson(jsonObject);
     }
 }

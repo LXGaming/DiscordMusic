@@ -19,7 +19,7 @@ package io.github.lxgaming.discordmusic.commands;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -41,11 +41,11 @@ public class QueueCommand extends AbstractCommand {
     public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setAuthor(textChannel.getJDA().getSelfUser().getName(), null, textChannel.getJDA().getSelfUser().getEffectiveAvatarUrl());
-        embedBuilder.setColor(DiscordUtil.DEFAULT);
+        embedBuilder.setColor(Toolbox.DEFAULT);
         
         BlockingQueue<AudioTrack> audioQueue = AudioManager.getAudioQueue(member.getGuild());
         if (audioQueue == null || audioQueue.isEmpty()) {
-            embedBuilder.setColor(DiscordUtil.WARNING);
+            embedBuilder.setColor(Toolbox.WARNING);
             embedBuilder.setTitle("Nothing queued");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
@@ -66,7 +66,7 @@ public class QueueCommand extends AbstractCommand {
             embedBuilder.getDescriptionBuilder().append("[").append(audioTrack.getInfo().title).append("](").append(audioTrack.getInfo().uri).append(")");
         }
         
-        embedBuilder.setColor(DiscordUtil.SUCCESS);
+        embedBuilder.setColor(Toolbox.SUCCESS);
         if ((audioQueue.size() - index) > 0) {
             embedBuilder.setFooter("and " + (audioQueue.size() - index) + " more...", null);
         }

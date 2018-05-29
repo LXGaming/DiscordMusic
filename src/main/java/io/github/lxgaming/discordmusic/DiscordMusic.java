@@ -21,9 +21,9 @@ import io.github.lxgaming.discordmusic.configuration.Configuration;
 import io.github.lxgaming.discordmusic.managers.AccountManager;
 import io.github.lxgaming.discordmusic.managers.CommandManager;
 import io.github.lxgaming.discordmusic.managers.ServiceManager;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
 import io.github.lxgaming.discordmusic.util.Reference;
 import io.github.lxgaming.discordmusic.util.ShutdownHook;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +45,7 @@ public class DiscordMusic {
         instance = this;
         startTime = Instant.now();
         logger = LogManager.getLogger(Reference.APP_ID);
-        path = DiscordUtil.getPath().orElse(null);
+        path = Toolbox.getPath().orElse(null);
         configuration = new Configuration();
     }
     

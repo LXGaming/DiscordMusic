@@ -19,7 +19,7 @@ package io.github.lxgaming.discordmusic.commands;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -38,25 +38,25 @@ public class StopCommand extends AbstractCommand {
     @Override
     public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(DiscordUtil.DEFAULT);
+        embedBuilder.setColor(Toolbox.DEFAULT);
         
         AudioPlayer audioPlayer = AudioManager.getAudioPlayer(member.getGuild());
         if (audioPlayer == null) {
-            embedBuilder.setColor(DiscordUtil.ERROR);
+            embedBuilder.setColor(Toolbox.ERROR);
             embedBuilder.setTitle("Failed to get AudioPlayer");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
         }
         
         if (audioPlayer.getPlayingTrack() == null) {
-            embedBuilder.setColor(DiscordUtil.WARNING);
+            embedBuilder.setColor(Toolbox.WARNING);
             embedBuilder.setTitle("Player is not playing anything");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
         }
         
         audioPlayer.stopTrack();
-        embedBuilder.setColor(DiscordUtil.SUCCESS);
+        embedBuilder.setColor(Toolbox.SUCCESS);
         embedBuilder.setTitle("Player stopped.");
         MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
     }

@@ -17,7 +17,7 @@
 package io.github.lxgaming.discordmusic.commands;
 
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -42,12 +42,12 @@ public class JoinCommand extends AbstractCommand {
     @Override
     public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(DiscordUtil.DEFAULT);
+        embedBuilder.setColor(Toolbox.DEFAULT);
         
-        Set<VoiceChannel> voiceChannels = DiscordUtil.newLinkedHashSet();
+        Set<VoiceChannel> voiceChannels = Toolbox.newLinkedHashSet();
         if (arguments.isEmpty()) {
             if (!member.getVoiceState().inVoiceChannel()) {
-                embedBuilder.setColor(DiscordUtil.WARNING);
+                embedBuilder.setColor(Toolbox.WARNING);
                 embedBuilder.setTitle("You are not in a voice channel");
                 MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
                 return;
@@ -59,7 +59,7 @@ public class JoinCommand extends AbstractCommand {
         }
         
         if (voiceChannels.isEmpty()) {
-            embedBuilder.setColor(DiscordUtil.WARNING);
+            embedBuilder.setColor(Toolbox.WARNING);
             embedBuilder.setTitle("Unable to find the specified voice channel");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
@@ -73,14 +73,14 @@ public class JoinCommand extends AbstractCommand {
             
             try {
                 member.getGuild().getAudioManager().openAudioConnection(voiceChannel);
-                embedBuilder.setColor(DiscordUtil.SUCCESS);
+                embedBuilder.setColor(Toolbox.SUCCESS);
                 embedBuilder.getDescriptionBuilder().setLength(0);
                 embedBuilder.setTitle("Joining " + voiceChannel.getName());
                 MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
                 return;
             } catch (GuildUnavailableException | IllegalArgumentException | UnsupportedOperationException ex) {
                 embedBuilder.getDescriptionBuilder().setLength(0);
-                embedBuilder.setColor(DiscordUtil.ERROR);
+                embedBuilder.setColor(Toolbox.ERROR);
                 embedBuilder.setTitle("Encountered an error");
                 embedBuilder.getDescriptionBuilder().append(StringUtils.defaultIfBlank(ex.getMessage(), "Unknown"));
                 MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
@@ -91,7 +91,7 @@ public class JoinCommand extends AbstractCommand {
             }
         }
         
-        embedBuilder.setColor(DiscordUtil.WARNING);
+        embedBuilder.setColor(Toolbox.WARNING);
         embedBuilder.setTitle("Failed to join voice channel");
         MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
     }

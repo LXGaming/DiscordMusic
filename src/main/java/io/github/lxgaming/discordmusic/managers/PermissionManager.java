@@ -20,7 +20,7 @@ import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.config.Group;
 import io.github.lxgaming.discordmusic.configuration.config.Server;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
@@ -33,7 +33,7 @@ import java.util.Set;
 public class PermissionManager {
     
     public static void registerServer(Guild guild) {
-        Set<Group> groups = DiscordUtil.newLinkedHashSet();
+        Set<Group> groups = Toolbox.newLinkedHashSet();
         for (Role role : guild.getRoles()) {
             Group group = getGroup(role).orElse(new Group());
             group.setId(role.getIdLong());
@@ -56,11 +56,11 @@ public class PermissionManager {
             return false;
         }
         
-        return DiscordUtil.containsIgnoreCase(permissions, permission) || DiscordUtil.containsIgnoreCase(permissions, "*");
+        return Toolbox.containsIgnoreCase(permissions, permission) || Toolbox.containsIgnoreCase(permissions, "*");
     }
     
     public static Set<String> getPermissions(Member member) {
-        Set<String> permissions = DiscordUtil.newLinkedHashSet();
+        Set<String> permissions = Toolbox.newLinkedHashSet();
         for (Group group : getGroups(member)) {
             permissions.addAll(getPermissions(group));
         }
@@ -69,7 +69,7 @@ public class PermissionManager {
     }
     
     public static Set<String> getPermissions(Group group) {
-        Set<String> permissions = DiscordUtil.newLinkedHashSet();
+        Set<String> permissions = Toolbox.newLinkedHashSet();
         for (String permission : group.getPermissions()) {
             if (StringUtils.startsWith(permission, "!") && permissions.contains(StringUtils.substringAfter(permission, "!"))) {
                 continue;
@@ -86,14 +86,14 @@ public class PermissionManager {
     }
     
     public static Set<Group> getGroups(Member member) {
-        Set<Long> roles = DiscordUtil.newLinkedHashSet();
+        Set<Long> roles = Toolbox.newLinkedHashSet();
         for (Role role : member.getRoles()) {
             roles.add(role.getIdLong());
         }
         
         roles.add(member.getGuild().getPublicRole().getIdLong());
         
-        Set<Group> groups = DiscordUtil.newLinkedHashSet();
+        Set<Group> groups = Toolbox.newLinkedHashSet();
         Optional<Server> server = getServer(member.getGuild());
         if (!server.isPresent()) {
             return groups;

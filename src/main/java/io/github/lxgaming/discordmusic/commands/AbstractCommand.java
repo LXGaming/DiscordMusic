@@ -17,7 +17,7 @@
 package io.github.lxgaming.discordmusic.commands;
 
 import io.github.lxgaming.discordmusic.managers.CommandManager;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -29,8 +29,8 @@ import java.util.Set;
 
 public abstract class AbstractCommand {
     
-    private final Set<String> aliases = DiscordUtil.newLinkedHashSet();
-    private final Set<AbstractCommand> children = DiscordUtil.newLinkedHashSet();
+    private final Set<String> aliases = Toolbox.newLinkedHashSet();
+    private final Set<AbstractCommand> children = Toolbox.newLinkedHashSet();
     private String description;
     private String permission;
     private String usage;

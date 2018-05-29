@@ -24,7 +24,7 @@ import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.CommandManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
 import io.github.lxgaming.discordmusic.managers.PermissionManager;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
@@ -68,7 +68,7 @@ public class DiscordListener extends ListenerAdapter {
     
     @Override
     public void onMessageDelete(MessageDeleteEvent event) {
-        MessageManager.removeMessages(DiscordUtil.newLinkedHashSet(event.getMessageId()));
+        MessageManager.removeMessages(Toolbox.newLinkedHashSet(event.getMessageId()));
     }
     
     @Override

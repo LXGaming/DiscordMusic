@@ -19,7 +19,7 @@ package io.github.lxgaming.discordmusic.managers;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.services.AbstractService;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 
 import java.util.Objects;
 import java.util.concurrent.Executors;
@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ServiceManager {
     
-    private static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(10, DiscordUtil.buildThreadFactory("Service Thread #%d"));
+    private static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(10, Toolbox.buildThreadFactory("Service Thread #%d"));
     
     public static void buildServices() {
         DiscordMusic.getInstance().getConfig().map(Config::getMessageService).ifPresent(ServiceManager::schedule);

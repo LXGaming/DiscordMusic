@@ -19,7 +19,7 @@ package io.github.lxgaming.discordmusic.commands;
 import io.github.lxgaming.discordmusic.managers.CommandManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
 import io.github.lxgaming.discordmusic.managers.PermissionManager;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -42,7 +42,7 @@ public class HelpCommand extends AbstractCommand {
     @Override
     public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(DiscordUtil.DEFAULT);
+        embedBuilder.setColor(Toolbox.DEFAULT);
         
         if (arguments.isEmpty()) {
             for (AbstractCommand command : CommandManager.getCommands()) {
@@ -66,16 +66,16 @@ public class HelpCommand extends AbstractCommand {
             return;
         }
         
-        Optional<AbstractCommand> command = CommandManager.getCommand(DiscordUtil.newArrayList(arguments.toArray(new String[0])));
+        Optional<AbstractCommand> command = CommandManager.getCommand(Toolbox.newArrayList(arguments.toArray(new String[0])));
         if (!command.isPresent()) {
-            embedBuilder.setColor(DiscordUtil.ERROR);
+            embedBuilder.setColor(Toolbox.ERROR);
             embedBuilder.setTitle("No help present for " + StringUtils.join(arguments, " "));
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
         }
         
         if (!PermissionManager.hasPermission(member, command.get().getPermission())) {
-            embedBuilder.setColor(DiscordUtil.WARNING);
+            embedBuilder.setColor(Toolbox.WARNING);
             embedBuilder.setTitle("You do not have permission to view this command");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
@@ -87,7 +87,7 @@ public class HelpCommand extends AbstractCommand {
             embedBuilder.getDescriptionBuilder().append("\n");
         }
         
-        List<String> children = DiscordUtil.newArrayList();
+        List<String> children = Toolbox.newArrayList();
         for (AbstractCommand childCommand : command.get().getChildren()) {
             children.add(childCommand.getPrimaryAlias().orElse("Unknown"));
         }

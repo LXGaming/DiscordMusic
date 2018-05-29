@@ -34,7 +34,7 @@ import io.github.lxgaming.discordmusic.commands.SourcesCommand;
 import io.github.lxgaming.discordmusic.commands.StopCommand;
 import io.github.lxgaming.discordmusic.commands.VolumeCommand;
 import io.github.lxgaming.discordmusic.configuration.Config;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -47,8 +47,8 @@ import java.util.Set;
 
 public class CommandManager {
     
-    private static final Set<AbstractCommand> COMMANDS = DiscordUtil.newLinkedHashSet();
-    private static final Set<Class<? extends AbstractCommand>> COMMAND_CLASSES = DiscordUtil.newLinkedHashSet();
+    private static final Set<AbstractCommand> COMMANDS = Toolbox.newLinkedHashSet();
+    private static final Set<Class<? extends AbstractCommand>> COMMAND_CLASSES = Toolbox.newLinkedHashSet();
     
     public static void buildCommands() {
         registerCommand(ClearCommand.class);
@@ -69,7 +69,7 @@ public class CommandManager {
     }
     
     public static boolean process(TextChannel textChannel, Member member, Message message) {
-        Optional<List<String>> arguments = getArguments(message.getContentDisplay()).map(DiscordUtil::newArrayList);
+        Optional<List<String>> arguments = getArguments(message.getContentDisplay()).map(Toolbox::newArrayList);
         if (!arguments.isPresent() || arguments.get().isEmpty()) {
             return false;
         }
@@ -85,7 +85,7 @@ public class CommandManager {
         
         if (StringUtils.isBlank(command.get().getPermission()) || !PermissionManager.hasPermission(member, command.get().getPermission())) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setColor(DiscordUtil.ERROR);
+            embedBuilder.setColor(Toolbox.ERROR);
             embedBuilder.setTitle("You do not have permission to execute this command");
             embedBuilder.setFooter("Missing permission: " + command.get().getPermission(), null);
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
@@ -104,7 +104,7 @@ public class CommandManager {
         }
         
         getCommandClasses().add(commandClass);
-        Optional<AbstractCommand> command = DiscordUtil.newInstance(commandClass);
+        Optional<AbstractCommand> command = Toolbox.newInstance(commandClass);
         if (!command.isPresent()) {
             DiscordMusic.getInstance().getLogger().error("{} failed to initialize", commandClass.getSimpleName());
             return false;
@@ -116,7 +116,7 @@ public class CommandManager {
     }
     
     public static boolean registerAlias(AbstractCommand command, String alias) {
-        if (DiscordUtil.containsIgnoreCase(command.getAliases(), alias)) {
+        if (Toolbox.containsIgnoreCase(command.getAliases(), alias)) {
             DiscordMusic.getInstance().getLogger().warn("{} has already been registered for {}", alias, command.getClass().getSimpleName());
             return false;
         }
@@ -138,7 +138,7 @@ public class CommandManager {
         }
         
         getCommandClasses().add(commandClass);
-        Optional<AbstractCommand> command = DiscordUtil.newInstance(commandClass);
+        Optional<AbstractCommand> command = Toolbox.newInstance(commandClass);
         if (!command.isPresent()) {
             DiscordMusic.getInstance().getLogger().error("{} failed to initialize", commandClass.getSimpleName());
             return false;
@@ -154,7 +154,7 @@ public class CommandManager {
     }
     
     private static Optional<AbstractCommand> getCommand(AbstractCommand parentCommand, List<String> arguments) {
-        Set<AbstractCommand> commands = DiscordUtil.newLinkedHashSet();
+        Set<AbstractCommand> commands = Toolbox.newLinkedHashSet();
         if (parentCommand != null) {
             commands.addAll(parentCommand.getChildren());
         } else {
@@ -166,7 +166,7 @@ public class CommandManager {
         }
         
         for (AbstractCommand command : commands) {
-            if (DiscordUtil.containsIgnoreCase(command.getAliases(), arguments.get(0))) {
+            if (Toolbox.containsIgnoreCase(command.getAliases(), arguments.get(0))) {
                 arguments.remove(0);
                 return getCommand(command, arguments);
             }
@@ -178,11 +178,11 @@ public class CommandManager {
     private static Optional<String[]> getArguments(String message) {
         String commandPrefix = DiscordMusic.getInstance().getConfig().map(Config::getCommandPrefix).orElse("/");
         if (StringUtils.startsWith(message, commandPrefix)) {
-            return Optional.ofNullable(StringUtils.split(DiscordUtil.filter(StringUtils.substringAfter(message, commandPrefix)), " "));
+            return Optional.ofNullable(StringUtils.split(Toolbox.filter(StringUtils.substringAfter(message, commandPrefix)), " "));
         }
         
         if (StringUtils.startsWith(message, "/")) {
-            return Optional.ofNullable(StringUtils.split(DiscordUtil.filter(StringUtils.substringAfter(message, "/")), " "));
+            return Optional.ofNullable(StringUtils.split(Toolbox.filter(StringUtils.substringAfter(message, "/")), " "));
         }
         
         return Optional.empty();

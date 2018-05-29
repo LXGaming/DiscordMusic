@@ -19,7 +19,7 @@ package io.github.lxgaming.discordmusic.commands;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -40,11 +40,11 @@ public class ClearCommand extends AbstractCommand {
     public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setAuthor(textChannel.getJDA().getSelfUser().getName(), null, textChannel.getJDA().getSelfUser().getEffectiveAvatarUrl());
-        embedBuilder.setColor(DiscordUtil.DEFAULT);
+        embedBuilder.setColor(Toolbox.DEFAULT);
         
         BlockingQueue<AudioTrack> audioQueue = AudioManager.getAudioQueue(member.getGuild());
         if (audioQueue == null || audioQueue.isEmpty()) {
-            embedBuilder.setColor(DiscordUtil.WARNING);
+            embedBuilder.setColor(Toolbox.WARNING);
             embedBuilder.setTitle("Nothing queued");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
@@ -52,7 +52,7 @@ public class ClearCommand extends AbstractCommand {
         
         audioQueue.clear();
         AudioManager.playNext(member.getGuild());
-        embedBuilder.setColor(DiscordUtil.SUCCESS);
+        embedBuilder.setColor(Toolbox.SUCCESS);
         embedBuilder.setTitle("Queue cleared");
         MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
     }

@@ -16,7 +16,7 @@
 
 package io.github.lxgaming.discordmusic.configuration.config;
 
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 
 import java.util.Set;
 
@@ -31,7 +31,7 @@ public class Server {
         setId(0L);
         setName("Unknown");
         setAutoJoinChannel(0L);
-        setGroups(DiscordUtil.newLinkedHashSet());
+        setGroups(Toolbox.newLinkedHashSet());
     }
     
     public long getId() {

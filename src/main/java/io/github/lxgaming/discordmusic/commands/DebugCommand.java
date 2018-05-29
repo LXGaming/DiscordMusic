@@ -19,7 +19,7 @@ package io.github.lxgaming.discordmusic.commands;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -40,11 +40,11 @@ public class DebugCommand extends AbstractCommand {
     public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setAuthor(textChannel.getJDA().getSelfUser().getName(), null, textChannel.getJDA().getSelfUser().getEffectiveAvatarUrl());
-        embedBuilder.setColor(DiscordUtil.DEFAULT);
+        embedBuilder.setColor(Toolbox.DEFAULT);
         
         Optional<Config> config = DiscordMusic.getInstance().getConfig();
         if (!config.isPresent()) {
-            embedBuilder.setColor(DiscordUtil.ERROR);
+            embedBuilder.setColor(Toolbox.ERROR);
             embedBuilder.setTitle("Configuration error");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
@@ -54,7 +54,7 @@ public class DebugCommand extends AbstractCommand {
             if (config.get().isDebug()) {
                 config.get().setDebug(false);
                 DiscordMusic.getInstance().reloadLogger();
-                embedBuilder.setColor(DiscordUtil.WARNING);
+                embedBuilder.setColor(Toolbox.WARNING);
                 embedBuilder.setTitle("Debugging disabled");
                 MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
                 return;
@@ -62,7 +62,7 @@ public class DebugCommand extends AbstractCommand {
             
             config.get().setDebug(true);
             DiscordMusic.getInstance().reloadLogger();
-            embedBuilder.setColor(DiscordUtil.SUCCESS);
+            embedBuilder.setColor(Toolbox.SUCCESS);
             embedBuilder.setTitle("Debugging enabled");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
         }

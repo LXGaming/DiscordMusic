@@ -36,7 +36,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DiscordUtil {
+public class Toolbox {
     
     public static final Color DEFAULT = decodeColor("#7289DA").orElse(null);
     public static final Color SUCCESS = decodeColor("#46A84B").orElse(null);

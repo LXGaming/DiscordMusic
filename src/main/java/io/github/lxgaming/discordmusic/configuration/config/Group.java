@@ -16,7 +16,7 @@
 
 package io.github.lxgaming.discordmusic.configuration.config;
 
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 
 import java.util.Set;
 
@@ -29,7 +29,7 @@ public class Group {
     public Group() {
         setId(0L);
         setName("Unknown");
-        setPermissions(DiscordUtil.newLinkedHashSet());
+        setPermissions(Toolbox.newLinkedHashSet());
     }
     
     public long getId() {

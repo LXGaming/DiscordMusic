@@ -20,7 +20,7 @@ import io.github.lxgaming.discordmusic.handlers.AudioPlayerLoadResultHandler;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
 import io.github.lxgaming.discordmusic.util.DiscordData;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -41,18 +41,18 @@ public class SearchCommand extends AbstractCommand {
     @Override
     public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(DiscordUtil.DEFAULT);
+        embedBuilder.setColor(Toolbox.DEFAULT);
         
         if (arguments.isEmpty()) {
-            embedBuilder.setColor(DiscordUtil.ERROR);
+            embedBuilder.setColor(Toolbox.ERROR);
             embedBuilder.setTitle("Invalid arguments");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
         }
         
-        String query = DiscordUtil.filter(String.join(" ", arguments));
+        String query = Toolbox.filter(String.join(" ", arguments));
         if (StringUtils.isBlank(query)) {
-            embedBuilder.setColor(DiscordUtil.ERROR);
+            embedBuilder.setColor(Toolbox.ERROR);
             embedBuilder.setTitle("Invalid query");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;

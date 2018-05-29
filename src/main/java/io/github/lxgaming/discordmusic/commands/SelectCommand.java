@@ -22,7 +22,7 @@ import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
 import io.github.lxgaming.discordmusic.util.DiscordData;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -44,10 +44,10 @@ public class SelectCommand extends AbstractCommand {
     @Override
     public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(DiscordUtil.DEFAULT);
+        embedBuilder.setColor(Toolbox.DEFAULT);
         
         if (arguments.isEmpty()) {
-            embedBuilder.setColor(DiscordUtil.ERROR);
+            embedBuilder.setColor(Toolbox.ERROR);
             embedBuilder.setTitle("Invalid arguments");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
@@ -55,19 +55,19 @@ public class SelectCommand extends AbstractCommand {
         
         Map.Entry<DiscordData, List<AudioTrack>> searchResult = AudioManager.getSearchResult(member);
         if (searchResult == null) {
-            embedBuilder.setColor(DiscordUtil.WARNING);
+            embedBuilder.setColor(Toolbox.WARNING);
             embedBuilder.setTitle("You don't have any search results pending selection.");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
         }
         
-        List<AudioTrack> audioTracks = DiscordUtil.newArrayList();
+        List<AudioTrack> audioTracks = Toolbox.newArrayList();
         for (String string : arguments) {
             if (embedBuilder.getDescriptionBuilder().length() != 0) {
                 embedBuilder.getDescriptionBuilder().append("\n");
             }
             
-            Optional<Integer> selection = DiscordUtil.parseInteger(string);
+            Optional<Integer> selection = Toolbox.parseInteger(string);
             if (!selection.isPresent()) {
                 embedBuilder.getDescriptionBuilder().append("**Invalid**: ").append(string);
                 continue;

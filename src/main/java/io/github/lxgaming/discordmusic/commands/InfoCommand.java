@@ -19,8 +19,8 @@ package io.github.lxgaming.discordmusic.commands;
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
 import io.github.lxgaming.discordmusic.util.Reference;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.Member;
@@ -44,8 +44,8 @@ public class InfoCommand extends AbstractCommand {
     public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setAuthor(Reference.APP_NAME + " v" + Reference.APP_VERSION, Reference.SOURCE, textChannel.getJDA().getSelfUser().getEffectiveAvatarUrl());
-        embedBuilder.setColor(DiscordUtil.DEFAULT);
-        embedBuilder.addField("Uptime", DiscordUtil.getTimeString(Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis()), false);
+        embedBuilder.setColor(Toolbox.DEFAULT);
+        embedBuilder.addField("Uptime", Toolbox.getTimeString(Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis()), false);
         embedBuilder.addField("Authors", Reference.AUTHORS, false);
         embedBuilder.addField("Source", Reference.SOURCE, false);
         embedBuilder.addField("Website", Reference.WEBSITE, false);

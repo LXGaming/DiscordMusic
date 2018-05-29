@@ -19,7 +19,7 @@ package io.github.lxgaming.discordmusic.configuration;
 import io.github.lxgaming.discordmusic.configuration.config.Account;
 import io.github.lxgaming.discordmusic.configuration.config.Server;
 import io.github.lxgaming.discordmusic.services.MessageService;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 
 import java.util.Set;
 
@@ -42,7 +42,7 @@ public class Config {
         setDeleteInvoking(true);
         setDeleteMessages(true);
         setAccount(new Account());
-        setAllowedSources(DiscordUtil.newLinkedHashSet(
+        setAllowedSources(Toolbox.newLinkedHashSet(
                 "bandcamp.com", // Bandcamp
                 "beam.pro", "mixer.com", "www.beam.pro", "www.mixer.com", // Beam
                 "nicovideo.jp", "www.nicovideo.jp", // Nico
@@ -51,7 +51,7 @@ public class Config {
                 "vimeo.com", // Vimeo
                 "m.youtube.com", "www.youtube.com", "youtu.be", "youtube.com" // YouTube
         ));
-        setServers(DiscordUtil.newLinkedHashSet());
+        setServers(Toolbox.newLinkedHashSet());
         setMessageService(new MessageService());
     }
     

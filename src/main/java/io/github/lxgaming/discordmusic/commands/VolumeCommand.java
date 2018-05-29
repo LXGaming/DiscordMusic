@@ -18,7 +18,7 @@ package io.github.lxgaming.discordmusic.commands;
 
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.util.DiscordUtil;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -39,30 +39,30 @@ public class VolumeCommand extends AbstractCommand {
     @Override
     public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(DiscordUtil.DEFAULT);
+        embedBuilder.setColor(Toolbox.DEFAULT);
         if (arguments.isEmpty()) {
             embedBuilder.setTitle("Volume - " + AudioManager.getAudioPlayer(member.getGuild()).getVolume());
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
         }
         
-        Optional<Integer> volume = DiscordUtil.parseInteger(arguments.get(0));
+        Optional<Integer> volume = Toolbox.parseInteger(arguments.get(0));
         if (!volume.isPresent()) {
-            embedBuilder.setColor(DiscordUtil.ERROR);
+            embedBuilder.setColor(Toolbox.ERROR);
             embedBuilder.setTitle("Failed to parse argument");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
         }
         
         if (volume.get() < 0 || volume.get() > 100) {
-            embedBuilder.setColor(DiscordUtil.WARNING);
+            embedBuilder.setColor(Toolbox.WARNING);
             embedBuilder.setTitle("Value is outside of the allowed range (0 ~ 100)");
             MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
             return;
         }
         
         AudioManager.getAudioPlayer(member.getGuild()).setVolume(volume.get());
-        embedBuilder.setColor(DiscordUtil.SUCCESS);
+        embedBuilder.setColor(Toolbox.SUCCESS);
         embedBuilder.setTitle("Volume - " + AudioManager.getAudioPlayer(member.getGuild()).getVolume());
         MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
     }
