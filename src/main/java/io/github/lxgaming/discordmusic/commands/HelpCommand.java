@@ -17,8 +17,8 @@
 package io.github.lxgaming.discordmusic.commands;
 
 import io.github.lxgaming.discordmusic.managers.CommandManager;
-import io.github.lxgaming.discordmusic.managers.MessageManager;
 import io.github.lxgaming.discordmusic.managers.GroupManager;
+import io.github.lxgaming.discordmusic.managers.MessageManager;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
