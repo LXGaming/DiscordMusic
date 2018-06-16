@@ -43,7 +43,7 @@ public final class AudioPlayerSendHandler implements AudioSendHandler {
     public byte[] provide20MsAudio() {
         try {
             if (getAudioFrame() != null) {
-                return getAudioFrame().data;
+                return getAudioFrame().getData();
             }
             
             return null;
