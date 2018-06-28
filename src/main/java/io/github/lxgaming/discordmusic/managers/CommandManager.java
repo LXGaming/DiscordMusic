@@ -178,11 +178,11 @@ public final class CommandManager {
     private static Optional<String[]> getArguments(String message) {
         String commandPrefix = DiscordMusic.getInstance().getConfig().map(Config::getCommandPrefix).orElse("/");
         if (StringUtils.startsWithIgnoreCase(message, commandPrefix)) {
-            return Optional.ofNullable(StringUtils.split(Toolbox.filter(StringUtils.substringAfter(message, commandPrefix)), " "));
+            return Optional.ofNullable(StringUtils.split(Toolbox.filter(StringUtils.removeStartIgnoreCase(message, commandPrefix)), " "));
         }
         
         if (StringUtils.startsWithIgnoreCase(message, "/")) {
-            return Optional.ofNullable(StringUtils.split(Toolbox.filter(StringUtils.substringAfter(message, "/")), " "));
+            return Optional.ofNullable(StringUtils.split(Toolbox.filter(StringUtils.removeStartIgnoreCase(message, "/")), " "));
         }
         
         return Optional.empty();
