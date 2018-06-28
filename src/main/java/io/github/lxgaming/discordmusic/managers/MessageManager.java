@@ -26,7 +26,6 @@ import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.Set;
 
 public class MessageManager {
@@ -39,9 +38,6 @@ public class MessageManager {
     
     public static void sendMessage(TextChannel textChannel, Message message, boolean delete) {
         try {
-            Objects.requireNonNull(textChannel, "TextChannel cannot be null");
-            Objects.requireNonNull(message, "Message cannot be null");
-            
             textChannel.sendMessage(message).queue(success -> {
                 if (DiscordMusic.getInstance().getConfig().map(Config::isDeleteMessages).orElse(false) && delete) {
                     getMessages().add(success);

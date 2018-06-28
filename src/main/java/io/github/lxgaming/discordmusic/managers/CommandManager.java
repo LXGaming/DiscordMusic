@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class CommandManager {
+public final class CommandManager {
     
     private static final Set<AbstractCommand> COMMANDS = Toolbox.newLinkedHashSet();
     private static final Set<Class<? extends AbstractCommand>> COMMAND_CLASSES = Toolbox.newLinkedHashSet();
@@ -177,11 +177,11 @@ public class CommandManager {
     
     private static Optional<String[]> getArguments(String message) {
         String commandPrefix = DiscordMusic.getInstance().getConfig().map(Config::getCommandPrefix).orElse("/");
-        if (StringUtils.startsWith(message, commandPrefix)) {
+        if (StringUtils.startsWithIgnoreCase(message, commandPrefix)) {
             return Optional.ofNullable(StringUtils.split(Toolbox.filter(StringUtils.substringAfter(message, commandPrefix)), " "));
         }
         
-        if (StringUtils.startsWith(message, "/")) {
+        if (StringUtils.startsWithIgnoreCase(message, "/")) {
             return Optional.ofNullable(StringUtils.split(Toolbox.filter(StringUtils.substringAfter(message, "/")), " "));
         }
         

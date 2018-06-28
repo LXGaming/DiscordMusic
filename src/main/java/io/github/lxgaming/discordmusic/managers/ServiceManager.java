@@ -21,7 +21,6 @@ import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.services.AbstractService;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 
-import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +35,6 @@ public class ServiceManager {
     
     private static void schedule(AbstractService abstractService) {
         try {
-            Objects.requireNonNull(abstractService);
             long delay = Math.max(abstractService.getDelay(), 0L);
             long period = Math.max(abstractService.getPeriod(), 0L);
             if (!abstractService.isPeriodical() || period <= 0L) {

@@ -25,7 +25,6 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 
 import javax.security.auth.login.LoginException;
-import java.util.Objects;
 import java.util.Optional;
 
 public class AccountManager {
@@ -36,7 +35,6 @@ public class AccountManager {
     
     private static void createJDA(Account account) {
         try {
-            Objects.requireNonNull(account);
             JDABuilder jdaBuilder = new JDABuilder(AccountType.BOT);
             jdaBuilder.addEventListener(new DiscordListener());
             jdaBuilder.setBulkDeleteSplittingEnabled(false);

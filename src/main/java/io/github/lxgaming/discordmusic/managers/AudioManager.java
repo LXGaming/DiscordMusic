@@ -37,7 +37,6 @@ import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 
 public class AudioManager {
@@ -122,8 +121,6 @@ public class AudioManager {
     
     public static void playlist(DiscordData discordData, AudioPlaylist audioPlaylist) {
         try {
-            Objects.requireNonNull(discordData, "DiscordData cannot be null");
-            Objects.requireNonNull(audioPlaylist, "AudioPlaylist cannot be null");
             if (!discordData.isValid()) {
                 throw new InvalidParameterException("DiscordData cannot be invalid");
             }
@@ -177,8 +174,6 @@ public class AudioManager {
     
     public static void track(DiscordData discordData, AudioTrack audioTrack) {
         try {
-            Objects.requireNonNull(discordData, "DiscordData cannot be null");
-            Objects.requireNonNull(audioTrack, "AudioTrack cannot be null");
             if (!discordData.isValid()) {
                 throw new InvalidParameterException("DiscordData cannot be invalid");
             }
