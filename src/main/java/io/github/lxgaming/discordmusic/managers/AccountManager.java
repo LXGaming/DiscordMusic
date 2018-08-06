@@ -40,7 +40,7 @@ public class AccountManager {
             jdaBuilder.setBulkDeleteSplittingEnabled(false);
             jdaBuilder.setEnableShutdownHook(false);
             jdaBuilder.setToken(account.getToken());
-            account.setJDA(jdaBuilder.buildAsync());
+            account.setJDA(jdaBuilder.build());
         } catch (LoginException | RuntimeException ex) {
             DiscordMusic.getInstance().getLogger().error("Encountered an error processing {}::createJDA", "AccountManager", ex);
         }
