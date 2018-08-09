@@ -17,7 +17,6 @@
 package io.github.lxgaming.discordmusic.listeners;
 
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.config.Server;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.CommandManager;

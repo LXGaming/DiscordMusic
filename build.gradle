@@ -39,14 +39,15 @@ jar {
         }
     }
 
-    exclude("natives/darwin/**")
-    exclude("natives/linux-arm/**")
-    exclude("natives/linux-x86/**")
-    exclude("natives/linux-x86-64/**")
-    exclude("natives/win-x86/**")
+    //exclude("natives/darwin/**")
+    //exclude("natives/linux-aarch64/**")
+    //exclude("natives/linux-arm/**")
+    //exclude("natives/linux-x86/**")
+    //exclude("natives/linux-x86-64/**")
+    //exclude("natives/win-x86/**")
     //exclude("natives/win-x86-64/**")
-    exclude("natives/win32-x86/**")
-    exclude("natives/win32-x86-64/**")
+    //exclude("natives/win32-x86/**")
+    //exclude("natives/win32-x86-64/**")
 }
 
 processResources {
