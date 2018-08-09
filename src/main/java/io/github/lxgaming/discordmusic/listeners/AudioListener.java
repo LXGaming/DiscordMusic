@@ -39,12 +39,12 @@ public class AudioListener extends AudioEventAdapter {
     
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
-        DiscordMusic.getInstance().getLogger().debug("Track start");
+        DiscordMusic.getInstance().getLogger().debug("Track start - {} ({})", track.getInfo().title, track.getInfo().uri);
     }
     
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        DiscordMusic.getInstance().getLogger().debug("Track end - {}", endReason.name());
+        DiscordMusic.getInstance().getLogger().debug("Track end - {} - {} ({})", endReason.name(), track.getInfo().title, track.getInfo().uri);
         if (endReason.mayStartNext) {
             AudioManager.playNext(track.getUserData(DiscordData.class));
         }
@@ -52,13 +52,13 @@ public class AudioListener extends AudioEventAdapter {
     
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-        DiscordMusic.getInstance().getLogger().debug("Track exception - {}", exception.getMessage());
+        DiscordMusic.getInstance().getLogger().debug("Track exception - {} - {} ({})", exception.getMessage(), track.getInfo().title, track.getInfo().uri);
         AudioManager.exception(track.getUserData(DiscordData.class), exception);
     }
     
     @Override
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
-        DiscordMusic.getInstance().getLogger().debug("Track stuck");
+        DiscordMusic.getInstance().getLogger().debug("Track stuck - {} ({})", track.getInfo().title, track.getInfo().uri);
         AudioManager.exception(track.getUserData(DiscordData.class), new FriendlyException("Track stuck", FriendlyException.Severity.COMMON, null));
     }
 }
