@@ -23,14 +23,34 @@ import io.github.lxgaming.discordmusic.listeners.DiscordListener;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.entities.Game;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.LoginException;
 import java.util.Optional;
 
 public class AccountManager {
     
+    private static JDA jda;
+    
     public static void buildAccount() {
-        DiscordMusic.getInstance().getConfig().map(Config::getAccount).ifPresent(AccountManager::createJDA);
+        getAccount().ifPresent(AccountManager::createJDA);
+    }
+    
+    public static void reloadAccount() {
+        Account account = getAccount().orElse(null);
+        JDA jda = getJDA().orElse(null);
+        if (account == null || jda == null) {
+            return;
+        }
+        
+        if (account.getGameType() != null && StringUtils.isNotBlank(account.getGameTitle())) {
+            jda.getPresence().setGame(Game.of(account.getGameType(), account.getGameTitle()));
+        }
+        
+        if (account.getOnlineStatus() != null) {
+            jda.getPresence().setStatus(account.getOnlineStatus());
+        }
     }
     
     private static void createJDA(Account account) {
@@ -40,13 +60,17 @@ public class AccountManager {
             jdaBuilder.setBulkDeleteSplittingEnabled(false);
             jdaBuilder.setEnableShutdownHook(false);
             jdaBuilder.setToken(account.getToken());
-            account.setJDA(jdaBuilder.build());
+            jda = jdaBuilder.build();
         } catch (LoginException | RuntimeException ex) {
             DiscordMusic.getInstance().getLogger().error("Encountered an error processing {}::createJDA", "AccountManager", ex);
         }
     }
     
+    public static Optional<Account> getAccount() {
+        return DiscordMusic.getInstance().getConfig().map(Config::getAccount);
+    }
+    
     public static Optional<JDA> getJDA() {
-        return DiscordMusic.getInstance().getConfig().map(Config::getAccount).map(Account::getJDA);
+        return Optional.ofNullable(jda);
     }
 }

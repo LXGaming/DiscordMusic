@@ -19,11 +19,9 @@ package io.github.lxgaming.discordmusic.commands;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.util.Toolbox;
+import io.github.lxgaming.discordmusic.util.Color;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.List;
 
@@ -36,28 +34,28 @@ public class StopCommand extends AbstractCommand {
     }
     
     @Override
-    public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(Toolbox.DEFAULT);
+        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
-        AudioPlayer audioPlayer = AudioManager.getAudioPlayer(member.getGuild());
+        AudioPlayer audioPlayer = AudioManager.getAudioPlayer(message.getGuild());
         if (audioPlayer == null) {
-            embedBuilder.setColor(Toolbox.ERROR);
+            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("Failed to get AudioPlayer");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
         if (audioPlayer.getPlayingTrack() == null) {
-            embedBuilder.setColor(Toolbox.WARNING);
+            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("Player is not playing anything");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
         audioPlayer.stopTrack();
-        embedBuilder.setColor(Toolbox.SUCCESS);
+        embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
         embedBuilder.setTitle("Player stopped.");
-        MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+        MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }
 }

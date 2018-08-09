@@ -34,18 +34,17 @@ import io.github.lxgaming.discordmusic.commands.SourcesCommand;
 import io.github.lxgaming.discordmusic.commands.StopCommand;
 import io.github.lxgaming.discordmusic.commands.VolumeCommand;
 import io.github.lxgaming.discordmusic.configuration.Config;
+import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public final class CommandManager {
+public class CommandManager {
     
     private static final Set<AbstractCommand> COMMANDS = Toolbox.newLinkedHashSet();
     private static final Set<Class<? extends AbstractCommand>> COMMAND_CLASSES = Toolbox.newLinkedHashSet();
@@ -68,13 +67,13 @@ public final class CommandManager {
         registerCommand(VolumeCommand.class);
     }
     
-    public static boolean process(TextChannel textChannel, Member member, Message message) {
-        Optional<List<String>> arguments = getArguments(message.getContentDisplay()).map(Toolbox::newArrayList);
-        if (!arguments.isPresent() || arguments.get().isEmpty()) {
+    public static boolean process(Message message) {
+        List<String> arguments = getArguments(MessageManager.getMessageContent(message)).map(Toolbox::newArrayList).orElse(null);
+        if (arguments == null || arguments.isEmpty()) {
             return false;
         }
         
-        Optional<AbstractCommand> command = getCommand(arguments.get());
+        Optional<AbstractCommand> command = getCommand(arguments);
         if (!command.isPresent()) {
             return false;
         }
@@ -83,17 +82,29 @@ public final class CommandManager {
             MessageManager.getMessages().add(message);
         }
         
-        if (StringUtils.isBlank(command.get().getPermission()) || !GroupManager.hasPermission(member, command.get().getPermission())) {
+        if (StringUtils.isBlank(command.get().getPermission()) || !GroupManager.hasPermission(message.getMember(), command.get().getPermission())) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setColor(Toolbox.ERROR);
+            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("You do not have permission to execute this command");
             embedBuilder.setFooter("Missing permission: " + command.get().getPermission(), null);
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getTextChannel(), embedBuilder.build());
             return false;
         }
         
-        DiscordMusic.getInstance().getLogger().debug("Processing {} for {}", command.get().getPrimaryAlias().orElse("Unknown"), GroupManager.getUsername(member.getUser()));
-        command.get().execute(textChannel, member, message, arguments.get());
+        DiscordMusic.getInstance().getLogger().debug("Processing {} for {}", command.get().getPrimaryAlias().orElse("Unknown"), GroupManager.getUsername(message.getMember().getUser()));
+        
+        try {
+            command.get().execute(message, arguments);
+        } catch (Exception ex) {
+            DiscordMusic.getInstance().getLogger().error("Encountered an error processing {}::process", "CommandManager", ex);
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
+            embedBuilder.setTitle("An error has occurred. Details are available in console.");
+            embedBuilder.appendDescription(Toolbox.filter(MessageManager.getMessageContent(message)));
+            embedBuilder.setFooter("Exception: " + ex.getClass().getSimpleName(), null);
+            MessageManager.sendMessage(message.getTextChannel(), embedBuilder.build());
+        }
+        
         return true;
     }
     

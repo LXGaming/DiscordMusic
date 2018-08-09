@@ -28,7 +28,7 @@ public class MessageService extends AbstractService {
     private long deleteInterval;
     
     public MessageService() {
-        setPeriod(5000L);
+        setInterval(5000L);
         setDeleteInterval(60000L);
     }
     
@@ -54,11 +54,6 @@ public class MessageService extends AbstractService {
                 iterator.remove();
             }
         }
-    }
-    
-    @Override
-    public boolean isPeriodical() {
-        return true;
     }
     
     private long getDeleteInterval() {

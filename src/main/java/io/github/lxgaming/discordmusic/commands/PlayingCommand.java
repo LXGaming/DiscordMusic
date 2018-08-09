@@ -19,11 +19,10 @@ package io.github.lxgaming.discordmusic.commands;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
+import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.List;
 
@@ -38,19 +37,19 @@ public class PlayingCommand extends AbstractCommand {
     }
     
     @Override
-    public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(Toolbox.DEFAULT);
+        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
-        AudioTrack audioTrack = AudioManager.getAudioPlayer(member.getGuild()).getPlayingTrack();
+        AudioTrack audioTrack = AudioManager.getAudioPlayer(message.getGuild()).getPlayingTrack();
         if (audioTrack == null) {
-            embedBuilder.setColor(Toolbox.WARNING);
+            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("Nothing is currently playing.");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        embedBuilder.setColor(Toolbox.SUCCESS);
+        embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
         embedBuilder.setTitle(audioTrack.getInfo().title, audioTrack.getInfo().uri);
         if (audioTrack.getInfo().isStream) {
             embedBuilder.setFooter(Toolbox.getTimeString(audioTrack.getPosition()), null);
@@ -58,6 +57,6 @@ public class PlayingCommand extends AbstractCommand {
             embedBuilder.setFooter(Toolbox.getTimeString(audioTrack.getPosition()) + " / " + Toolbox.getTimeString(audioTrack.getDuration()), null);
         }
         
-        MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+        MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }
 }

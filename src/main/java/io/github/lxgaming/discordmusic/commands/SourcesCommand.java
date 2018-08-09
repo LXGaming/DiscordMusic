@@ -19,11 +19,9 @@ package io.github.lxgaming.discordmusic.commands;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.util.Toolbox;
+import io.github.lxgaming.discordmusic.util.Color;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.List;
 
@@ -36,13 +34,13 @@ public class SourcesCommand extends AbstractCommand {
     }
     
     @Override
-    public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(Toolbox.DEFAULT);
+        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         if (!DiscordMusic.getInstance().getConfig().map(Config::getAllowedSources).isPresent()) {
-            embedBuilder.setColor(Toolbox.ERROR);
+            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("Configuration error!");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
@@ -55,6 +53,6 @@ public class SourcesCommand extends AbstractCommand {
             embedBuilder.getDescriptionBuilder().append(source);
         }
         
-        MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+        MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }
 }

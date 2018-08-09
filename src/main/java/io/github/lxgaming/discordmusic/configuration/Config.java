@@ -19,8 +19,10 @@ package io.github.lxgaming.discordmusic.configuration;
 import io.github.lxgaming.discordmusic.configuration.config.Account;
 import io.github.lxgaming.discordmusic.configuration.config.Server;
 import io.github.lxgaming.discordmusic.services.MessageService;
+import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 
+import java.util.Map;
 import java.util.Set;
 
 public class Config {
@@ -28,17 +30,20 @@ public class Config {
     private boolean debug;
     private String commandPrefix;
     private int defaultVolume;
+    private int maxVolume;
     private boolean deleteInvoking;
     private boolean deleteMessages;
     private Account account;
     private Set<String> allowedSources;
     private Set<Server> servers;
+    private Map<Color, String> colors;
     private MessageService messageService;
     
     public Config() {
         setDebug(false);
         setCommandPrefix("M!");
         setDefaultVolume(25);
+        setMaxVolume(150);
         setDeleteInvoking(true);
         setDeleteMessages(true);
         setAccount(new Account());
@@ -52,6 +57,7 @@ public class Config {
                 "m.youtube.com", "www.youtube.com", "youtu.be", "youtube.com" // YouTube
         ));
         setServers(Toolbox.newLinkedHashSet());
+        setColors(Toolbox.newHashMap());
         setMessageService(new MessageService());
     }
     
@@ -77,6 +83,14 @@ public class Config {
     
     public void setDefaultVolume(int defaultVolume) {
         this.defaultVolume = defaultVolume;
+    }
+    
+    public int getMaxVolume() {
+        return maxVolume;
+    }
+    
+    public void setMaxVolume(int maxVolume) {
+        this.maxVolume = maxVolume;
     }
     
     public boolean isDeleteInvoking() {
@@ -117,6 +131,14 @@ public class Config {
     
     public void setServers(Set<Server> servers) {
         this.servers = servers;
+    }
+    
+    public Map<Color, String> getColors() {
+        return colors;
+    }
+    
+    public void setColors(Map<Color, String> colors) {
+        this.colors = colors;
     }
     
     public MessageService getMessageService() {

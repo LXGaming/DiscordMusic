@@ -17,11 +17,10 @@
 package io.github.lxgaming.discordmusic.commands;
 
 import io.github.lxgaming.discordmusic.managers.MessageManager;
+import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.exceptions.GuildUnavailableException;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
@@ -40,50 +39,50 @@ public class JoinCommand extends AbstractCommand {
     }
     
     @Override
-    public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(Toolbox.DEFAULT);
+        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
         Set<VoiceChannel> voiceChannels = Toolbox.newLinkedHashSet();
         if (arguments.isEmpty()) {
-            if (!member.getVoiceState().inVoiceChannel()) {
-                embedBuilder.setColor(Toolbox.WARNING);
+            if (!message.getMember().getVoiceState().inVoiceChannel()) {
+                embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
                 embedBuilder.setTitle("You are not in a voice channel");
-                MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+                MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
                 return;
             }
             
-            voiceChannels.add(member.getVoiceState().getChannel());
+            voiceChannels.add(message.getMember().getVoiceState().getChannel());
         } else {
-            voiceChannels.addAll(member.getGuild().getVoiceChannelsByName(StringUtils.join(arguments, " "), true));
+            voiceChannels.addAll(message.getGuild().getVoiceChannelsByName(StringUtils.join(arguments, " "), true));
         }
         
         if (voiceChannels.isEmpty()) {
-            embedBuilder.setColor(Toolbox.WARNING);
+            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("Unable to find the specified voice channel");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
         for (VoiceChannel voiceChannel : voiceChannels) {
-            if (member.getGuild().getAudioManager().getConnectedChannel() == voiceChannel) {
+            if (message.getGuild().getAudioManager().getConnectedChannel() == voiceChannel) {
                 embedBuilder.getDescriptionBuilder().append("Already connected to ").append(voiceChannel.getName());
                 continue;
             }
             
             try {
-                member.getGuild().getAudioManager().openAudioConnection(voiceChannel);
-                embedBuilder.setColor(Toolbox.SUCCESS);
+                message.getGuild().getAudioManager().openAudioConnection(voiceChannel);
+                embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
                 embedBuilder.getDescriptionBuilder().setLength(0);
                 embedBuilder.setTitle("Joining " + voiceChannel.getName());
-                MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+                MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
                 return;
             } catch (GuildUnavailableException | IllegalArgumentException | UnsupportedOperationException ex) {
                 embedBuilder.getDescriptionBuilder().setLength(0);
-                embedBuilder.setColor(Toolbox.ERROR);
+                embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
                 embedBuilder.setTitle("Encountered an error");
                 embedBuilder.getDescriptionBuilder().append(StringUtils.defaultIfBlank(ex.getMessage(), "Unknown"));
-                MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+                MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
                 return;
             } catch (InsufficientPermissionException ex) {
                 embedBuilder.setTitle("Insufficient permission for " + voiceChannel.getName());
@@ -91,8 +90,8 @@ public class JoinCommand extends AbstractCommand {
             }
         }
         
-        embedBuilder.setColor(Toolbox.WARNING);
+        embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
         embedBuilder.setTitle("Failed to join voice channel");
-        MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+        MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }
 }

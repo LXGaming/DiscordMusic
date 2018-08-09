@@ -16,20 +16,44 @@
 
 package io.github.lxgaming.discordmusic.configuration.config;
 
-import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.OnlineStatus;
+import net.dv8tion.jda.core.audio.SpeakingMode;
 import net.dv8tion.jda.core.entities.Game;
 
 public class Account {
     
+    private long id;
+    private String name;
     private String token;
     private String gameTitle;
     private Game.GameType gameType;
-    private transient JDA jda;
+    private OnlineStatus onlineStatus;
+    private SpeakingMode speakingMode;
     
     public Account() {
-        setToken("");
-        setGameTitle("Music");
-        setGameType(Game.GameType.LISTENING);
+        setId(0L);
+        setName("Unknown");
+        setToken("token");
+        setGameTitle("on Lolnet");
+        setGameType(Game.GameType.DEFAULT);
+        setOnlineStatus(OnlineStatus.ONLINE);
+        setSpeakingMode(SpeakingMode.VOICE);
+    }
+    
+    public long getId() {
+        return id;
+    }
+    
+    public void setId(long id) {
+        this.id = id;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
     }
     
     public String getToken() {
@@ -56,11 +80,19 @@ public class Account {
         this.gameType = gameType;
     }
     
-    public JDA getJDA() {
-        return jda;
+    public OnlineStatus getOnlineStatus() {
+        return onlineStatus;
     }
     
-    public void setJDA(JDA jda) {
-        this.jda = jda;
+    public void setOnlineStatus(OnlineStatus onlineStatus) {
+        this.onlineStatus = onlineStatus;
+    }
+    
+    public SpeakingMode getSpeakingMode() {
+        return speakingMode;
+    }
+    
+    public void setSpeakingMode(SpeakingMode speakingMode) {
+        this.speakingMode = speakingMode;
     }
 }

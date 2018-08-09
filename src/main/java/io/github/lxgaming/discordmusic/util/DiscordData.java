@@ -19,35 +19,24 @@ package io.github.lxgaming.discordmusic.util;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 
 public final class DiscordData {
     
     private final Guild guild;
     private final Message message;
-    private final TextChannel textChannel;
-    private final User user;
     
     public DiscordData(Message message) {
-        this(message, message.getTextChannel(), message.getMember());
+        this(message.getGuild(), message);
     }
     
-    public DiscordData(Message message, TextChannel textChannel, Member member) {
-        this(member.getGuild(), message, textChannel, member.getUser());
-    }
-    
-    public DiscordData(Guild guild, Message message, TextChannel textChannel, User user) {
+    public DiscordData(Guild guild, Message message) {
         this.guild = guild;
         this.message = message;
-        this.textChannel = textChannel;
-        this.user = user;
     }
     
     public boolean isValid() {
-        return !(getGuild() == null || getMessage() == null || getTextChannel() == null || getUser() == null);
+        return getGuild() != null && getMessage() != null;
     }
     
     public Guild getGuild() {
@@ -58,21 +47,13 @@ public final class DiscordData {
         return message;
     }
     
-    public TextChannel getTextChannel() {
-        return textChannel;
-    }
-    
-    public User getUser() {
-        return user;
-    }
-    
     @Override
     public String toString() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("guild", Toolbox.getIdLong(getGuild()).orElse(0L));
-        jsonObject.addProperty("message", Toolbox.getIdLong(getMessage()).orElse(0L));
-        jsonObject.addProperty("textChannel", Toolbox.getIdLong(getTextChannel()).orElse(0L));
-        jsonObject.addProperty("user", Toolbox.getIdLong(getUser()).orElse(0L));
+        jsonObject.addProperty("channel", getMessage().getChannel().getIdLong());
+        jsonObject.addProperty("guild", getGuild().getIdLong());
+        jsonObject.addProperty("message", getMessage().getIdLong());
+        jsonObject.addProperty("user", getMessage().getAuthor().getIdLong());
         return new Gson().toJson(jsonObject);
     }
 }

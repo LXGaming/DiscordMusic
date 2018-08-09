@@ -19,11 +19,9 @@ package io.github.lxgaming.discordmusic.commands;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.util.Toolbox;
+import io.github.lxgaming.discordmusic.util.Color;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,16 +35,16 @@ public class DebugCommand extends AbstractCommand {
     }
     
     @Override
-    public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setAuthor(textChannel.getJDA().getSelfUser().getName(), null, textChannel.getJDA().getSelfUser().getEffectiveAvatarUrl());
-        embedBuilder.setColor(Toolbox.DEFAULT);
+        embedBuilder.setAuthor(message.getJDA().getSelfUser().getName(), null, message.getJDA().getSelfUser().getEffectiveAvatarUrl());
+        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
         Optional<Config> config = DiscordMusic.getInstance().getConfig();
         if (!config.isPresent()) {
-            embedBuilder.setColor(Toolbox.ERROR);
+            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("Configuration error");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
@@ -54,17 +52,17 @@ public class DebugCommand extends AbstractCommand {
             if (config.get().isDebug()) {
                 config.get().setDebug(false);
                 DiscordMusic.getInstance().reloadLogger();
-                embedBuilder.setColor(Toolbox.WARNING);
+                embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
                 embedBuilder.setTitle("Debugging disabled");
-                MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+                MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
                 return;
             }
             
             config.get().setDebug(true);
             DiscordMusic.getInstance().reloadLogger();
-            embedBuilder.setColor(Toolbox.SUCCESS);
+            embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
             embedBuilder.setTitle("Debugging enabled");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
         }
     }
 }

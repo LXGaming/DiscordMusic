@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class AbstractService implements Runnable {
     
     private long delay;
-    private long period;
+    private long interval;
     private transient ScheduledFuture scheduledFuture;
     
     public final void run() {
@@ -38,8 +38,6 @@ public abstract class AbstractService implements Runnable {
     
     public abstract void execute();
     
-    public abstract boolean isPeriodical();
-    
     public boolean isRunning() {
         return getScheduledFuture() != null && (!getScheduledFuture().isDone() || getScheduledFuture().getDelay(TimeUnit.MILLISECONDS) > 0L);
     }
@@ -52,12 +50,12 @@ public abstract class AbstractService implements Runnable {
         this.delay = delay;
     }
     
-    public long getPeriod() {
-        return period;
+    public long getInterval() {
+        return interval;
     }
     
-    protected void setPeriod(long period) {
-        this.period = period;
+    protected void setInterval(long interval) {
+        this.interval = interval;
     }
     
     public ScheduledFuture getScheduledFuture() {

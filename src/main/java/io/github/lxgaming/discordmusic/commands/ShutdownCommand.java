@@ -18,11 +18,10 @@ package io.github.lxgaming.discordmusic.commands;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
+import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -37,12 +36,12 @@ public class ShutdownCommand extends AbstractCommand {
     }
     
     @Override
-    public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(Toolbox.WARNING);
+        embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
         embedBuilder.setTitle("Shutting down...");
         embedBuilder.setFooter(Toolbox.getTimeString(Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis()), null);
-        MessageManager.sendMessage(textChannel, embedBuilder.build(), false);
+        MessageManager.sendMessage(message.getChannel(), embedBuilder.build());
         Runtime.getRuntime().exit(0);
     }
 }

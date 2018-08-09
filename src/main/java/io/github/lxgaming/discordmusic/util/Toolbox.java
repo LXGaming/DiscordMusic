@@ -37,11 +37,6 @@ import java.util.stream.Stream;
 
 public class Toolbox {
     
-    public static final Color DEFAULT = decodeColor("#7289DA").orElse(null);
-    public static final Color SUCCESS = decodeColor("#46A84B").orElse(null);
-    public static final Color WARNING = decodeColor("#EAA245").orElse(null);
-    public static final Color ERROR = decodeColor("#C13737").orElse(null);
-    
     /**
      * Decodes the provided {@link java.lang.String String} into a {@link java.awt.Color Color}.
      *

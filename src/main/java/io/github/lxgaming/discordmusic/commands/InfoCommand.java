@@ -19,13 +19,12 @@ package io.github.lxgaming.discordmusic.commands;
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
+import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.Reference;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDAInfo;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -41,10 +40,10 @@ public class InfoCommand extends AbstractCommand {
     }
     
     @Override
-    public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setAuthor(Reference.APP_NAME + " v" + Reference.APP_VERSION, Reference.SOURCE, textChannel.getJDA().getSelfUser().getEffectiveAvatarUrl());
-        embedBuilder.setColor(Toolbox.DEFAULT);
+        embedBuilder.setAuthor(Reference.APP_NAME + " v" + Reference.APP_VERSION, Reference.SOURCE, message.getJDA().getSelfUser().getEffectiveAvatarUrl());
+        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         embedBuilder.addField("Uptime", Toolbox.getTimeString(Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis()), false);
         embedBuilder.addField("Authors", Reference.AUTHORS, false);
         embedBuilder.addField("Source", Reference.SOURCE, false);
@@ -52,6 +51,6 @@ public class InfoCommand extends AbstractCommand {
         embedBuilder.addField("Dependencies", ""
                 + "\n- " + "JDA (Java Discord API) v" + JDAInfo.VERSION
                 + "\n- " + "LavaPlayer v" + PlayerLibrary.VERSION, false);
-        MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+        MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }
 }

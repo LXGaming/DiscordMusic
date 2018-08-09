@@ -21,12 +21,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
+import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.DiscordData;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.List;
 import java.util.Map;
@@ -42,22 +41,22 @@ public class SelectCommand extends AbstractCommand {
     }
     
     @Override
-    public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(Toolbox.DEFAULT);
+        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
         if (arguments.isEmpty()) {
-            embedBuilder.setColor(Toolbox.ERROR);
+            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("Invalid arguments");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        Map.Entry<DiscordData, List<AudioTrack>> searchResult = AudioManager.getSearchResult(member);
+        Map.Entry<DiscordData, List<AudioTrack>> searchResult = AudioManager.getSearchResult(message.getMember());
         if (searchResult == null) {
-            embedBuilder.setColor(Toolbox.WARNING);
+            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("You don't have any search results pending selection.");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
@@ -84,17 +83,17 @@ public class SelectCommand extends AbstractCommand {
         }
         
         embedBuilder.setTitle("Select results");
-        MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+        MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
         if (audioTracks.isEmpty()) {
             return;
         }
         
-        AudioManager.removeSearchResult(member);
+        AudioManager.removeSearchResult(message.getMember());
         if (audioTracks.size() > 1) {
             AudioPlaylist audioPlaylist = new BasicAudioPlaylist("Search", audioTracks, null, false);
-            AudioManager.playlist(new DiscordData(message, textChannel, member), audioPlaylist);
+            AudioManager.playlist(new DiscordData(message), audioPlaylist);
         } else {
-            AudioManager.track(new DiscordData(message, textChannel, member), audioTracks.get(0));
+            AudioManager.track(new DiscordData(message), audioTracks.get(0));
         }
     }
 }

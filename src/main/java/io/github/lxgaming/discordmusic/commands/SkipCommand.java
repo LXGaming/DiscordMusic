@@ -19,11 +19,9 @@ package io.github.lxgaming.discordmusic.commands;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.util.Toolbox;
+import io.github.lxgaming.discordmusic.util.Color;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.List;
 
@@ -36,22 +34,22 @@ public class SkipCommand extends AbstractCommand {
     }
     
     @Override
-    public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(Toolbox.DEFAULT);
+        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
-        AudioTrack audioTrack = AudioManager.getAudioPlayer(member.getGuild()).getPlayingTrack();
+        AudioTrack audioTrack = AudioManager.getAudioPlayer(message.getGuild()).getPlayingTrack();
         if (audioTrack == null) {
-            embedBuilder.setColor(Toolbox.WARNING);
+            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("Nothing is currently playing.");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        embedBuilder.setColor(Toolbox.SUCCESS);
+        embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
         embedBuilder.setTitle("Skipped");
         embedBuilder.getDescriptionBuilder().append("[").append(audioTrack.getInfo().title).append("](").append(audioTrack.getInfo().uri).append(")");
-        MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
-        AudioManager.playNext(member.getGuild());
+        MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+        AudioManager.playNext(message.getGuild());
     }
 }

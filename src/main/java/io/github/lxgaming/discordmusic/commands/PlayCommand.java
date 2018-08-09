@@ -21,12 +21,11 @@ import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.handlers.AudioPlayerLoadResultHandler;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
+import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.DiscordData;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
@@ -44,17 +43,17 @@ public class PlayCommand extends AbstractCommand {
     }
     
     @Override
-    public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(Toolbox.DEFAULT);
+        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         if (arguments.isEmpty()) {
-            embedBuilder.setColor(Toolbox.ERROR);
+            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("Invalid arguments");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        embedBuilder.setColor(Toolbox.SUCCESS);
+        embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
         embedBuilder.setTitle("Play");
         for (String string : arguments) {
             Optional<URL> url = Toolbox.parseUrl(string);
@@ -75,9 +74,9 @@ public class PlayCommand extends AbstractCommand {
             }
             
             embedBuilder.getDescriptionBuilder().append("**Processing**: ").append(string).append("\n");
-            AudioManager.getAudioPlayerManager().loadItem(string, new AudioPlayerLoadResultHandler(new DiscordData(message, textChannel, member)));
+            AudioManager.getAudioPlayerManager().loadItem(string, new AudioPlayerLoadResultHandler(new DiscordData(message)));
         }
         
-        MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+        MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }
 }

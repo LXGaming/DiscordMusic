@@ -16,12 +16,27 @@
 
 package io.github.lxgaming.discordmusic.util;
 
-public class Reference {
+import com.google.gson.annotations.SerializedName;
+
+public enum Color {
     
-    public static final String APP_ID = "discordmusic";
-    public static final String APP_NAME = "DiscordMusic";
-    public static final String APP_VERSION = "2.1.0";
-    public static final String AUTHORS = "LX_Gaming";
-    public static final String SOURCE = "https://github.com/LXGaming/DiscordMusic/";
-    public static final String WEBSITE = "https://lxgaming.github.io/";
+    @SerializedName("default") DEFAULT("Default"),
+    @SerializedName("error") ERROR("Error"),
+    @SerializedName("success") SUCCESS("Success"),
+    @SerializedName("warning") WARNING("Warning");
+    
+    private final String friendlyName;
+    
+    Color(String friendlyName) {
+        this.friendlyName = friendlyName;
+    }
+    
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+    
+    @Override
+    public String toString() {
+        return getFriendlyName();
+    }
 }

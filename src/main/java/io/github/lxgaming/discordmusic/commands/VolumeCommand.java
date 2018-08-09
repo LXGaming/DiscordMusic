@@ -16,16 +16,16 @@
 
 package io.github.lxgaming.discordmusic.commands;
 
+import io.github.lxgaming.discordmusic.DiscordMusic;
+import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
+import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.List;
-import java.util.Optional;
 
 public class VolumeCommand extends AbstractCommand {
     
@@ -37,33 +37,36 @@ public class VolumeCommand extends AbstractCommand {
     }
     
     @Override
-    public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(Toolbox.DEFAULT);
+        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         if (arguments.isEmpty()) {
-            embedBuilder.setTitle("Volume - " + AudioManager.getAudioPlayer(member.getGuild()).getVolume());
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            embedBuilder.setTitle("Volume - " + AudioManager.getAudioPlayer(message.getGuild()).getVolume());
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        Optional<Integer> volume = Toolbox.parseInteger(arguments.get(0));
-        if (!volume.isPresent()) {
-            embedBuilder.setColor(Toolbox.ERROR);
+        Integer volume = Toolbox.parseInteger(arguments.get(0)).orElse(null);
+        if (volume == null) {
+            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("Failed to parse argument");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        if (volume.get() < 0 || volume.get() > 100) {
-            embedBuilder.setColor(Toolbox.WARNING);
-            embedBuilder.setTitle("Value is outside of the allowed range (0 ~ 100)");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+        int maxVolume = Math.min(1000, DiscordMusic.getInstance().getConfig().map(Config::getMaxVolume).orElse(150));
+        if (volume < 0 || volume > maxVolume) {
+            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
+            embedBuilder.setTitle("Value is outside of the allowed range (0 ~ " + maxVolume + ")");
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        AudioManager.getAudioPlayer(member.getGuild()).setVolume(volume.get());
-        embedBuilder.setColor(Toolbox.SUCCESS);
-        embedBuilder.setTitle("Volume - " + AudioManager.getAudioPlayer(member.getGuild()).getVolume());
-        MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+        int previousVolume = AudioManager.getAudioPlayer(message.getGuild()).getVolume();
+        AudioManager.getAudioPlayer(message.getGuild()).setVolume(volume);
+        
+        embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
+        embedBuilder.setTitle("Volume - " + previousVolume + " -> " + AudioManager.getAudioPlayer(message.getGuild()).getVolume());
+        MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }
 }

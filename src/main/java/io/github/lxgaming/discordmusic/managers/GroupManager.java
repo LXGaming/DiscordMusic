@@ -85,36 +85,13 @@ public class GroupManager {
         return user.getName() + "#" + user.getDiscriminator() + " (" + user.getId() + ")";
     }
     
-    public static Set<Group> getGroups(Member member) {
-        Set<Long> roles = Toolbox.newLinkedHashSet();
-        for (Role role : member.getRoles()) {
-            roles.add(role.getIdLong());
-        }
-        
-        roles.add(member.getGuild().getPublicRole().getIdLong());
-        
-        Set<Group> groups = Toolbox.newLinkedHashSet();
-        Optional<Server> server = getServer(member.getGuild());
-        if (!server.isPresent()) {
-            return groups;
-        }
-        
-        for (Group group : server.get().getGroups()) {
-            if (!groups.isEmpty() || roles.contains(group.getId())) {
-                groups.add(group);
-            }
-        }
-        
-        return groups;
-    }
-    
     public static Optional<Group> getGroup(Role role) {
-        Optional<Server> server = getServer(role.getGuild());
-        if (!server.isPresent()) {
+        Server server = getServer(role.getGuild()).orElse(null);
+        if (server == null || server.getGroups().isEmpty()) {
             return Optional.empty();
         }
         
-        for (Group group : server.get().getGroups()) {
+        for (Group group : server.getGroups()) {
             if (group.getId() == role.getIdLong()) {
                 return Optional.of(group);
             }
@@ -123,13 +100,24 @@ public class GroupManager {
         return Optional.empty();
     }
     
+    public static Set<Group> getGroups(Member member) {
+        Set<Group> groups = Toolbox.newLinkedHashSet();
+        for (Role role : member.getGuild().getRoles()) {
+            if (!groups.isEmpty() || member.getRoles().contains(role) || member.getGuild().getPublicRole() == role) {
+                getGroup(role).ifPresent(groups::add);
+            }
+        }
+        
+        return groups;
+    }
+    
     public static Optional<Server> getServer(Guild guild) {
-        Optional<Set<Server>> servers = DiscordMusic.getInstance().getConfig().map(Config::getServers);
-        if (!servers.isPresent()) {
+        Set<Server> servers = DiscordMusic.getInstance().getConfig().map(Config::getServers).orElse(null);
+        if (servers == null || servers.isEmpty()) {
             return Optional.empty();
         }
         
-        for (Server server : servers.get()) {
+        for (Server server : servers) {
             if (server.getId() == guild.getIdLong()) {
                 return Optional.of(server);
             }

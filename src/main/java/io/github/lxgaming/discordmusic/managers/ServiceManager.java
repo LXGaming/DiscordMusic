@@ -21,8 +21,10 @@ import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.services.AbstractService;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class ServiceManager {
@@ -33,18 +35,20 @@ public class ServiceManager {
         DiscordMusic.getInstance().getConfig().map(Config::getMessageService).ifPresent(ServiceManager::schedule);
     }
     
-    private static void schedule(AbstractService abstractService) {
+    public static void schedule(AbstractService abstractService) {
+        schedule(abstractService, abstractService.getDelay(), abstractService.getInterval()).ifPresent(abstractService::setScheduledFuture);
+    }
+    
+    public static Optional<ScheduledFuture> schedule(Runnable runnable, long delay, long interval) {
         try {
-            long delay = Math.max(abstractService.getDelay(), 0L);
-            long period = Math.max(abstractService.getPeriod(), 0L);
-            if (!abstractService.isPeriodical() || period <= 0L) {
-                abstractService.setScheduledFuture(getScheduledExecutorService().schedule(abstractService, delay, TimeUnit.MILLISECONDS));
-                return;
+            if (interval <= 0L) {
+                return Optional.of(getScheduledExecutorService().schedule(runnable, Math.max(delay, 0L), TimeUnit.MILLISECONDS));
             }
             
-            abstractService.setScheduledFuture(getScheduledExecutorService().scheduleWithFixedDelay(abstractService, delay, period, TimeUnit.MILLISECONDS));
+            return Optional.of(getScheduledExecutorService().scheduleWithFixedDelay(runnable, Math.max(delay, 0L), Math.max(interval, 0L), TimeUnit.MILLISECONDS));
         } catch (RuntimeException ex) {
-            DiscordMusic.getInstance().getLogger().error("Encountered an error processing {}::schedule", "ServerManager", ex);
+            DiscordMusic.getInstance().getLogger().error("Encountered an error processing {}::schedule", "ServiceManager", ex);
+            return Optional.empty();
         }
     }
     

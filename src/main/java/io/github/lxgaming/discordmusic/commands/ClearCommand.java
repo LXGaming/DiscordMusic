@@ -19,11 +19,9 @@ package io.github.lxgaming.discordmusic.commands;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.util.Toolbox;
+import io.github.lxgaming.discordmusic.util.Color;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -37,23 +35,23 @@ public class ClearCommand extends AbstractCommand {
     }
     
     @Override
-    public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setAuthor(textChannel.getJDA().getSelfUser().getName(), null, textChannel.getJDA().getSelfUser().getEffectiveAvatarUrl());
-        embedBuilder.setColor(Toolbox.DEFAULT);
+        embedBuilder.setAuthor(message.getJDA().getSelfUser().getName(), null, message.getJDA().getSelfUser().getEffectiveAvatarUrl());
+        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
-        BlockingQueue<AudioTrack> audioQueue = AudioManager.getAudioQueue(member.getGuild());
+        BlockingQueue<AudioTrack> audioQueue = AudioManager.getAudioQueue(message.getGuild());
         if (audioQueue == null || audioQueue.isEmpty()) {
-            embedBuilder.setColor(Toolbox.WARNING);
+            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("Nothing queued");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
         audioQueue.clear();
-        AudioManager.playNext(member.getGuild());
-        embedBuilder.setColor(Toolbox.SUCCESS);
+        AudioManager.playNext(message.getGuild());
+        embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
         embedBuilder.setTitle("Queue cleared");
-        MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+        MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }
 }

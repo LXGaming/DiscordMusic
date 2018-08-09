@@ -18,9 +18,7 @@ package io.github.lxgaming.discordmusic.commands;
 
 import io.github.lxgaming.discordmusic.managers.CommandManager;
 import io.github.lxgaming.discordmusic.util.Toolbox;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -35,7 +33,7 @@ public abstract class AbstractCommand {
     private String permission;
     private String usage;
     
-    public abstract void execute(TextChannel textChannel, Member member, Message message, List<String> arguments);
+    public abstract void execute(Message message, List<String> arguments);
     
     protected final void addAlias(String alias) {
         CommandManager.registerAlias(this, alias);

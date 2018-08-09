@@ -18,43 +18,92 @@ package io.github.lxgaming.discordmusic.managers;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
+import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.Toolbox;
+import net.dv8tion.jda.client.exceptions.VerificationLevelException;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.impl.DataMessage;
+import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class MessageManager {
     
-    private static final Set<Message> MESSAGES = Collections.synchronizedSet(Toolbox.newLinkedHashSet());
+    private static final List<Message> MESSAGES = Collections.synchronizedList(Toolbox.newArrayList());
     
-    public static void sendMessage(TextChannel textChannel, MessageEmbed messageEmbed, boolean delete) {
-        sendMessage(textChannel, new MessageBuilder().setEmbed(messageEmbed).build(), delete);
+    public static void buildColors() {
+        Map<Color, String> colors = DiscordMusic.getInstance().getConfig().map(Config::getColors).orElse(null);
+        if (colors == null) {
+            return;
+        }
+        
+        colors.putIfAbsent(Color.ERROR, "#C13737");
+        colors.putIfAbsent(Color.SUCCESS, "#46A84B");
+        colors.putIfAbsent(Color.WARNING, "#EAA245");
+        
+        for (Color color : Color.values()) {
+            colors.putIfAbsent(color, "#7289DA");
+        }
     }
     
-    public static void sendMessage(TextChannel textChannel, Message message, boolean delete) {
+    public static void sendMessage(MessageChannel messageChannel, MessageEmbed messageEmbed) {
+        sendMessage(messageChannel, new MessageBuilder().setEmbed(messageEmbed).build());
+    }
+    
+    public static void sendTemporaryMessage(MessageChannel messageChannel, MessageEmbed messageEmbed) {
+        sendTemporaryMessage(messageChannel, new MessageBuilder().setEmbed(messageEmbed).build());
+    }
+    
+    public static void sendMessage(MessageChannel messageChannel, Message message) {
+        sendMessage(messageChannel, message, success -> {
+        });
+    }
+    
+    public static void sendTemporaryMessage(MessageChannel messageChannel, Message message) {
+        sendMessage(messageChannel, message, success -> {
+            if (DiscordMusic.getInstance().getConfig().map(Config::isDeleteMessages).orElse(false)) {
+                getMessages().add(success);
+            }
+        });
+    }
+    
+    public static void sendMessage(MessageChannel messageChannel, Message message, Consumer<Message> success) {
+        sendMessage(messageChannel, message, success, failure -> DiscordMusic.getInstance().getLogger().error("Encountered an error processing {}::sendMessage", "MessageManager", failure));
+    }
+    
+    public static void sendMessage(MessageChannel messageChannel, Message message, Consumer<Message> success, Consumer<Throwable> failure) {
         try {
-            textChannel.sendMessage(message).queue(success -> {
-                if (DiscordMusic.getInstance().getConfig().map(Config::isDeleteMessages).orElse(false) && delete) {
-                    getMessages().add(success);
-                }
-            }, failure -> {
-                DiscordMusic.getInstance().getLogger().error("Encountered an error processing {}::sendMessage", "MessageManager", failure);
-            });
-        } catch (RuntimeException ex) {
-            DiscordMusic.getInstance().getLogger().error("Encountered an error processing {}::sendMessage", "MessageManager", ex);
+            messageChannel.sendMessage(message).queue(success, failure);
+        } catch (IllegalArgumentException | InsufficientPermissionException | UnsupportedOperationException | VerificationLevelException ex) {
+            failure.accept(ex);
         }
+    }
+    
+    public static int getColor(Color color) {
+        return DiscordMusic.getInstance().getConfig().map(Config::getColors).map(colors -> colors.get(color)).map(NumberUtils::createInteger).orElse(0);
+    }
+    
+    public static String getMessageContent(Message message) {
+        if (message instanceof DataMessage) {
+            return message.getContentRaw();
+        }
+        
+        return message.getContentDisplay();
     }
     
     public static void removeMessages(Collection<String> messages) {
         getMessages().removeIf(message -> messages.contains(message.getId()));
     }
     
-    public static Set<Message> getMessages() {
+    public static List<Message> getMessages() {
         return MESSAGES;
     }
 }

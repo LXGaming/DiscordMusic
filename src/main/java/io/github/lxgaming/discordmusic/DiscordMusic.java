@@ -20,6 +20,7 @@ import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.Configuration;
 import io.github.lxgaming.discordmusic.managers.AccountManager;
 import io.github.lxgaming.discordmusic.managers.CommandManager;
+import io.github.lxgaming.discordmusic.managers.MessageManager;
 import io.github.lxgaming.discordmusic.managers.ServiceManager;
 import io.github.lxgaming.discordmusic.util.Reference;
 import io.github.lxgaming.discordmusic.util.ShutdownHook;
@@ -55,7 +56,9 @@ public class DiscordMusic {
         getConfiguration().loadConfiguration();
         reloadLogger();
         AccountManager.buildAccount();
+        AccountManager.reloadAccount();
         CommandManager.buildCommands();
+        MessageManager.buildColors();
         ServiceManager.buildServices();
         getConfiguration().saveConfiguration();
         getLogger().info("{} v{} has loaded", Reference.APP_NAME, Reference.APP_VERSION);

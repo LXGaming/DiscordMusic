@@ -19,11 +19,10 @@ package io.github.lxgaming.discordmusic.commands;
 import io.github.lxgaming.discordmusic.managers.CommandManager;
 import io.github.lxgaming.discordmusic.managers.GroupManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
+import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -40,13 +39,13 @@ public class HelpCommand extends AbstractCommand {
     }
     
     @Override
-    public void execute(TextChannel textChannel, Member member, Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(Toolbox.DEFAULT);
+        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
         if (arguments.isEmpty()) {
             for (AbstractCommand command : CommandManager.getCommands()) {
-                if (command.getAliases().isEmpty() || !GroupManager.hasPermission(member, command.getPermission())) {
+                if (command.getAliases().isEmpty() || !GroupManager.hasPermission(message.getMember(), command.getPermission())) {
                     continue;
                 }
                 
@@ -62,22 +61,22 @@ public class HelpCommand extends AbstractCommand {
             
             embedBuilder.setTitle("Help: Index");
             embedBuilder.setFooter("<> = Required Argument, [] = Optional Argument", null);
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
         Optional<AbstractCommand> command = CommandManager.getCommand(Toolbox.newArrayList(arguments.toArray(new String[0])));
         if (!command.isPresent()) {
-            embedBuilder.setColor(Toolbox.ERROR);
+            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("No help present for " + StringUtils.join(arguments, " "));
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        if (!GroupManager.hasPermission(member, command.get().getPermission())) {
-            embedBuilder.setColor(Toolbox.WARNING);
+        if (!GroupManager.hasPermission(message.getMember(), command.get().getPermission())) {
+            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("You do not have permission to view this command");
-            MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
@@ -104,6 +103,6 @@ public class HelpCommand extends AbstractCommand {
             embedBuilder.getDescriptionBuilder().append(" ").append(command.get().getUsage());
         }
         
-        MessageManager.sendMessage(textChannel, embedBuilder.build(), true);
+        MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }
 }

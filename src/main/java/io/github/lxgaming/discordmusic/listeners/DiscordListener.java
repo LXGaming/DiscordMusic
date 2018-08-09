@@ -18,7 +18,6 @@ package io.github.lxgaming.discordmusic.listeners;
 
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import io.github.lxgaming.discordmusic.DiscordMusic;
-import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.config.Server;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.CommandManager;
@@ -26,27 +25,22 @@ import io.github.lxgaming.discordmusic.managers.GroupManager;
 import io.github.lxgaming.discordmusic.managers.MessageManager;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
+import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
+import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.MessageBulkDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import org.apache.commons.lang3.StringUtils;
 
 public class DiscordListener extends ListenerAdapter {
     
     @Override
     public void onReady(ReadyEvent event) {
-        DiscordMusic.getInstance().getConfig().map(Config::getAccount).ifPresent(account -> {
-            if (account.getJDA() != null && StringUtils.isNotBlank(account.getGameTitle()) || account.getGameType() != null) {
-                account.getJDA().getPresence().setGame(Game.of(account.getGameType(), account.getGameTitle()));
-            }
-        });
-        
         AudioSourceManagers.registerRemoteSources(AudioManager.getAudioPlayerManager());
         for (Guild guild : event.getJDA().getGuilds()) {
             AudioManager.registerAudioPlayer(guild);
@@ -62,7 +56,7 @@ public class DiscordListener extends ListenerAdapter {
         }
         
         if (event.isFromType(ChannelType.TEXT)) {
-            CommandManager.process(event.getTextChannel(), event.getMember(), event.getMessage());
+            CommandManager.process(event.getMessage());
         }
     }
     
@@ -86,78 +80,48 @@ public class DiscordListener extends ListenerAdapter {
         AudioManager.unregisterAudioPlayer(event.getGuild());
     }
     
-    /*
-    public void testing(VoiceChannel voiceChannel) {
-        AudioPlayer audioPlayer = AudioManager.getAudioPlayer(voiceChannel.getGuild());
-        if (audioPlayer == null) {
+    @Override
+    public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
+        if (event.getChannelJoined().getMembers().size() < 2) {
             return;
         }
         
-        if (voiceChannel.getMembers().size() == 1) {
-            audioPlayer.setPaused(true);
-        } else {
-        
-        }
-    }
-    
-    @Override
-    public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
-        DiscordMusic.getInstance().getLogger().debug("GuildVoiceJoinEvent");
-        if (event.getMember() == event.getGuild().getSelfMember() && event.getChannelJoined() == event.getGuild().getAudioManager().getQueuedAudioConnection()) {
-            AudioPlayer audioPlayer = AudioManager.getAudioPlayer(event.getGuild());
-            if (audioPlayer != null && event.getChannelJoined().getMembers().size() >= 1) {
-            
-            }
-        }
-        
-        if (event.getChannelJoined() == event.getGuild().getAudioManager().getQueuedAudioConnection() && event.getChannelJoined().getMembers().size() == 2) {
-            AudioPlayer audioPlayer = AudioManager.getAudioPlayer(event.getGuild());
-            if (audioPlayer != null) {
-                audioPlayer.setPaused(false);
-                if (audioPlayer.getPlayingTrack() == null) {
-                    AudioManager.playNext(event.getGuild());
-                }
-            }
+        if (event.getMember() == event.getGuild().getSelfMember() || event.getChannelJoined() == event.getGuild().getAudioManager().getConnectedChannel()) {
+            AudioManager.play(event.getGuild());
         }
     }
     
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-        DiscordMusic.getInstance().getLogger().debug("GuildVoiceLeaveEvent");
-        if (event.getChannelLeft() == event.getGuild().getAudioManager().getConnectedChannel() && event.getChannelLeft().getMembers().size() == 1) {
-            AudioPlayer audioPlayer = AudioManager.getAudioPlayer(event.getGuild());
-            if (audioPlayer != null) {
-                audioPlayer.setPaused(true);
-            }
+        if (event.getMember() == event.getGuild().getSelfMember()) {
+            AudioManager.getAudioPlayer(event.getGuild()).setPaused(true);
+            return;
+        }
+        
+        if (event.getChannelLeft() == event.getGuild().getAudioManager().getConnectedChannel() && event.getChannelLeft().getMembers().size() <= 1) {
+            AudioManager.getAudioPlayer(event.getGuild()).setPaused(true);
         }
     }
     
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
-        DiscordMusic.getInstance().getLogger().debug("GuildVoiceMoveEvent");
-        if (event.getChannelLeft() == event.getGuild().getAudioManager().getConnectedChannel() && event.getChannelLeft().getMembers().size() == 1) {
-            AudioPlayer audioPlayer = AudioManager.getAudioPlayer(event.getGuild());
-            if (audioPlayer != null) {
-                audioPlayer.setPaused(true);
+        if (event.getMember() == event.getGuild().getSelfMember()) {
+            if (event.getChannelJoined().getMembers().size() <= 1) {
+                AudioManager.getAudioPlayer(event.getGuild()).setPaused(true);
+            } else {
+                AudioManager.play(event.getGuild());
             }
+            
+            return;
         }
         
-        if (event.getChannelJoined() == event.getGuild().getAudioManager().getConnectedChannel() && event.getChannelJoined().getMembers().size() == 1) {
-            AudioPlayer audioPlayer = AudioManager.getAudioPlayer(event.getGuild());
-            if (audioPlayer != null) {
-                audioPlayer.setPaused(true);
-            }
+        if (event.getChannelLeft() == event.getGuild().getAudioManager().getConnectedChannel() && event.getChannelLeft().getMembers().size() <= 1) {
+            AudioManager.getAudioPlayer(event.getGuild()).setPaused(true);
+            return;
         }
         
-        if (event.getChannelJoined() == event.getGuild().getAudioManager().getConnectedChannel() && event.getChannelJoined().getMembers().size() == 2) {
-            AudioPlayer audioPlayer = AudioManager.getAudioPlayer(event.getGuild());
-            if (audioPlayer != null) {
-                audioPlayer.setPaused(false);
-                if (audioPlayer.getPlayingTrack() == null) {
-                    AudioManager.playNext(event.getGuild());
-                }
-            }
+        if (event.getChannelJoined() == event.getGuild().getAudioManager().getConnectedChannel()) {
+            AudioManager.play(event.getGuild());
         }
     }
-    */
 }
