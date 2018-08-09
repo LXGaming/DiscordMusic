@@ -17,7 +17,10 @@
 package io.github.lxgaming.discordmusic.listeners;
 
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import io.github.lxgaming.discordmusic.DiscordMusic;
+import io.github.lxgaming.discordmusic.configuration.config.Account;
 import io.github.lxgaming.discordmusic.configuration.config.Server;
+import io.github.lxgaming.discordmusic.managers.AccountManager;
 import io.github.lxgaming.discordmusic.managers.AudioManager;
 import io.github.lxgaming.discordmusic.managers.CommandManager;
 import io.github.lxgaming.discordmusic.managers.GroupManager;
@@ -35,11 +38,26 @@ import net.dv8tion.jda.core.events.message.MessageBulkDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import org.apache.commons.lang3.StringUtils;
 
 public class DiscordListener extends ListenerAdapter {
     
     @Override
     public void onReady(ReadyEvent event) {
+        Account account = AccountManager.getAccount().orElse(null);
+        if (account != null) {
+            long id = event.getJDA().getSelfUser().getIdLong();
+            String name = Toolbox.filter(event.getJDA().getSelfUser().getName());
+            
+            if (account.getId() != id || !StringUtils.equals(account.getName(), name)) {
+                DiscordMusic.getInstance().getLogger().info("Account {} ({}) -> {} ({})", account.getName(), account.getId(), name, id);
+                account.setId(id);
+                account.setName(name);
+                DiscordMusic.getInstance().getConfiguration().saveConfiguration();
+                ;
+            }
+        }
+        
         AudioSourceManagers.registerRemoteSources(AudioManager.getAudioPlayerManager());
         for (Guild guild : event.getJDA().getGuilds()) {
             AudioManager.registerAudioPlayer(guild);

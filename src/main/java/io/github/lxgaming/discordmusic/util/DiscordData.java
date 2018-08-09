@@ -21,7 +21,7 @@ import com.google.gson.JsonObject;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 
-public final class DiscordData {
+public class DiscordData {
     
     private final Guild guild;
     private final Message message;
