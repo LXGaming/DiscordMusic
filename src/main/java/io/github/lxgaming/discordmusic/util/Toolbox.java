@@ -17,6 +17,7 @@
 package io.github.lxgaming.discordmusic.util;
 
 import net.dv8tion.jda.core.entities.ISnowflake;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
@@ -58,7 +59,7 @@ public class Toolbox {
      * @return The filtered {@link java.lang.String String}.
      */
     public static String filter(String string) {
-        return StringUtils.replaceAll(string, "[^\\x20-\\x7E\\x0A\\x0D]", "");
+        return RegExUtils.replaceAll(string, "[^\\x20-\\x7E\\x0A\\x0D]", "");
     }
     
     public static String getTimeString(long time) {
