@@ -75,6 +75,12 @@ public class AudioManager {
         getSearchResults().remove(guild.getIdLong());
     }
     
+    public static boolean pause(Guild guild) {
+        AudioPlayer audioPlayer = AudioManager.getAudioPlayer(guild);
+        audioPlayer.setPaused(true);
+        return true;
+    }
+    
     public static boolean play(Guild guild) {
         AudioPlayer audioPlayer = AudioManager.getAudioPlayer(guild);
         if (audioPlayer.getPlayingTrack() == null) {

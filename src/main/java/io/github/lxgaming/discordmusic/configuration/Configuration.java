@@ -29,6 +29,12 @@ import java.nio.file.Files;
 
 public class Configuration {
     
+    private final Gson gson = new GsonBuilder()
+            .disableHtmlEscaping()
+            .enableComplexMapKeySerialization()
+            .setPrettyPrinting()
+            .create();
+    
     private Config config;
     
     public Configuration() {
@@ -61,7 +67,7 @@ public class Configuration {
                 throw new IOException("File is blank!");
             }
             
-            Object jsonObject = getGson(object).fromJson(string, object.getClass());
+            Object jsonObject = getGson().fromJson(string, object.getClass());
             if (jsonObject == null) {
                 throw new JsonParseException("Failed to parse File!");
             }
@@ -89,7 +95,7 @@ public class Configuration {
                 DiscordMusic.getInstance().getLogger().info("Successfully created file {}.", file.getName());
             }
             
-            Files.write(file.toPath(), getGson(object).toJson(object, object.getClass()).getBytes(StandardCharsets.UTF_8));
+            Files.write(file.toPath(), getGson().toJson(object, object.getClass()).getBytes(StandardCharsets.UTF_8));
             return true;
         } catch (IOException | OutOfMemoryError | RuntimeException ex) {
             DiscordMusic.getInstance().getLogger().error("Encountered an error processing {}::saveObject", getClass().getSimpleName(), ex);
@@ -97,12 +103,8 @@ public class Configuration {
         }
     }
     
-    private Gson getGson(Object object) {
-        return new GsonBuilder()
-                .disableHtmlEscaping()
-                .enableComplexMapKeySerialization()
-                .setPrettyPrinting()
-                .create();
+    private Gson getGson() {
+        return gson;
     }
     
     public Config getConfig() {

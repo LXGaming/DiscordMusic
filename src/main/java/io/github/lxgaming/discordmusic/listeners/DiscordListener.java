@@ -54,7 +54,6 @@ public class DiscordListener extends ListenerAdapter {
                 account.setId(id);
                 account.setName(name);
                 DiscordMusic.getInstance().getConfiguration().saveConfiguration();
-                ;
             }
         }
         
@@ -99,6 +98,9 @@ public class DiscordListener extends ListenerAdapter {
     
     @Override
     public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
+        DiscordMusic.getInstance().getLogger().debug("GuildVoiceJoinEvent - Joined: {} ({})",
+                event.getChannelJoined().getName(), event.getChannelJoined().getMembers().size());
+        
         if (event.getChannelJoined().getMembers().size() < 2) {
             return;
         }
@@ -110,21 +112,28 @@ public class DiscordListener extends ListenerAdapter {
     
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
+        DiscordMusic.getInstance().getLogger().debug("GuildVoiceLeaveEvent - Left: {} ({})",
+                event.getChannelLeft().getName(), event.getChannelLeft().getMembers().size());
+        
         if (event.getMember() == event.getGuild().getSelfMember()) {
-            AudioManager.getAudioPlayer(event.getGuild()).setPaused(true);
+            AudioManager.pause(event.getGuild());
             return;
         }
         
-        if (event.getChannelLeft() == event.getGuild().getAudioManager().getConnectedChannel() && event.getChannelLeft().getMembers().size() <= 1) {
-            AudioManager.getAudioPlayer(event.getGuild()).setPaused(true);
+        if (event.getChannelLeft() == event.getGuild().getAudioManager().getConnectedChannel() && event.getChannelLeft().getMembers().size() < 2) {
+            AudioManager.pause(event.getGuild());
         }
     }
     
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
+        DiscordMusic.getInstance().getLogger().debug("GuildVoiceMoveEvent - Joined: {} ({}), Left: {} ({})",
+                event.getChannelJoined().getName(), event.getChannelJoined().getMembers().size(),
+                event.getChannelLeft().getName(), event.getChannelLeft().getMembers().size());
+        
         if (event.getMember() == event.getGuild().getSelfMember()) {
-            if (event.getChannelJoined().getMembers().size() <= 1) {
-                AudioManager.getAudioPlayer(event.getGuild()).setPaused(true);
+            if (event.getChannelJoined().getMembers().size() < 2) {
+                AudioManager.pause(event.getGuild());
             } else {
                 AudioManager.play(event.getGuild());
             }
@@ -132,8 +141,8 @@ public class DiscordListener extends ListenerAdapter {
             return;
         }
         
-        if (event.getChannelLeft() == event.getGuild().getAudioManager().getConnectedChannel() && event.getChannelLeft().getMembers().size() <= 1) {
-            AudioManager.getAudioPlayer(event.getGuild()).setPaused(true);
+        if (event.getChannelLeft() == event.getGuild().getAudioManager().getConnectedChannel() && event.getChannelLeft().getMembers().size() < 2) {
+            AudioManager.pause(event.getGuild());
             return;
         }
         
