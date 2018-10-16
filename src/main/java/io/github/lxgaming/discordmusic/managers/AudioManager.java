@@ -83,11 +83,11 @@ public class AudioManager {
     
     public static boolean play(Guild guild) {
         AudioPlayer audioPlayer = AudioManager.getAudioPlayer(guild);
+        audioPlayer.setPaused(false);
         if (audioPlayer.getPlayingTrack() == null) {
             return playNext(audioPlayer, getAudioQueue(guild).poll());
         }
         
-        audioPlayer.setPaused(false);
         return true;
     }
     
