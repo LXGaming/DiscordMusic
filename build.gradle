@@ -6,7 +6,7 @@ targetCompatibility = 1.8
 
 group = "io.github.lxgaming"
 archivesBaseName = "DiscordMusic"
-version = "2.1.4"
+version = "2.1.5"
 
 configurations {
     provided {
