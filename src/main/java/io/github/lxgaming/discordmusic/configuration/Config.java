@@ -54,7 +54,7 @@ public class Config {
                 "m.soundcloud.com", "soundcloud.com", "www.soundcloud.com", // SoundCloud
                 "go.twitch.tv", "twitch.tv", "www.twitch.tv", // Twitch
                 "vimeo.com", // Vimeo
-                "m.youtube.com", "www.youtube.com", "youtu.be", "youtube.com" // YouTube
+                "m.youtube.com", "music.youtube.com", "www.youtube.com", "youtu.be", "youtube.com" // YouTube
         ));
         setServers(Toolbox.newLinkedHashSet());
         setColors(Toolbox.newHashMap());
