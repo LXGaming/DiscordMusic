@@ -53,7 +53,10 @@ public class DiscordMusic {
     public void loadDiscordMusic() {
         getLogger().info("Initializing...");
         Runtime.getRuntime().addShutdownHook(new ShutdownHook());
+        
+        getLogger().info("Loading configuration...");
         getConfiguration().loadConfiguration();
+        
         reloadLogger();
         AccountManager.buildAccount();
         AccountManager.reloadAccount();
