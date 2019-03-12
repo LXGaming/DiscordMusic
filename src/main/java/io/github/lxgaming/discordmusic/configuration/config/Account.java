@@ -34,7 +34,7 @@ public class Account {
         setId(0L);
         setName("Unknown");
         setToken("token");
-        setGameTitle("on Lolnet");
+        setGameTitle("music");
         setGameType(Game.GameType.DEFAULT);
         setOnlineStatus(OnlineStatus.ONLINE);
         setSpeakingMode(SpeakingMode.VOICE);
