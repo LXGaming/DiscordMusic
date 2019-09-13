@@ -18,10 +18,10 @@ package io.github.lxgaming.discordmusic;
 
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.Configuration;
-import io.github.lxgaming.discordmusic.managers.AccountManager;
-import io.github.lxgaming.discordmusic.managers.CommandManager;
-import io.github.lxgaming.discordmusic.managers.MessageManager;
-import io.github.lxgaming.discordmusic.managers.ServiceManager;
+import io.github.lxgaming.discordmusic.manager.AccountManager;
+import io.github.lxgaming.discordmusic.manager.CommandManager;
+import io.github.lxgaming.discordmusic.manager.MessageManager;
+import io.github.lxgaming.discordmusic.manager.ServiceManager;
 import io.github.lxgaming.discordmusic.util.Reference;
 import io.github.lxgaming.discordmusic.util.ShutdownHook;
 import io.github.lxgaming.discordmusic.util.Toolbox;

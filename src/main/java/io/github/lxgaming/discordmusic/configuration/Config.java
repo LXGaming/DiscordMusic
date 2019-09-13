@@ -16,9 +16,9 @@
 
 package io.github.lxgaming.discordmusic.configuration;
 
-import io.github.lxgaming.discordmusic.configuration.config.Account;
-import io.github.lxgaming.discordmusic.configuration.config.Server;
-import io.github.lxgaming.discordmusic.services.MessageService;
+import io.github.lxgaming.discordmusic.configuration.category.AccountCategory;
+import io.github.lxgaming.discordmusic.configuration.category.ServerCategory;
+import io.github.lxgaming.discordmusic.service.MessageService;
 import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 
@@ -33,9 +33,9 @@ public class Config {
     private int maxVolume;
     private boolean deleteInvoking;
     private boolean deleteMessages;
-    private Account account;
+    private AccountCategory account;
     private Set<String> allowedSources;
-    private Set<Server> servers;
+    private Set<ServerCategory> servers;
     private Map<Color, String> colors;
     private MessageService messageService;
     
@@ -46,7 +46,7 @@ public class Config {
         setMaxVolume(150);
         setDeleteInvoking(true);
         setDeleteMessages(true);
-        setAccount(new Account());
+        setAccount(new AccountCategory());
         setAllowedSources(Toolbox.newLinkedHashSet(
                 "bandcamp.com", // Bandcamp
                 "beam.pro", "mixer.com", "www.beam.pro", "www.mixer.com", // Beam
@@ -109,11 +109,11 @@ public class Config {
         this.deleteMessages = deleteMessages;
     }
     
-    public Account getAccount() {
+    public AccountCategory getAccount() {
         return account;
     }
     
-    public void setAccount(Account account) {
+    public void setAccount(AccountCategory account) {
         this.account = account;
     }
     
@@ -125,11 +125,11 @@ public class Config {
         this.allowedSources = allowedSources;
     }
     
-    public Set<Server> getServers() {
+    public Set<ServerCategory> getServers() {
         return servers;
     }
     
-    public void setServers(Set<Server> servers) {
+    public void setServers(Set<ServerCategory> servers) {
         this.servers = servers;
     }
     

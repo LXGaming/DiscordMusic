@@ -17,8 +17,8 @@
 package io.github.lxgaming.discordmusic.util;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
-import io.github.lxgaming.discordmusic.managers.AccountManager;
-import io.github.lxgaming.discordmusic.managers.ServiceManager;
+import io.github.lxgaming.discordmusic.manager.AccountManager;
+import io.github.lxgaming.discordmusic.manager.ServiceManager;
 import net.dv8tion.jda.core.JDA;
 import org.apache.logging.log4j.LogManager;
 
