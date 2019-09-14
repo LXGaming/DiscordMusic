@@ -18,7 +18,7 @@ package io.github.lxgaming.discordmusic.command;
 
 import io.github.lxgaming.discordmusic.manager.CommandManager;
 import io.github.lxgaming.discordmusic.util.Toolbox;
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.api.entities.Message;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;

@@ -18,8 +18,10 @@ package io.github.lxgaming.discordmusic.handler;
 
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
-import net.dv8tion.jda.core.audio.AudioSendHandler;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.audio.AudioSendHandler;
+import net.dv8tion.jda.api.entities.Guild;
+
+import java.nio.ByteBuffer;
 
 public final class AudioPlayerSendHandler implements AudioSendHandler {
     
@@ -40,10 +42,10 @@ public final class AudioPlayerSendHandler implements AudioSendHandler {
     }
     
     @Override
-    public byte[] provide20MsAudio() {
+    public ByteBuffer provide20MsAudio() {
         try {
             if (getAudioFrame() != null) {
-                return getAudioFrame().getData();
+                return ByteBuffer.wrap(getAudioFrame().getData());
             }
             
             return null;

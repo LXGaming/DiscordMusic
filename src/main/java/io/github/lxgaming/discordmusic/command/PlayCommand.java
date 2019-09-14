@@ -24,8 +24,8 @@ import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.DiscordData;
 import io.github.lxgaming.discordmusic.util.Toolbox;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;

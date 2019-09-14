@@ -18,7 +18,7 @@ package io.github.lxgaming.discordmusic.service;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.api.entities.Message;
 
 import java.time.Instant;
 import java.util.Iterator;
@@ -37,12 +37,12 @@ public class MessageService extends AbstractService {
         synchronized (MessageManager.getMessages()) {
             for (Iterator<Message> iterator = MessageManager.getMessages().iterator(); iterator.hasNext(); ) {
                 Message message = iterator.next();
-                if (message == null || message.getCreationTime() == null || message.getIdLong() == 0L) {
+                if (message == null || message.getTimeCreated() == null || message.getIdLong() == 0L) {
                     iterator.remove();
                     continue;
                 }
                 
-                if (message.getCreationTime().toInstant().toEpochMilli() > Instant.now().minusMillis(getDeleteInterval()).toEpochMilli()) {
+                if (message.getTimeCreated().toInstant().toEpochMilli() > Instant.now().minusMillis(getDeleteInterval()).toEpochMilli()) {
                     continue;
                 }
                 

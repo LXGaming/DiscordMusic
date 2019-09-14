@@ -16,9 +16,9 @@
 
 package io.github.lxgaming.discordmusic.configuration.category;
 
-import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.audio.SpeakingMode;
-import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.audio.SpeakingMode;
+import net.dv8tion.jda.api.entities.Activity;
 
 public class AccountCategory {
     
@@ -26,7 +26,7 @@ public class AccountCategory {
     private String name;
     private String token;
     private String gameTitle;
-    private Game.GameType gameType;
+    private Activity.ActivityType gameType;
     private OnlineStatus onlineStatus;
     private SpeakingMode speakingMode;
     
@@ -35,7 +35,7 @@ public class AccountCategory {
         setName("Unknown");
         setToken("token");
         setGameTitle("music");
-        setGameType(Game.GameType.DEFAULT);
+        setGameType(Activity.ActivityType.DEFAULT);
         setOnlineStatus(OnlineStatus.ONLINE);
         setSpeakingMode(SpeakingMode.VOICE);
     }
@@ -72,11 +72,11 @@ public class AccountCategory {
         this.gameTitle = gameTitle;
     }
     
-    public Game.GameType getGameType() {
+    public Activity.ActivityType getGameType() {
         return gameType;
     }
     
-    public void setGameType(Game.GameType gameType) {
+    public void setGameType(Activity.ActivityType gameType) {
         this.gameType = gameType;
     }
     

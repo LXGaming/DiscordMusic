@@ -20,10 +20,10 @@ import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.AccountCategory;
 import io.github.lxgaming.discordmusic.listener.DiscordListener;
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.LoginException;
@@ -45,7 +45,7 @@ public class AccountManager {
         }
         
         if (account.getGameType() != null && StringUtils.isNotBlank(account.getGameTitle())) {
-            jda.getPresence().setGame(Game.of(account.getGameType(), account.getGameTitle()));
+            jda.getPresence().setActivity(Activity.of(account.getGameType(), account.getGameTitle()));
         }
         
         if (account.getOnlineStatus() != null) {
@@ -56,7 +56,7 @@ public class AccountManager {
     private static void createJDA(AccountCategory account) {
         try {
             JDABuilder jdaBuilder = new JDABuilder(AccountType.BOT);
-            jdaBuilder.addEventListener(new DiscordListener());
+            jdaBuilder.addEventListeners(new DiscordListener());
             jdaBuilder.setBulkDeleteSplittingEnabled(false);
             jdaBuilder.setEnableShutdownHook(false);
             jdaBuilder.setToken(account.getToken());

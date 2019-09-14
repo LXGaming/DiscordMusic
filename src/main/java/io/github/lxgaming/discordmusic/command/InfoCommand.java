@@ -22,9 +22,9 @@ import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.Reference;
 import io.github.lxgaming.discordmusic.util.Toolbox;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDAInfo;
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDAInfo;
+import net.dv8tion.jda.api.entities.Message;
 
 import java.time.Duration;
 import java.time.Instant;

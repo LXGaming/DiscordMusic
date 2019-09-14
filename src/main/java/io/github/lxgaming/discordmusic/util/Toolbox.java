@@ -16,7 +16,7 @@
 
 package io.github.lxgaming.discordmusic.util;
 
-import net.dv8tion.jda.core.entities.ISnowflake;
+import net.dv8tion.jda.api.entities.ISnowflake;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;

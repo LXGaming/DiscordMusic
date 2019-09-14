@@ -19,7 +19,7 @@ package io.github.lxgaming.discordmusic.util;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.manager.AccountManager;
 import io.github.lxgaming.discordmusic.manager.ServiceManager;
-import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.api.JDA;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.concurrent.TimeUnit;

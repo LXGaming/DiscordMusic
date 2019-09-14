@@ -30,10 +30,10 @@ import io.github.lxgaming.discordmusic.listener.AudioListener;
 import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.DiscordData;
 import io.github.lxgaming.discordmusic.util.Toolbox;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.audio.SpeakingMode;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.audio.SpeakingMode;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang3.StringUtils;
 
 import java.security.InvalidParameterException;

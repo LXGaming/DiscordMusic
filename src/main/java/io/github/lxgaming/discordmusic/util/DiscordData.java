@@ -18,8 +18,8 @@ package io.github.lxgaming.discordmusic.util;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
 
 public class DiscordData {
     
