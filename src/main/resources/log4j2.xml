@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" shutdownHook="disable">
+<Configuration status="WARN" shutdownHook="disable" packages="io.github.lxgaming.discordmusic.util">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%level] [%t]: %msg%n"/>
+            <PatternLayout pattern="%color{[%d{HH:mm:ss}] [%level] [%t]: %msg%n%xEx}"/>
         </Console>
     </Appenders>
     <Loggers>
