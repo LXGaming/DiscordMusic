@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.discordmusic.util;
+package io.github.lxgaming.discordmusic.data;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -25,18 +25,18 @@ public enum Color {
     @SerializedName("success") SUCCESS("Success"),
     @SerializedName("warning") WARNING("Warning");
     
-    private final String friendlyName;
+    private final String name;
     
-    Color(String friendlyName) {
-        this.friendlyName = friendlyName;
+    Color(String name) {
+        this.name = name;
     }
     
-    public String getFriendlyName() {
-        return friendlyName;
+    public String getName() {
+        return name;
     }
     
     @Override
     public String toString() {
-        return getFriendlyName();
+        return name().toLowerCase();
     }
 }

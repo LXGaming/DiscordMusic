@@ -17,8 +17,8 @@
 package io.github.lxgaming.discordmusic.command;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
+import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
-import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;

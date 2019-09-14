@@ -17,9 +17,9 @@
 package io.github.lxgaming.discordmusic.command;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
-import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;

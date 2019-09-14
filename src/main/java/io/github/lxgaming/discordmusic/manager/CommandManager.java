@@ -34,7 +34,7 @@ import io.github.lxgaming.discordmusic.command.SourcesCommand;
 import io.github.lxgaming.discordmusic.command.StopCommand;
 import io.github.lxgaming.discordmusic.command.VolumeCommand;
 import io.github.lxgaming.discordmusic.configuration.Config;
-import io.github.lxgaming.discordmusic.util.Color;
+import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;

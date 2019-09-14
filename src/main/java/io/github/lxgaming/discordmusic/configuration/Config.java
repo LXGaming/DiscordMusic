@@ -17,9 +17,9 @@
 package io.github.lxgaming.discordmusic.configuration;
 
 import io.github.lxgaming.discordmusic.configuration.category.AccountCategory;
+import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.configuration.category.ServerCategory;
 import io.github.lxgaming.discordmusic.service.MessageService;
-import io.github.lxgaming.discordmusic.util.Color;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 
 import java.util.Map;
