@@ -36,7 +36,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audio.SpeakingMode;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import org.apache.commons.lang3.StringUtils;
 
@@ -53,7 +52,7 @@ public class AudioManager {
     private static final AudioListener AUDIO_LISTENER = new AudioListener();
     private static final Map<Long, AudioPlayer> AUDIO_PLAYERS = Collections.synchronizedMap(Toolbox.newHashMap());
     private static final Map<Long, BlockingQueue<AudioTrack>> AUDIO_QUEUES = Collections.synchronizedMap(Toolbox.newHashMap());
-    private static final Map<Long, Map<Message, List<AudioTrack>>> SEARCH_RESULTS = Collections.synchronizedMap(Toolbox.newHashMap());
+    private static final Map<Long, Map<AudioTrackData, List<AudioTrack>>> SEARCH_RESULTS = Collections.synchronizedMap(Toolbox.newHashMap());
     
     public static void prepare() {
         GeneralCategory generalCategory = DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).orElseThrow(NullPointerException::new);
@@ -216,10 +215,12 @@ public class AudioManager {
                 });
                 menuBuilder.setFinalAction(message -> {
                     message.delete().queue();
-                    getSearchResults(message.getGuild()).remove(message);
+                    getSearchResults(message.getGuild()).remove(entry.getKey());
                 });
                 menuBuilder.setEventWaiter(AccountManager.EVENT_WAITER);
                 menuBuilder.build().display(entry.getKey().getChannel(), embedBuilder.build());
+                
+                getSearchResults(entry.getKey().getGuild()).put(entry.getKey(), entry.getValue());
             }
             
             return;
@@ -292,15 +293,15 @@ public class AudioManager {
     }
     
     public static List<AudioTrack> getSearchResult(Member member) {
-        Map<Message, List<AudioTrack>> searchResults = getSearchResults(member.getGuild());
+        Map<AudioTrackData, List<AudioTrack>> searchResults = getSearchResults(member.getGuild());
         if (searchResults == null) {
             return null;
         }
         
         // noinspection SynchronizationOnLocalVariableOrMethodParameter
         synchronized (searchResults) {
-            for (Map.Entry<Message, List<AudioTrack>> entry : searchResults.entrySet()) {
-                if (entry.getKey().getAuthor().getIdLong() == member.getIdLong()) {
+            for (Map.Entry<AudioTrackData, List<AudioTrack>> entry : searchResults.entrySet()) {
+                if (entry.getKey().getUser().getIdLong() == member.getIdLong()) {
                     return entry.getValue();
                 }
             }
@@ -310,15 +311,15 @@ public class AudioManager {
     }
     
     public static void removeSearchResult(Member member) {
-        Map<Message, List<AudioTrack>> searchResults = getSearchResults(member.getGuild());
+        Map<AudioTrackData, List<AudioTrack>> searchResults = getSearchResults(member.getGuild());
         if (searchResults == null) {
             return;
         }
         
-        searchResults.keySet().removeIf(message -> message.getAuthor().getIdLong() == member.getIdLong());
+        searchResults.keySet().removeIf(audioTrackData -> audioTrackData.getUser().getIdLong() == member.getIdLong());
     }
     
-    public static Map<Message, List<AudioTrack>> getSearchResults(Guild guild) {
+    public static Map<AudioTrackData, List<AudioTrack>> getSearchResults(Guild guild) {
         return SEARCH_RESULTS.get(guild.getIdLong());
     }
 }
