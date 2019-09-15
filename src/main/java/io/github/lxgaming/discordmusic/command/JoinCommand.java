@@ -34,7 +34,7 @@ public class JoinCommand extends AbstractCommand {
     public JoinCommand() {
         addAlias("join");
         setDescription("Connects to your current voice channel or one matching the name provided.");
-        setPermission("command.join");
+        setPermission("join.base");
         setUsage("[Channel name]");
     }
     

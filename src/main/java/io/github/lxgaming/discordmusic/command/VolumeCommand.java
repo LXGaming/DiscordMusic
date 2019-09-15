@@ -33,7 +33,7 @@ public class VolumeCommand extends AbstractCommand {
         addAlias("volume");
         setDescription("Adjusts playback volume.");
         setUsage("[0 ~ 100]");
-        setPermission("command.volume");
+        setPermission("volume.base");
     }
     
     @Override

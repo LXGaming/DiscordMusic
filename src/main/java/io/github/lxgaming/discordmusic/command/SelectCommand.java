@@ -36,7 +36,7 @@ public class SelectCommand extends AbstractCommand {
     public SelectCommand() {
         addAlias("select");
         setDescription("Select from search results.");
-        setPermission("command.select");
+        setPermission("select.base");
         setUsage("<ID...>");
     }
     

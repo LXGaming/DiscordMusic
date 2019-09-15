@@ -32,7 +32,7 @@ public class QueueCommand extends AbstractCommand {
         addAlias("queue");
         addAlias("list");
         setDescription("Displays all of the media that is queued.");
-        setPermission("command.queue");
+        setPermission("queue.base");
     }
     
     @Override

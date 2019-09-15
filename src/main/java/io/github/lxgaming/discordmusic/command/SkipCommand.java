@@ -30,7 +30,7 @@ public class SkipCommand extends AbstractCommand {
     public SkipCommand() {
         addAlias("skip");
         setDescription("Skip the current media");
-        setPermission("command.skip");
+        setPermission("skip.base");
     }
     
     @Override

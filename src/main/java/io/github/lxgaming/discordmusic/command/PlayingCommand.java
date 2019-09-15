@@ -33,7 +33,7 @@ public class PlayingCommand extends AbstractCommand {
         addAlias("nowplaying");
         addAlias("np");
         setDescription("Displays the media that is currently being played.");
-        setPermission("command.playing");
+        setPermission("playing.base");
     }
     
     @Override

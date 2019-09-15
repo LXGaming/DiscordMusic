@@ -39,7 +39,7 @@ public class PlayCommand extends AbstractCommand {
         addAlias("play");
         setDescription("Plays audio from the specific URLs.");
         setUsage("[URL...]");
-        setPermission("command.play");
+        setPermission("play.base");
     }
     
     @Override

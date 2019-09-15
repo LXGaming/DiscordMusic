@@ -30,7 +30,7 @@ public class SourcesCommand extends AbstractCommand {
     public SourcesCommand() {
         addAlias("sources");
         setDescription("Displays the allows sources which media can be played from.");
-        setPermission("command.sources");
+        setPermission("sources.base");
     }
     
     @Override

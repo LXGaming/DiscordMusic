@@ -32,7 +32,7 @@ public class ShutdownCommand extends AbstractCommand {
     public ShutdownCommand() {
         addAlias("shutdown");
         setDescription("Safely shutdowns the bot.");
-        setPermission("command.shutdown");
+        setPermission("shutdown.base");
     }
     
     @Override

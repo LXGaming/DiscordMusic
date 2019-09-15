@@ -30,7 +30,7 @@ public class StopCommand extends AbstractCommand {
     public StopCommand() {
         addAlias("stop");
         setDescription("Stops the Player");
-        setPermission("command.stop");
+        setPermission("stop.base");
     }
     
     @Override

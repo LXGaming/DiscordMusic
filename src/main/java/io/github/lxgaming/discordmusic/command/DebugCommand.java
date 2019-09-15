@@ -31,7 +31,7 @@ public class DebugCommand extends AbstractCommand {
     public DebugCommand() {
         addAlias("debug");
         setDescription("For development purposes.");
-        setPermission("command.debug");
+        setPermission("debug.base");
     }
     
     @Override

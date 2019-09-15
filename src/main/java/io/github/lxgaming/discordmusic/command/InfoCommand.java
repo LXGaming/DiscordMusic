@@ -36,7 +36,7 @@ public class InfoCommand extends AbstractCommand {
         addAlias("info");
         addAlias("version");
         setDescription("Displays bot information.");
-        setPermission("command.info");
+        setPermission("info.base");
     }
     
     @Override

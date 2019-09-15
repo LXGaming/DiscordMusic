@@ -33,7 +33,7 @@ public class SearchCommand extends AbstractCommand {
     public SearchCommand() {
         addAlias("search");
         setDescription("Searches YouTube.");
-        setPermission("command.search");
+        setPermission("search.base");
         setUsage("<Query...>");
     }
     

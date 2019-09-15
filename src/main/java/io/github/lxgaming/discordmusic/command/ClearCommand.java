@@ -31,7 +31,7 @@ public class ClearCommand extends AbstractCommand {
     public ClearCommand() {
         addAlias("clear");
         setDescription("Clears all of the media that is queued.");
-        setPermission("command.clear");
+        setPermission("clear.base");
     }
     
     @Override

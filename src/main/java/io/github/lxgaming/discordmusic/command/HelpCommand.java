@@ -34,7 +34,7 @@ public class HelpCommand extends AbstractCommand {
     public HelpCommand() {
         addAlias("help");
         setDescription("Displays helpful information.");
-        setPermission("command.help");
+        setPermission("help.base");
         setUsage("[Command]");
     }
     
