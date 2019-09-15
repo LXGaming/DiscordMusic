@@ -63,14 +63,13 @@ public class SearchCommand extends AbstractCommand {
         embedBuilder.getDescriptionBuilder()
                 .append("**Searching for **")
                 .append("[").append(sanitizedQuery).append("]")
-                .append("(").append("https://www.youtube.com/results?search_query=").append(sanitizedQuery).append(")");
+                .append("(").append("https://www.youtube.com/results?search_query=").append(sanitizedQuery.replace(' ', '+')).append(")");
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }
     
     private String sanitize(String sequence) {
         return MarkdownSanitizer.sanitize(sequence)
                 .replace("[", "\\[").replace("]", "\\]")
-                .replace("(", "\\(").replace(")", "\\)")
-                .replace(' ', '+');
+                .replace("(", "\\(").replace(")", "\\)");
     }
 }
