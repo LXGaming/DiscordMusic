@@ -39,7 +39,6 @@ public class PlayingCommand extends AbstractCommand {
     @Override
     public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
         AudioTrack audioTrack = AudioManager.getAudioPlayer(message.getGuild()).getPlayingTrack();
         if (audioTrack == null) {

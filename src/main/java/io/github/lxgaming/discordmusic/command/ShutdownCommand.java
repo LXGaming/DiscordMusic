@@ -40,7 +40,7 @@ public class ShutdownCommand extends AbstractCommand {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
         embedBuilder.setTitle("Shutting down...");
-        embedBuilder.setFooter(Toolbox.getTimeString(Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis()), null);
+        embedBuilder.setFooter("Uptime: " + Toolbox.getTimeString(Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis()), null);
         MessageManager.sendMessage(message.getChannel(), embedBuilder.build());
         Runtime.getRuntime().exit(0);
     }

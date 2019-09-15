@@ -16,14 +16,14 @@
 
 package io.github.lxgaming.discordmusic.command;
 
+import io.github.lxgaming.discordmusic.data.AudioTrackData;
 import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.handler.AudioPlayerLoadResultHandler;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
-import io.github.lxgaming.discordmusic.util.DiscordData;
-import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.utils.MarkdownSanitizer;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -40,7 +40,6 @@ public class SearchCommand extends AbstractCommand {
     @Override
     public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
         if (arguments.isEmpty()) {
             embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
@@ -49,7 +48,7 @@ public class SearchCommand extends AbstractCommand {
             return;
         }
         
-        String query = Toolbox.filter(String.join(" ", arguments));
+        String query = String.join(" ", arguments);
         if (StringUtils.isBlank(query)) {
             embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("Invalid query");
@@ -57,10 +56,21 @@ public class SearchCommand extends AbstractCommand {
             return;
         }
         
-        AudioManager.getAudioPlayerManager().loadItem("ytsearch: " + query, new AudioPlayerLoadResultHandler(new DiscordData(message)));
+        AudioManager.AUDIO_PLAYER_MANAGER.loadItem("ytsearch: " + query, new AudioPlayerLoadResultHandler(AudioTrackData.of(message)));
         
-        embedBuilder.setTitle("Search query");
-        embedBuilder.appendDescription(query);
+        String sanitizedQuery = sanitize(query);
+        embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
+        embedBuilder.getDescriptionBuilder()
+                .append("**Searching for **")
+                .append("[").append(sanitizedQuery).append("]")
+                .append("(").append("https://www.youtube.com/results?search_query=").append(sanitizedQuery).append(")");
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+    }
+    
+    private String sanitize(String sequence) {
+        return MarkdownSanitizer.sanitize(sequence)
+                .replace("[", "\\[").replace("]", "\\]")
+                .replace("(", "\\(").replace(")", "\\)")
+                .replace(' ', '+');
     }
 }

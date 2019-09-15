@@ -18,9 +18,9 @@ package io.github.lxgaming.discordmusic.util;
 
 public class Reference {
     
-    public static final String APP_ID = "discordmusic";
-    public static final String APP_NAME = "DiscordMusic";
-    public static final String APP_VERSION = "2.1.6";
+    public static final String ID = "discordmusic";
+    public static final String NAME = "DiscordMusic";
+    public static final String VERSION = "2.1.6";
     public static final String AUTHORS = "LX_Gaming";
     public static final String SOURCE = "https://github.com/LXGaming/DiscordMusic";
     public static final String WEBSITE = "https://lxgaming.github.io/";

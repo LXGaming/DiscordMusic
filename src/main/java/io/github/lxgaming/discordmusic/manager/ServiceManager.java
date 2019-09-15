@@ -18,41 +18,84 @@ package io.github.lxgaming.discordmusic.manager;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
+import io.github.lxgaming.discordmusic.configuration.category.ServiceCategory;
 import io.github.lxgaming.discordmusic.service.AbstractService;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 
 import java.util.Optional;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class ServiceManager {
     
-    private static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(10, Toolbox.buildThreadFactory("Service Thread #%d"));
+    public static final ScheduledThreadPoolExecutor SCHEDULED_EXECUTOR_SERVICE = new ScheduledThreadPoolExecutor(0, Toolbox.newThreadFactory("Service Thread #%d"));
     
-    public static void buildServices() {
-        DiscordMusic.getInstance().getConfig().map(Config::getMessageService).ifPresent(ServiceManager::schedule);
+    public static void prepare() {
+        ServiceCategory serviceCategory = DiscordMusic.getInstance().getConfig().map(Config::getServiceCategory).orElseThrow(NullPointerException::new);
+        if (serviceCategory.getCorePoolSize() < 0) {
+            DiscordMusic.getInstance().getLogger().warn("CorePoolSize is out of bounds. Resetting to {}", ServiceCategory.DEFAULT_CORE_POOL_SIZE);
+            serviceCategory.setCorePoolSize(ServiceCategory.DEFAULT_CORE_POOL_SIZE);
+        }
+        
+        if (serviceCategory.getMaximumPoolSize() < serviceCategory.getCorePoolSize()) {
+            DiscordMusic.getInstance().getLogger().warn("MaximumPoolSize is out of bounds. Resetting to {}", ServiceCategory.DEFAULT_MAXIMUM_POOL_SIZE);
+            serviceCategory.setMaximumPoolSize(ServiceCategory.DEFAULT_MAXIMUM_POOL_SIZE);
+        }
+        
+        if (serviceCategory.getKeepAliveTime() <= 0) {
+            DiscordMusic.getInstance().getLogger().warn("KeepAliveTime is out of bounds. Resetting to {}", ServiceCategory.DEFAULT_KEEP_ALIVE_TIME);
+            serviceCategory.setKeepAliveTime(ServiceCategory.DEFAULT_KEEP_ALIVE_TIME);
+        }
+        
+        SCHEDULED_EXECUTOR_SERVICE.setCorePoolSize(serviceCategory.getCorePoolSize());
+        SCHEDULED_EXECUTOR_SERVICE.setMaximumPoolSize(serviceCategory.getMaximumPoolSize());
+        SCHEDULED_EXECUTOR_SERVICE.setKeepAliveTime(serviceCategory.getKeepAliveTime(), TimeUnit.MILLISECONDS);
     }
     
     public static void schedule(AbstractService abstractService) {
-        schedule(abstractService, abstractService.getDelay(), abstractService.getInterval()).ifPresent(abstractService::setScheduledFuture);
+        try {
+            if (!abstractService.prepare()) {
+                throw new IllegalStateException("Service preparation failed");
+            }
+            
+            schedule(abstractService, abstractService.getDelay(), abstractService.getInterval()).ifPresent(abstractService::setScheduledFuture);
+        } catch (Exception ex) {
+            DiscordMusic.getInstance().getLogger().error("Encountered an error while scheduling service", ex);
+        }
+    }
+    
+    public static Optional<ScheduledFuture> schedule(Runnable runnable) {
+        return schedule(runnable, 0L, 0L);
     }
     
     public static Optional<ScheduledFuture> schedule(Runnable runnable, long delay, long interval) {
+        return schedule(runnable, delay, interval, TimeUnit.MILLISECONDS);
+    }
+    
+    public static Optional<ScheduledFuture> schedule(Runnable runnable, long delay, long interval, TimeUnit unit) {
         try {
             if (interval <= 0L) {
-                return Optional.of(getScheduledExecutorService().schedule(runnable, Math.max(delay, 0L), TimeUnit.MILLISECONDS));
+                return Optional.of(SCHEDULED_EXECUTOR_SERVICE.schedule(runnable, Math.max(delay, 0L), unit));
             }
             
-            return Optional.of(getScheduledExecutorService().scheduleWithFixedDelay(runnable, Math.max(delay, 0L), Math.max(interval, 0L), TimeUnit.MILLISECONDS));
-        } catch (RuntimeException ex) {
-            DiscordMusic.getInstance().getLogger().error("Encountered an error processing {}::schedule", "ServiceManager", ex);
+            return Optional.of(SCHEDULED_EXECUTOR_SERVICE.scheduleWithFixedDelay(runnable, Math.max(delay, 0L), Math.max(interval, 0L), unit));
+        } catch (Exception ex) {
+            DiscordMusic.getInstance().getLogger().error("Encountered an error while scheduling service", ex);
             return Optional.empty();
         }
     }
     
-    public static ScheduledExecutorService getScheduledExecutorService() {
-        return SCHEDULED_EXECUTOR_SERVICE;
+    public static void shutdown() {
+        try {
+            SCHEDULED_EXECUTOR_SERVICE.shutdown();
+            if (!SCHEDULED_EXECUTOR_SERVICE.awaitTermination(5000L, TimeUnit.MILLISECONDS)) {
+                throw new InterruptedException();
+            }
+            
+            DiscordMusic.getInstance().getLogger().info("Successfully terminated threads, continuing with shutdown process...");
+        } catch (InterruptedException | RuntimeException ex) {
+            DiscordMusic.getInstance().getLogger().error("Failed to terminate threads, continuing with shutdown process...");
+        }
     }
 }

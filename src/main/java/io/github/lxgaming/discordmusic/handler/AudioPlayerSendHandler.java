@@ -16,58 +16,37 @@
 
 package io.github.lxgaming.discordmusic.handler;
 
-import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
-import io.github.lxgaming.discordmusic.manager.AudioManager;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.track.playback.MutableAudioFrame;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
-import net.dv8tion.jda.api.entities.Guild;
 
 import java.nio.ByteBuffer;
 
 public final class AudioPlayerSendHandler implements AudioSendHandler {
     
-    private final Guild guild;
-    private AudioFrame audioFrame;
+    private final AudioPlayer audioPlayer;
+    private final ByteBuffer byteBuffer;
+    private final MutableAudioFrame audioFrame;
     
-    public AudioPlayerSendHandler(Guild guild) {
-        this.guild = guild;
+    public AudioPlayerSendHandler(AudioPlayer audioPlayer) {
+        this.audioPlayer = audioPlayer;
+        this.byteBuffer = ByteBuffer.allocate(1024);
+        this.audioFrame = new MutableAudioFrame();
+        this.audioFrame.setBuffer(this.byteBuffer);
     }
     
     @Override
     public boolean canProvide() {
-        if (getAudioFrame() == null) {
-            setAudioFrame(AudioManager.getAudioPlayer(getGuild()).provide());
-        }
-        
-        return getAudioFrame() != null;
+        return audioPlayer.provide(audioFrame);
     }
     
     @Override
     public ByteBuffer provide20MsAudio() {
-        try {
-            if (getAudioFrame() != null) {
-                return ByteBuffer.wrap(getAudioFrame().getData());
-            }
-            
-            return null;
-        } finally {
-            setAudioFrame(null);
-        }
+        return (ByteBuffer) byteBuffer.flip();
     }
     
     @Override
     public boolean isOpus() {
         return true;
-    }
-    
-    private Guild getGuild() {
-        return guild;
-    }
-    
-    private AudioFrame getAudioFrame() {
-        return audioFrame;
-    }
-    
-    private void setAudioFrame(AudioFrame audioFrame) {
-        this.audioFrame = audioFrame;
     }
 }

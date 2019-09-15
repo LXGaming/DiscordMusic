@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Alex Thomson
+ * Copyright 2019 Alex Thomson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,31 @@
 
 package io.github.lxgaming.discordmusic.configuration.category;
 
+import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 
-import java.util.Set;
+import java.util.Map;
 
-public class GroupCategory {
+public class MessageCategory {
     
-    private long id = 0L;
-    private String name = "Unknown";
-    private Set<String> permissions = Toolbox.newHashSet();
+    private Map<Color, String> colors = Toolbox.newHashMap();
+    private long deleteInternal = 60000L;
+    private boolean deleteInvoking = true;
+    private boolean deleteMessages = true;
     
-    public long getId() {
-        return id;
+    public Map<Color, String> getColors() {
+        return colors;
     }
     
-    public void setId(long id) {
-        this.id = id;
+    public long getDeleteInternal() {
+        return deleteInternal;
     }
     
-    public String getName() {
-        return name;
+    public boolean isDeleteInvoking() {
+        return deleteInvoking;
     }
     
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    public Set<String> getPermissions() {
-        return permissions;
+    public boolean isDeleteMessages() {
+        return deleteMessages;
     }
 }

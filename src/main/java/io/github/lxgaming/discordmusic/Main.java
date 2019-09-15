@@ -21,6 +21,6 @@ public class Main {
     public static void main(String[] args) {
         Thread.currentThread().setName("Main Thread");
         DiscordMusic discordMusic = new DiscordMusic();
-        discordMusic.loadDiscordMusic();
+        discordMusic.load();
     }
 }

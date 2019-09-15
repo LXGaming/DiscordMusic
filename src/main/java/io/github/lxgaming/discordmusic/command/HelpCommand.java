@@ -16,6 +16,9 @@
 
 package io.github.lxgaming.discordmusic.command;
 
+import io.github.lxgaming.discordmusic.DiscordMusic;
+import io.github.lxgaming.discordmusic.configuration.Config;
+import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
 import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.manager.CommandManager;
 import io.github.lxgaming.discordmusic.manager.GroupManager;
@@ -26,13 +29,13 @@ import net.dv8tion.jda.api.entities.Message;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class HelpCommand extends AbstractCommand {
     
     public HelpCommand() {
         addAlias("help");
+        addAlias("?");
         setDescription("Displays helpful information.");
         setPermission("help.base");
         setUsage("[Command]");
@@ -44,7 +47,7 @@ public class HelpCommand extends AbstractCommand {
         embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
         if (arguments.isEmpty()) {
-            for (AbstractCommand command : CommandManager.getCommands()) {
+            for (AbstractCommand command : CommandManager.COMMANDS) {
                 if (command.getAliases().isEmpty() || !GroupManager.hasPermission(message.getMember(), command.getPermission())) {
                     continue;
                 }
@@ -60,49 +63,59 @@ public class HelpCommand extends AbstractCommand {
             }
             
             embedBuilder.setTitle("Help: Index");
-            embedBuilder.setFooter("<> = Required Argument, [] = Optional Argument", null);
             MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        Optional<AbstractCommand> command = CommandManager.getCommand(Toolbox.newArrayList(arguments.toArray(new String[0])));
-        if (!command.isPresent()) {
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("No help present for " + StringUtils.join(arguments, " "));
+        List<String> childArguments = Toolbox.newArrayList(arguments.toArray(new String[0]));
+        AbstractCommand command = CommandManager.getCommand(childArguments).orElse(null);
+        if (command == null) {
+            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
+            embedBuilder.setTitle("Unknown command");
             MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        if (!GroupManager.hasPermission(message.getMember(), command.get().getPermission())) {
+        int index = (arguments.size() - childArguments.size());
+        while (index < arguments.size()) {
+            arguments.remove(index);
+        }
+        
+        if (!GroupManager.hasPermission(message.getMember(), command.getPermission())) {
             embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("You do not have permission to view this command");
             MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        embedBuilder.setTitle("Help: " + StringUtils.capitalize(command.get().getPrimaryAlias().orElse("Unknown")));
-        if (command.get().getAliases().size() > 1) {
-            embedBuilder.getDescriptionBuilder().append("**Aliases**: ").append(command.get().getAliases().stream().skip(1).collect(Collectors.joining(", ")));
+        embedBuilder.setTitle("Help: " + StringUtils.capitalize(command.getPrimaryAlias().orElse("Unknown")));
+        if (command.getAliases().size() > 1) {
+            embedBuilder.getDescriptionBuilder().append("**Aliases**: ").append(command.getAliases().stream().skip(1).collect(Collectors.joining(", ")));
             embedBuilder.getDescriptionBuilder().append("\n");
         }
         
         List<String> children = Toolbox.newArrayList();
-        for (AbstractCommand childCommand : command.get().getChildren()) {
+        for (AbstractCommand childCommand : command.getChildren()) {
             children.add(childCommand.getPrimaryAlias().orElse("Unknown"));
         }
         
         if (!children.isEmpty()) {
-            embedBuilder.getDescriptionBuilder().append("**Children**: ").append(StringUtils.join(children, ", "));
+            embedBuilder.getDescriptionBuilder().append("**Children**: ").append(String.join(", ", children));
             embedBuilder.getDescriptionBuilder().append("\n");
         }
         
         embedBuilder.getDescriptionBuilder().append("**Description**: ");
-        embedBuilder.getDescriptionBuilder().append(StringUtils.defaultIfBlank(command.get().getDescription(), "No description provided.")).append("\n");
-        embedBuilder.getDescriptionBuilder().append("**Usage**: ").append(StringUtils.join(arguments, " "));
-        if (StringUtils.isNotBlank(command.get().getUsage())) {
-            embedBuilder.getDescriptionBuilder().append(" ").append(command.get().getUsage());
+        embedBuilder.getDescriptionBuilder().append(StringUtils.defaultIfBlank(command.getDescription(), "No description provided.")).append("\n");
+        embedBuilder.getDescriptionBuilder().append("**Usage**: ")
+                .append(DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).map(GeneralCategory::getCommandPrefix).orElse("/"))
+                .append(" ")
+                .append(String.join(" ", arguments));
+        
+        if (StringUtils.isNotBlank(command.getUsage())) {
+            embedBuilder.getDescriptionBuilder().append(" ").append(command.getUsage());
         }
         
+        embedBuilder.setFooter("<> = Required Argument, [] = Optional Argument", null);
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }
 }

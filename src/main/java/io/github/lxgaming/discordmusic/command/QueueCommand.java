@@ -38,7 +38,6 @@ public class QueueCommand extends AbstractCommand {
     @Override
     public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
         BlockingQueue<AudioTrack> audioQueue = AudioManager.getAudioQueue(message.getGuild());
         if (audioQueue == null || audioQueue.isEmpty()) {

@@ -25,44 +25,46 @@ public abstract class AbstractService implements Runnable {
     
     private long delay;
     private long interval;
-    private transient ScheduledFuture scheduledFuture;
+    private ScheduledFuture scheduledFuture;
     
     public final void run() {
         try {
             execute();
         } catch (Exception ex) {
-            DiscordMusic.getInstance().getLogger().error("Encountered an error processing {}::run", getClass().getSimpleName(), ex);
+            DiscordMusic.getInstance().getLogger().error("Encountered an error while executing {}", getClass().getSimpleName(), ex);
             getScheduledFuture().cancel(false);
         }
     }
     
-    public abstract void execute();
+    public abstract boolean prepare();
+    
+    public abstract void execute() throws Exception;
     
     public boolean isRunning() {
         return getScheduledFuture() != null && (!getScheduledFuture().isDone() || getScheduledFuture().getDelay(TimeUnit.MILLISECONDS) > 0L);
     }
     
-    public long getDelay() {
+    public final long getDelay() {
         return delay;
     }
     
-    protected void setDelay(long delay) {
+    protected final void setDelay(long delay) {
         this.delay = delay;
     }
     
-    public long getInterval() {
+    public final long getInterval() {
         return interval;
     }
     
-    protected void setInterval(long interval) {
+    protected final void setInterval(long interval) {
         this.interval = interval;
     }
     
-    public ScheduledFuture getScheduledFuture() {
+    public final ScheduledFuture getScheduledFuture() {
         return scheduledFuture;
     }
     
-    public void setScheduledFuture(ScheduledFuture scheduledFuture) {
+    public final void setScheduledFuture(ScheduledFuture scheduledFuture) {
         this.scheduledFuture = scheduledFuture;
     }
 }

@@ -36,26 +36,24 @@ public class StopCommand extends AbstractCommand {
     @Override
     public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
         AudioPlayer audioPlayer = AudioManager.getAudioPlayer(message.getGuild());
         if (audioPlayer == null) {
             embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("Failed to get AudioPlayer");
+            embedBuilder.setTitle("AudioPlayer is unavailable");
             MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        if (audioPlayer.getPlayingTrack() == null) {
+        if (audioPlayer.getPlayingTrack() != null) {
+            audioPlayer.stopTrack();
+            embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
+            embedBuilder.setTitle("Player stopped.");
+        } else {
             embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("Player is not playing anything");
-            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
-            return;
         }
         
-        audioPlayer.stopTrack();
-        embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
-        embedBuilder.setTitle("Player stopped.");
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }
 }

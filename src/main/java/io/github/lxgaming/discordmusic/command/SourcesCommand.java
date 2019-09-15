@@ -18,12 +18,14 @@ package io.github.lxgaming.discordmusic.command;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
+import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
 import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 
 import java.util.List;
+import java.util.Set;
 
 public class SourcesCommand extends AbstractCommand {
     
@@ -36,21 +38,21 @@ public class SourcesCommand extends AbstractCommand {
     @Override
     public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
-        if (!DiscordMusic.getInstance().getConfig().map(Config::getAllowedSources).isPresent()) {
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("Configuration error!");
-            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
-            return;
-        }
         
-        embedBuilder.setTitle("Sources:");
-        for (String source : DiscordMusic.getInstance().getConfig().map(Config::getAllowedSources).get()) {
-            if (embedBuilder.getDescriptionBuilder().length() != 0) {
-                embedBuilder.getDescriptionBuilder().append("\n");
+        Set<String> allowedSources = DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).map(GeneralCategory::getAllowedSources).orElse(null);
+        if (allowedSources != null) {
+            embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
+            embedBuilder.setTitle("Sources");
+            for (String source : allowedSources) {
+                if (embedBuilder.getDescriptionBuilder().length() != 0) {
+                    embedBuilder.getDescriptionBuilder().append("\n");
+                }
+                
+                embedBuilder.getDescriptionBuilder().append(source);
             }
-            
-            embedBuilder.getDescriptionBuilder().append(source);
+        } else {
+            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
+            embedBuilder.setTitle("AllowedSources is unavailable");
         }
         
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());

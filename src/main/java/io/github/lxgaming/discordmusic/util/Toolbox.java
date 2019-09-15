@@ -16,8 +16,6 @@
 
 package io.github.lxgaming.discordmusic.util;
 
-import net.dv8tion.jda.api.entities.ISnowflake;
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
@@ -29,6 +27,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -37,6 +36,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Toolbox {
+    
+    /**
+     * Removes non-printable characters (excluding new line and carriage return) in the provided {@link java.lang.String String}.
+     *
+     * @param string The {@link java.lang.String String} to filter.
+     * @return The filtered {@link java.lang.String String}.
+     */
+    public static String filter(String string) {
+        return string.replaceAll("[^\\x20-\\x7E\\x0A\\x0D]", "");
+    }
     
     /**
      * Decodes the provided {@link java.lang.String String} into a {@link java.awt.Color Color}.
@@ -52,19 +61,8 @@ public class Toolbox {
         }
     }
     
-    /**
-     * Removes non-printable characters (excluding new line and carriage return) in the provided {@link java.lang.String String}.
-     *
-     * @param string The {@link java.lang.String String} to filter.
-     * @return The filtered {@link java.lang.String String}.
-     */
-    public static String filter(String string) {
-        return RegExUtils.replaceAll(string, "[^\\x20-\\x7E\\x0A\\x0D]", "");
-    }
-    
-    public static String getTimeString(long time) {
-        time = Math.abs(time);
-        long second = time / 1000;
+    public static String getTimeString(long millisecond) {
+        long second = Math.abs(millisecond) / 1000;
         long minute = second / 60;
         long hour = minute / 60;
         long day = hour / 24;
@@ -88,13 +86,16 @@ public class Toolbox {
                 stringBuilder.append(", ");
             }
             
-            stringBuilder.append(unit).append(" ");
-            if (unit == 1) {
-                stringBuilder.append(singular);
-            } else {
-                stringBuilder.append(plural);
-            }
+            stringBuilder.append(unit).append(" ").append(formatUnit(unit, singular, plural));
         }
+    }
+    
+    public static String formatUnit(long unit, String singular, String plural) {
+        if (unit == 1) {
+            return singular;
+        }
+        
+        return plural;
     }
     
     public static Optional<Integer> parseInteger(String string) {
@@ -122,12 +123,12 @@ public class Toolbox {
     }
     
     public static boolean containsIgnoreCase(Collection<String> list, String targetString) {
-        if (list == null || list.isEmpty()) {
+        if (list == null || targetString == null) {
             return false;
         }
         
         for (String string : list) {
-            if (StringUtils.equalsIgnoreCase(string, targetString)) {
+            if (string != null && string.equalsIgnoreCase(targetString)) {
                 return true;
             }
         }
@@ -143,30 +144,31 @@ public class Toolbox {
         }
     }
     
-    public static ThreadFactory buildThreadFactory(String namingPattern) {
-        return new BasicThreadFactory.Builder().namingPattern(namingPattern).daemon(true).priority(Thread.NORM_PRIORITY).build();
-    }
-    
-    public static Optional<Long> getIdLong(ISnowflake snowflake) {
-        if (snowflake != null) {
-            return Optional.of(snowflake.getIdLong());
-        }
-        
-        return Optional.empty();
-    }
-    
-    public static Optional<Path> getPath() {
+    public static Path getPath() {
         String userDir = System.getProperty("user.dir");
         if (StringUtils.isNotBlank(userDir)) {
-            return Optional.of(Paths.get(userDir));
+            return Paths.get(userDir);
         }
         
-        return Optional.empty();
+        return Paths.get(".");
+    }
+    
+    public static ThreadFactory newThreadFactory(String namingPattern) {
+        return new BasicThreadFactory.Builder().namingPattern(namingPattern).daemon(true).priority(Thread.NORM_PRIORITY).build();
     }
     
     @SafeVarargs
     public static <E> ArrayList<E> newArrayList(E... elements) {
         return Stream.of(elements).collect(Collectors.toCollection(ArrayList::new));
+    }
+    
+    public static <K, V> HashMap<K, V> newHashMap() {
+        return new HashMap<>();
+    }
+    
+    @SafeVarargs
+    public static <E> HashSet<E> newHashSet(E... elements) {
+        return Stream.of(elements).collect(Collectors.toCollection(HashSet::new));
     }
     
     @SafeVarargs
@@ -177,9 +179,5 @@ public class Toolbox {
     @SafeVarargs
     public static <E> LinkedHashSet<E> newLinkedHashSet(E... elements) {
         return Stream.of(elements).collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-    
-    public static <K, V> HashMap<K, V> newHashMap() {
-        return new HashMap<>();
     }
 }

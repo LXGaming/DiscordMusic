@@ -19,10 +19,7 @@ package io.github.lxgaming.discordmusic.util;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.manager.AccountManager;
 import io.github.lxgaming.discordmusic.manager.ServiceManager;
-import net.dv8tion.jda.api.JDA;
 import org.apache.logging.log4j.LogManager;
-
-import java.util.concurrent.TimeUnit;
 
 public class ShutdownHook extends Thread {
     
@@ -30,26 +27,8 @@ public class ShutdownHook extends Thread {
     public void run() {
         Thread.currentThread().setName("Shutdown Thread");
         DiscordMusic.getInstance().getLogger().info("Shutting down...");
-        shutdownExecutorService();
-        shutdownJDA();
+        AccountManager.shutdown();
+        ServiceManager.shutdown();
         LogManager.shutdown();
-    }
-    
-    private void shutdownExecutorService() {
-        try {
-            ServiceManager.getScheduledExecutorService().shutdown();
-            if (!ServiceManager.getScheduledExecutorService().awaitTermination(2000, TimeUnit.MILLISECONDS)) {
-                throw new InterruptedException();
-            }
-            
-            DiscordMusic.getInstance().getLogger().info("Successfully terminated threads, continuing with shutdown process...");
-        } catch (InterruptedException | RuntimeException ex) {
-            DiscordMusic.getInstance().getLogger().error("Failed to terminate threads, continuing with shutdown process...");
-        }
-    }
-    
-    private void shutdownJDA() {
-        AccountManager.getJDA().ifPresent(JDA::shutdown);
-        DiscordMusic.getInstance().getLogger().info("JDA Shutdown");
     }
 }

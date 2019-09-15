@@ -18,13 +18,13 @@ package io.github.lxgaming.discordmusic.command;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
+import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
 import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 
 import java.util.List;
-import java.util.Optional;
 
 public class DebugCommand extends AbstractCommand {
     
@@ -37,32 +37,35 @@ public class DebugCommand extends AbstractCommand {
     @Override
     public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setAuthor(message.getJDA().getSelfUser().getName(), null, message.getJDA().getSelfUser().getEffectiveAvatarUrl());
-        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
-        Optional<Config> config = DiscordMusic.getInstance().getConfig();
-        if (!config.isPresent()) {
+        if (!arguments.isEmpty()) {
             embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("Configuration error");
+            embedBuilder.setTitle("Invalid arguments");
             MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        if (arguments.isEmpty()) {
-            if (config.get().isDebug()) {
-                config.get().setDebug(false);
-                DiscordMusic.getInstance().reloadLogger();
-                embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
-                embedBuilder.setTitle("Debugging disabled");
-                MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
-                return;
-            }
-            
-            config.get().setDebug(true);
-            DiscordMusic.getInstance().reloadLogger();
+        GeneralCategory generalCategory = DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).orElse(null);
+        if (generalCategory == null) {
+            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
+            embedBuilder.setTitle("GeneralCategory is unavailable");
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+            return;
+        }
+        
+        if (generalCategory.isDebug()) {
+            generalCategory.setDebug(false);
+            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
+            embedBuilder.setTitle("Debugging disabled");
+        } else {
+            generalCategory.setDebug(true);
             embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
             embedBuilder.setTitle("Debugging enabled");
-            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
         }
+        
+        DiscordMusic.getInstance().getConfiguration().saveConfiguration();
+        DiscordMusic.getInstance().reload();
+        
+        MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }
 }

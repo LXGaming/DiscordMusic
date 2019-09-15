@@ -18,6 +18,7 @@ package io.github.lxgaming.discordmusic.command;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
+import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
 import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
@@ -32,7 +33,7 @@ public class VolumeCommand extends AbstractCommand {
     public VolumeCommand() {
         addAlias("volume");
         setDescription("Adjusts playback volume.");
-        setUsage("[0 ~ 100]");
+        setUsage("[0 ~ 1000]");
         setPermission("volume.base");
     }
     
@@ -54,7 +55,7 @@ public class VolumeCommand extends AbstractCommand {
             return;
         }
         
-        int maxVolume = Math.min(1000, DiscordMusic.getInstance().getConfig().map(Config::getMaxVolume).orElse(150));
+        int maxVolume = Math.min(1000, DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).map(GeneralCategory::getMaxVolume).orElse(GeneralCategory.DEFAULT_MAX_VOLUME));
         if (volume < 0 || volume > maxVolume) {
             embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("Value is outside of the allowed range (0 ~ " + maxVolume + ")");

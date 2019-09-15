@@ -37,21 +37,25 @@ public class ClearCommand extends AbstractCommand {
     @Override
     public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setAuthor(message.getJDA().getSelfUser().getName(), null, message.getJDA().getSelfUser().getEffectiveAvatarUrl());
-        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
         BlockingQueue<AudioTrack> audioQueue = AudioManager.getAudioQueue(message.getGuild());
-        if (audioQueue == null || audioQueue.isEmpty()) {
-            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
-            embedBuilder.setTitle("Nothing queued");
+        if (audioQueue == null) {
+            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
+            embedBuilder.setTitle("AudioQueue is unavailable");
             MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        audioQueue.clear();
-        AudioManager.playNext(message.getGuild());
-        embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
-        embedBuilder.setTitle("Queue cleared");
+        if (!audioQueue.isEmpty()) {
+            audioQueue.clear();
+            AudioManager.playNext(message.getGuild());
+            embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
+            embedBuilder.setTitle("Queue cleared");
+        } else {
+            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
+            embedBuilder.setTitle("Nothing queued");
+        }
+        
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }
 }

@@ -17,6 +17,8 @@
 package io.github.lxgaming.discordmusic.service;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
+import io.github.lxgaming.discordmusic.configuration.Config;
+import io.github.lxgaming.discordmusic.configuration.category.MessageCategory;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import net.dv8tion.jda.api.entities.Message;
 
@@ -25,42 +27,43 @@ import java.util.Iterator;
 
 public class MessageService extends AbstractService {
     
-    private long deleteInterval;
-    
-    public MessageService() {
-        setInterval(5000L);
-        setDeleteInterval(60000L);
+    @Override
+    public boolean prepare() {
+        setInterval(1000L);
+        return true;
     }
     
     @Override
     public void execute() {
-        synchronized (MessageManager.getMessages()) {
-            for (Iterator<Message> iterator = MessageManager.getMessages().iterator(); iterator.hasNext(); ) {
+        Instant deleteTime = DiscordMusic.getInstance().getConfig()
+                .map(Config::getMessageCategory)
+                .map(MessageCategory::getDeleteInternal)
+                .map(deleteInternal -> Instant.now().minusMillis(deleteInternal))
+                .orElse(null);
+        if (deleteTime == null) {
+            DiscordMusic.getInstance().getLogger().warn("Failed to calculate delete time");
+            return;
+        }
+        
+        synchronized (MessageManager.MESSAGES) {
+            for (Iterator<Message> iterator = MessageManager.MESSAGES.iterator(); iterator.hasNext(); ) {
                 Message message = iterator.next();
-                if (message == null || message.getTimeCreated() == null || message.getIdLong() == 0L) {
+                if (message.getIdLong() == 0L) {
                     iterator.remove();
                     continue;
                 }
                 
-                if (message.getTimeCreated().toInstant().toEpochMilli() > Instant.now().minusMillis(getDeleteInterval()).toEpochMilli()) {
+                if (message.getTimeCreated().toInstant().isAfter(deleteTime)) {
                     continue;
                 }
                 
                 message.delete().queue(
                         success -> DiscordMusic.getInstance().getLogger().debug("Successfully deleted Message {}", message.getIdLong()),
-                        failure -> DiscordMusic.getInstance().getLogger().error("Encountered an error deleting Message {}", message.getIdLong(), failure)
+                        failure -> DiscordMusic.getInstance().getLogger().error("Encountered an error deleting message {}", message.getIdLong(), failure)
                 );
                 
                 iterator.remove();
             }
         }
-    }
-    
-    private long getDeleteInterval() {
-        return deleteInterval;
-    }
-    
-    private void setDeleteInterval(long deleteInterval) {
-        this.deleteInterval = deleteInterval;
     }
 }

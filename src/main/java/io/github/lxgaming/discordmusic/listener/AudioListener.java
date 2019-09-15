@@ -22,8 +22,8 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import io.github.lxgaming.discordmusic.DiscordMusic;
+import io.github.lxgaming.discordmusic.data.AudioTrackData;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
-import io.github.lxgaming.discordmusic.util.DiscordData;
 
 public class AudioListener extends AudioEventAdapter {
     
@@ -46,19 +46,21 @@ public class AudioListener extends AudioEventAdapter {
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         DiscordMusic.getInstance().getLogger().debug("Track end - {} - {} ({})", endReason.name(), track.getInfo().title, track.getInfo().uri);
         if (endReason.mayStartNext) {
-            AudioManager.playNext(track.getUserData(DiscordData.class));
+            AudioManager.getData(track).map(AudioTrackData::getGuild).ifPresent(AudioManager::playNext);
         }
     }
     
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         DiscordMusic.getInstance().getLogger().debug("Track exception - {} - {} ({})", exception.getMessage(), track.getInfo().title, track.getInfo().uri);
-        AudioManager.exception(track.getUserData(DiscordData.class), exception);
+        AudioManager.getData(track).map(AudioTrackData::getChannel).ifPresent(channel -> AudioManager.exception(channel, exception));
     }
     
     @Override
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
         DiscordMusic.getInstance().getLogger().debug("Track stuck - {} ({})", track.getInfo().title, track.getInfo().uri);
-        AudioManager.exception(track.getUserData(DiscordData.class), new FriendlyException("Track stuck", FriendlyException.Severity.COMMON, null));
+        AudioManager.getData(track).map(AudioTrackData::getChannel).ifPresent(channel -> {
+            AudioManager.exception(channel, new FriendlyException("Track stuck", FriendlyException.Severity.COMMON, null));
+        });
     }
 }

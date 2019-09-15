@@ -20,38 +20,40 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import io.github.lxgaming.discordmusic.data.AudioTrackData;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
-import io.github.lxgaming.discordmusic.util.DiscordData;
 
 public final class AudioPlayerLoadResultHandler implements AudioLoadResultHandler {
     
-    private final DiscordData discordData;
+    private final AudioTrackData trackData;
     
-    public AudioPlayerLoadResultHandler(DiscordData discordData) {
-        this.discordData = discordData;
+    public AudioPlayerLoadResultHandler(AudioTrackData trackData) {
+        this.trackData = trackData;
     }
     
     @Override
     public void trackLoaded(AudioTrack track) {
-        AudioManager.track(getDiscordData(), track);
+        track.setUserData(trackData);
+        AudioManager.track(track);
     }
     
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
-        AudioManager.playlist(getDiscordData(), playlist);
+        playlist.getTracks().forEach(track -> track.setUserData(trackData));
+        if (playlist.getSelectedTrack() != null) {
+            playlist.getSelectedTrack().setUserData(trackData);
+        }
+        
+        AudioManager.playlist(playlist);
     }
     
     @Override
     public void noMatches() {
-        AudioManager.exception(getDiscordData(), new FriendlyException("No matches found", FriendlyException.Severity.COMMON, null));
+        loadFailed(new FriendlyException("No matches found", FriendlyException.Severity.COMMON, null));
     }
     
     @Override
     public void loadFailed(FriendlyException exception) {
-        AudioManager.exception(getDiscordData(), exception);
-    }
-    
-    private DiscordData getDiscordData() {
-        return discordData;
+        AudioManager.exception(trackData.getChannel(), exception);
     }
 }

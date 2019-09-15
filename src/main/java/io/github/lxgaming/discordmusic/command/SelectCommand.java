@@ -22,13 +22,11 @@ import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
-import io.github.lxgaming.discordmusic.util.DiscordData;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class SelectCommand extends AbstractCommand {
@@ -43,7 +41,6 @@ public class SelectCommand extends AbstractCommand {
     @Override
     public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
         if (arguments.isEmpty()) {
             embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
@@ -52,7 +49,7 @@ public class SelectCommand extends AbstractCommand {
             return;
         }
         
-        Map.Entry<DiscordData, List<AudioTrack>> searchResult = AudioManager.getSearchResult(message.getMember());
+        List<AudioTrack> searchResult = AudioManager.getSearchResult(message.getMember());
         if (searchResult == null) {
             embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("You don't have any search results pending selection.");
@@ -72,16 +69,17 @@ public class SelectCommand extends AbstractCommand {
                 continue;
             }
             
-            if (selection.get() < 1 || selection.get() > searchResult.getValue().size()) {
+            if (selection.get() < 1 || selection.get() > searchResult.size()) {
                 embedBuilder.getDescriptionBuilder().append("**OutOfBounds**: ").append(selection.get());
                 continue;
             }
             
-            AudioTrack audioTrack = searchResult.getValue().get(selection.get() - 1);
+            AudioTrack audioTrack = searchResult.get(selection.get() - 1);
             audioTracks.add(audioTrack);
             embedBuilder.getDescriptionBuilder().append("**Processing**: ").append(audioTrack.getInfo().title);
         }
         
+        embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
         embedBuilder.setTitle("Select results");
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
         if (audioTracks.isEmpty()) {
@@ -91,9 +89,9 @@ public class SelectCommand extends AbstractCommand {
         AudioManager.removeSearchResult(message.getMember());
         if (audioTracks.size() > 1) {
             AudioPlaylist audioPlaylist = new BasicAudioPlaylist("Search", audioTracks, null, false);
-            AudioManager.playlist(new DiscordData(message), audioPlaylist);
+            AudioManager.playlist(audioPlaylist);
         } else {
-            AudioManager.track(new DiscordData(message), audioTracks.get(0));
+            AudioManager.track(audioTracks.get(0));
         }
     }
 }

@@ -22,17 +22,10 @@ import java.util.Set;
 
 public class ServerCategory {
     
-    private long id;
-    private String name;
-    private long autoJoinChannel;
-    private Set<GroupCategory> groups;
-    
-    public ServerCategory() {
-        setId(0L);
-        setName("Unknown");
-        setAutoJoinChannel(0L);
-        setGroups(Toolbox.newLinkedHashSet());
-    }
+    private long id = 0L;
+    private String name = "Unknown";
+    private long autoJoinChannel = 0L;
+    private Set<GroupCategory> groups = Toolbox.newHashSet();
     
     public long getId() {
         return id;
@@ -54,15 +47,7 @@ public class ServerCategory {
         return autoJoinChannel;
     }
     
-    public void setAutoJoinChannel(long autoJoinChannel) {
-        this.autoJoinChannel = autoJoinChannel;
-    }
-    
     public Set<GroupCategory> getGroups() {
         return groups;
-    }
-    
-    public void setGroups(Set<GroupCategory> groups) {
-        this.groups = groups;
     }
 }

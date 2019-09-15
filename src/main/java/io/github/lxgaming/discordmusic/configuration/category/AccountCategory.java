@@ -16,29 +16,20 @@
 
 package io.github.lxgaming.discordmusic.configuration.category;
 
+import io.github.lxgaming.discordmusic.util.Reference;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.audio.SpeakingMode;
 import net.dv8tion.jda.api.entities.Activity;
 
 public class AccountCategory {
     
-    private long id;
-    private String name;
-    private String token;
-    private String gameTitle;
-    private Activity.ActivityType gameType;
-    private OnlineStatus onlineStatus;
-    private SpeakingMode speakingMode;
-    
-    public AccountCategory() {
-        setId(0L);
-        setName("Unknown");
-        setToken("token");
-        setGameTitle("music");
-        setGameType(Activity.ActivityType.DEFAULT);
-        setOnlineStatus(OnlineStatus.ONLINE);
-        setSpeakingMode(SpeakingMode.VOICE);
-    }
+    private long id = 0L;
+    private String name = "Unknown";
+    private String token = "";
+    private String activityTitle = Reference.NAME;
+    private Activity.ActivityType activityType = Activity.ActivityType.DEFAULT;
+    private OnlineStatus onlineStatus = OnlineStatus.ONLINE;
+    private SpeakingMode speakingMode = SpeakingMode.VOICE;
     
     public long getId() {
         return id;
@@ -60,39 +51,19 @@ public class AccountCategory {
         return token;
     }
     
-    public void setToken(String token) {
-        this.token = token;
+    public String getActivityTitle() {
+        return activityTitle;
     }
     
-    public String getGameTitle() {
-        return gameTitle;
-    }
-    
-    public void setGameTitle(String gameTitle) {
-        this.gameTitle = gameTitle;
-    }
-    
-    public Activity.ActivityType getGameType() {
-        return gameType;
-    }
-    
-    public void setGameType(Activity.ActivityType gameType) {
-        this.gameType = gameType;
+    public Activity.ActivityType getActivityType() {
+        return activityType;
     }
     
     public OnlineStatus getOnlineStatus() {
         return onlineStatus;
     }
     
-    public void setOnlineStatus(OnlineStatus onlineStatus) {
-        this.onlineStatus = onlineStatus;
-    }
-    
     public SpeakingMode getSpeakingMode() {
         return speakingMode;
-    }
-    
-    public void setSpeakingMode(SpeakingMode speakingMode) {
-        this.speakingMode = speakingMode;
     }
 }

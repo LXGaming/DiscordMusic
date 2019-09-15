@@ -16,6 +16,7 @@
 
 package io.github.lxgaming.discordmusic.manager;
 
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.AccountCategory;
@@ -23,51 +24,73 @@ import io.github.lxgaming.discordmusic.listener.DiscordListener;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.security.auth.login.LoginException;
 import java.util.Optional;
 
 public class AccountManager {
     
+    public static final EventWaiter EVENT_WAITER = new EventWaiter(ServiceManager.SCHEDULED_EXECUTOR_SERVICE, false);
     private static JDA jda;
     
-    public static void buildAccount() {
-        getAccount().ifPresent(AccountManager::createJDA);
+    public static void prepare() {
+        AccountCategory accountCategory = DiscordMusic.getInstance().getConfig().map(Config::getAccountCategory).orElseThrow(NullPointerException::new);
+        createJDA(accountCategory.getToken());
+        reload();
     }
     
-    public static void reloadAccount() {
-        AccountCategory account = getAccount().orElse(null);
+    public static boolean reload() {
+        AccountCategory accountCategory = DiscordMusic.getInstance().getConfig().map(Config::getAccountCategory).orElse(null);
+        if (accountCategory == null) {
+            DiscordMusic.getInstance().getLogger().warn("AccountCategory is unavailable");
+            return false;
+        }
+        
         JDA jda = getJDA().orElse(null);
-        if (account == null || jda == null) {
-            return;
+        if (jda == null) {
+            DiscordMusic.getInstance().getLogger().warn("JDA is unavailable");
+            return false;
         }
         
-        if (account.getGameType() != null && StringUtils.isNotBlank(account.getGameTitle())) {
-            jda.getPresence().setActivity(Activity.of(account.getGameType(), account.getGameTitle()));
+        Activity activity;
+        if (StringUtils.isNotBlank(accountCategory.getActivityTitle()) && accountCategory.getActivityType() != null) {
+            activity = Activity.of(accountCategory.getActivityType(), accountCategory.getActivityTitle());
+        } else {
+            activity = null;
         }
         
-        if (account.getOnlineStatus() != null) {
-            jda.getPresence().setStatus(account.getOnlineStatus());
+        OnlineStatus onlineStatus;
+        if (accountCategory.getOnlineStatus() != OnlineStatus.UNKNOWN) {
+            onlineStatus = accountCategory.getOnlineStatus();
+        } else {
+            onlineStatus = null;
         }
+        
+        jda.getPresence().setPresence(onlineStatus, activity);
+        return true;
     }
     
-    private static void createJDA(AccountCategory account) {
+    public static void shutdown() {
+        getJDA().ifPresent(JDA::shutdown);
+    }
+    
+    private static void createJDA(String token) {
         try {
+            if (StringUtils.isBlank(token)) {
+                throw new IllegalArgumentException("Token cannot be blank");
+            }
+            
             JDABuilder jdaBuilder = new JDABuilder(AccountType.BOT);
-            jdaBuilder.addEventListeners(new DiscordListener());
+            jdaBuilder.addEventListeners(EVENT_WAITER, new DiscordListener());
             jdaBuilder.setBulkDeleteSplittingEnabled(false);
             jdaBuilder.setEnableShutdownHook(false);
-            jdaBuilder.setToken(account.getToken());
+            jdaBuilder.setToken(token);
             jda = jdaBuilder.build();
-        } catch (LoginException | RuntimeException ex) {
-            DiscordMusic.getInstance().getLogger().error("Encountered an error processing {}::createJDA", "AccountManager", ex);
+        } catch (Exception ex) {
+            DiscordMusic.getInstance().getLogger().error("Encountered an error while creating JDA", ex);
         }
-    }
-    
-    public static Optional<AccountCategory> getAccount() {
-        return DiscordMusic.getInstance().getConfig().map(Config::getAccount);
     }
     
     public static Optional<JDA> getJDA() {

@@ -36,20 +36,19 @@ public class SkipCommand extends AbstractCommand {
     @Override
     public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
         AudioTrack audioTrack = AudioManager.getAudioPlayer(message.getGuild()).getPlayingTrack();
-        if (audioTrack == null) {
+        if (audioTrack != null) {
+            embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
+            embedBuilder.getDescriptionBuilder()
+                    .append("**Skipped** ")
+                    .append("[").append(audioTrack.getInfo().title).append("](").append(audioTrack.getInfo().uri).append(")");
+            AudioManager.playNext(message.getGuild());
+        } else {
             embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("Nothing is currently playing.");
-            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
-            return;
         }
         
-        embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
-        embedBuilder.setTitle("Skipped");
-        embedBuilder.getDescriptionBuilder().append("[").append(audioTrack.getInfo().title).append("](").append(audioTrack.getInfo().uri).append(")");
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
-        AudioManager.playNext(message.getGuild());
     }
 }

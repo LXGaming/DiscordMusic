@@ -32,7 +32,7 @@ import java.util.Set;
 
 public class GroupManager {
     
-    public static void registerServer(Guild guild) {
+    public static void register(Guild guild) {
         Set<GroupCategory> groups = Toolbox.newLinkedHashSet();
         for (Role role : guild.getRoles()) {
             GroupCategory group = getGroup(role).orElse(new GroupCategory());
@@ -41,12 +41,13 @@ public class GroupManager {
             groups.add(group);
         }
         
-        ServerCategory server = getServer(guild).orElse(new ServerCategory());
-        server.setId(guild.getIdLong());
-        server.setName(guild.getName());
-        server.setGroups(groups);
+        ServerCategory serverCategory = getServer(guild).orElse(new ServerCategory());
+        serverCategory.setId(guild.getIdLong());
+        serverCategory.setName(guild.getName());
+        serverCategory.getGroups().clear();
+        serverCategory.getGroups().addAll(groups);
         
-        DiscordMusic.getInstance().getConfig().map(Config::getServers).ifPresent(servers -> servers.add(server));
+        DiscordMusic.getInstance().getConfig().map(Config::getServerCategories).ifPresent(serverCategories -> serverCategories.add(serverCategory));
         DiscordMusic.getInstance().getConfiguration().saveConfiguration();
     }
     
@@ -86,12 +87,12 @@ public class GroupManager {
     }
     
     public static Optional<GroupCategory> getGroup(Role role) {
-        ServerCategory server = getServer(role.getGuild()).orElse(null);
-        if (server == null || server.getGroups().isEmpty()) {
+        ServerCategory serverCategory = getServer(role.getGuild()).orElse(null);
+        if (serverCategory == null || serverCategory.getGroups().isEmpty()) {
             return Optional.empty();
         }
         
-        for (GroupCategory group : server.getGroups()) {
+        for (GroupCategory group : serverCategory.getGroups()) {
             if (group.getId() == role.getIdLong()) {
                 return Optional.of(group);
             }
@@ -112,12 +113,12 @@ public class GroupManager {
     }
     
     public static Optional<ServerCategory> getServer(Guild guild) {
-        Set<ServerCategory> servers = DiscordMusic.getInstance().getConfig().map(Config::getServers).orElse(null);
-        if (servers == null || servers.isEmpty()) {
+        Set<ServerCategory> serverCategories = DiscordMusic.getInstance().getConfig().map(Config::getServerCategories).orElse(null);
+        if (serverCategories == null || serverCategories.isEmpty()) {
             return Optional.empty();
         }
         
-        for (ServerCategory server : servers) {
+        for (ServerCategory server : serverCategories) {
             if (server.getId() == guild.getIdLong()) {
                 return Optional.of(server);
             }

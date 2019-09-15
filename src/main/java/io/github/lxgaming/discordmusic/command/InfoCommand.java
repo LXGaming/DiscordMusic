@@ -16,6 +16,7 @@
 
 package io.github.lxgaming.discordmusic.command;
 
+import com.jagrosh.jdautilities.commons.JDAUtilitiesInfo;
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.data.Color;
@@ -42,14 +43,15 @@ public class InfoCommand extends AbstractCommand {
     @Override
     public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setAuthor(Reference.APP_NAME + " v" + Reference.APP_VERSION, Reference.SOURCE, message.getJDA().getSelfUser().getEffectiveAvatarUrl());
+        embedBuilder.setAuthor(Reference.NAME + " v" + Reference.VERSION, Reference.SOURCE, message.getJDA().getSelfUser().getEffectiveAvatarUrl());
         embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         embedBuilder.addField("Uptime", Toolbox.getTimeString(Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis()), false);
         embedBuilder.addField("Authors", Reference.AUTHORS, false);
         embedBuilder.addField("Source", Reference.SOURCE, false);
         embedBuilder.addField("Website", Reference.WEBSITE, false);
         embedBuilder.addField("Dependencies", ""
-                + "\n- " + "JDA (Java Discord API) v" + JDAInfo.VERSION
+                + "\n- " + "JDA v" + JDAInfo.VERSION
+                + "\n- " + "JDA-Utilities v" + JDAUtilitiesInfo.VERSION
                 + "\n- " + "LavaPlayer v" + PlayerLibrary.VERSION, false);
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }

@@ -41,7 +41,6 @@ public class JoinCommand extends AbstractCommand {
     @Override
     public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
         Set<VoiceChannel> voiceChannels = Toolbox.newLinkedHashSet();
         if (arguments.isEmpty()) {

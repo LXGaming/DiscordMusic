@@ -18,11 +18,12 @@ package io.github.lxgaming.discordmusic.command;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
+import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
+import io.github.lxgaming.discordmusic.data.AudioTrackData;
 import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.handler.AudioPlayerLoadResultHandler;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
-import io.github.lxgaming.discordmusic.util.DiscordData;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -45,7 +46,7 @@ public class PlayCommand extends AbstractCommand {
     @Override
     public void execute(Message message, List<String> arguments) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
+        
         if (arguments.isEmpty()) {
             embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("Invalid arguments");
@@ -67,14 +68,14 @@ public class PlayCommand extends AbstractCommand {
                 continue;
             }
             
-            Optional<Set<String>> allowedSources = DiscordMusic.getInstance().getConfig().map(Config::getAllowedSources);
+            Optional<Set<String>> allowedSources = DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).map(GeneralCategory::getAllowedSources);
             if (!allowedSources.isPresent() || !allowedSources.get().contains(url.get().getHost())) {
                 embedBuilder.getDescriptionBuilder().append("**Forbidden:** ").append(string).append("\n");
                 continue;
             }
             
             embedBuilder.getDescriptionBuilder().append("**Processing**: ").append(string).append("\n");
-            AudioManager.getAudioPlayerManager().loadItem(string, new AudioPlayerLoadResultHandler(new DiscordData(message)));
+            AudioManager.AUDIO_PLAYER_MANAGER.loadItem(string, new AudioPlayerLoadResultHandler(AudioTrackData.of(message)));
         }
         
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
