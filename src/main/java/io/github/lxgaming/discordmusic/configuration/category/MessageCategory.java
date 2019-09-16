@@ -25,7 +25,7 @@ public class MessageCategory {
     
     private long actionTimeout = 900000L;
     private Map<Color, String> colors = Toolbox.newHashMap();
-    private long deleteInternal = 60000L;
+    private long deleteInterval = 60000L;
     private boolean deleteInvoking = true;
     private boolean deleteMessages = true;
     
@@ -37,8 +37,8 @@ public class MessageCategory {
         return colors;
     }
     
-    public long getDeleteInternal() {
-        return deleteInternal;
+    public long getDeleteInterval() {
+        return deleteInterval;
     }
     
     public boolean isDeleteInvoking() {

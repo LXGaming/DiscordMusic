@@ -37,8 +37,8 @@ public class MessageService extends AbstractService {
     public void execute() {
         Instant deleteTime = DiscordMusic.getInstance().getConfig()
                 .map(Config::getMessageCategory)
-                .map(MessageCategory::getDeleteInternal)
-                .map(deleteInternal -> Instant.now().minusMillis(deleteInternal))
+                .map(MessageCategory::getDeleteInterval)
+                .map(deleteInterval -> Instant.now().minusMillis(deleteInterval))
                 .orElse(null);
         if (deleteTime == null) {
             DiscordMusic.getInstance().getLogger().warn("Failed to calculate delete time");
