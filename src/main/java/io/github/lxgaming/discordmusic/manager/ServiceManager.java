@@ -94,7 +94,7 @@ public class ServiceManager {
             }
             
             DiscordMusic.getInstance().getLogger().info("Successfully terminated threads, continuing with shutdown process...");
-        } catch (InterruptedException | RuntimeException ex) {
+        } catch (Exception ex) {
             DiscordMusic.getInstance().getLogger().error("Failed to terminate threads, continuing with shutdown process...");
         }
     }

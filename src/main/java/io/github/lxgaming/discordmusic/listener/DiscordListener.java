@@ -83,7 +83,7 @@ public class DiscordListener extends ListenerAdapter {
     
     @Override
     public void onMessageDelete(MessageDeleteEvent event) {
-        MessageManager.removeMessages(Toolbox.newLinkedHashSet(event.getMessageId()));
+        MessageManager.removeMessages(Toolbox.newHashSet(event.getMessageId()));
     }
     
     @Override
