@@ -26,6 +26,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
+import io.github.lxgaming.discordmusic.configuration.category.MessageCategory;
 import io.github.lxgaming.discordmusic.data.AudioTrackData;
 import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.handler.AudioPlayerSendHandler;
@@ -45,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class AudioManager {
     
@@ -218,6 +220,10 @@ public class AudioManager {
                     getSearchResults(message.getGuild()).remove(entry.getKey());
                 });
                 menuBuilder.setEventWaiter(AccountManager.EVENT_WAITER);
+                DiscordMusic.getInstance().getConfig()
+                        .map(Config::getMessageCategory)
+                        .map(MessageCategory::getActionTimeout)
+                        .ifPresent(timeout -> menuBuilder.setTimeout(timeout, TimeUnit.MILLISECONDS));
                 menuBuilder.build().display(entry.getKey().getChannel(), embedBuilder.build());
                 
                 getSearchResults(entry.getKey().getGuild()).put(entry.getKey(), entry.getValue());

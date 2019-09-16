@@ -23,10 +23,15 @@ import java.util.Map;
 
 public class MessageCategory {
     
+    private long actionTimeout = 900000L;
     private Map<Color, String> colors = Toolbox.newHashMap();
     private long deleteInternal = 60000L;
     private boolean deleteInvoking = true;
     private boolean deleteMessages = true;
+    
+    public long getActionTimeout() {
+        return actionTimeout;
+    }
     
     public Map<Color, String> getColors() {
         return colors;
