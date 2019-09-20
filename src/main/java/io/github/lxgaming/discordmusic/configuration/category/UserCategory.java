@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Alex Thomson
+ * Copyright 2019 Alex Thomson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,11 @@ import io.github.lxgaming.discordmusic.util.Toolbox;
 
 import java.util.Set;
 
-public class ServerCategory {
+public class UserCategory {
     
     private long id = 0L;
     private String name = "Unknown";
-    private long autoJoinChannel = 0L;
-    private Set<GroupCategory> groups = Toolbox.newHashSet();
+    private Set<String> permissions = Toolbox.newLinkedHashSet();
     
     public long getId() {
         return id;
@@ -43,11 +42,7 @@ public class ServerCategory {
         this.name = name;
     }
     
-    public long getAutoJoinChannel() {
-        return autoJoinChannel;
-    }
-    
-    public Set<GroupCategory> getGroups() {
-        return groups;
+    public Set<String> getPermissions() {
+        return permissions;
     }
 }

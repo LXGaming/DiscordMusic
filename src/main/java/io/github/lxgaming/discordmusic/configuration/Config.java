@@ -19,8 +19,8 @@ package io.github.lxgaming.discordmusic.configuration;
 import com.google.gson.annotations.SerializedName;
 import io.github.lxgaming.discordmusic.configuration.category.AccountCategory;
 import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
+import io.github.lxgaming.discordmusic.configuration.category.GuildCategory;
 import io.github.lxgaming.discordmusic.configuration.category.MessageCategory;
-import io.github.lxgaming.discordmusic.configuration.category.ServerCategory;
 import io.github.lxgaming.discordmusic.configuration.category.ServiceCategory;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 
@@ -34,11 +34,11 @@ public class Config {
     @SerializedName("general")
     private GeneralCategory generalCategory = new GeneralCategory();
     
+    @SerializedName("guilds")
+    private Set<GuildCategory> guildCategories = Toolbox.newHashSet();
+    
     @SerializedName("message")
     private MessageCategory messageCategory = new MessageCategory();
-    
-    @SerializedName("servers")
-    private Set<ServerCategory> serverCategories = Toolbox.newHashSet();
     
     @SerializedName("service")
     private ServiceCategory serviceCategory = new ServiceCategory();
@@ -51,12 +51,12 @@ public class Config {
         return generalCategory;
     }
     
-    public MessageCategory getMessageCategory() {
-        return messageCategory;
+    public Set<GuildCategory> getGuildCategories() {
+        return guildCategories;
     }
     
-    public Set<ServerCategory> getServerCategories() {
-        return serverCategories;
+    public MessageCategory getMessageCategory() {
+        return messageCategory;
     }
     
     public ServiceCategory getServiceCategory() {

@@ -20,11 +20,11 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.AccountCategory;
-import io.github.lxgaming.discordmusic.configuration.category.ServerCategory;
+import io.github.lxgaming.discordmusic.configuration.category.GuildCategory;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 import io.github.lxgaming.discordmusic.manager.CommandManager;
-import io.github.lxgaming.discordmusic.manager.GroupManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
+import io.github.lxgaming.discordmusic.manager.PermissionManager;
 import io.github.lxgaming.discordmusic.manager.ServiceManager;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -61,9 +61,9 @@ public class DiscordListener extends ListenerAdapter {
         AudioSourceManagers.registerRemoteSources(AudioManager.AUDIO_PLAYER_MANAGER);
         for (Guild guild : event.getJDA().getGuilds()) {
             AudioManager.register(guild);
-            GroupManager.register(guild);
-            GroupManager.getServer(guild)
-                    .map(ServerCategory::getAutoJoinChannel)
+            PermissionManager.register(guild);
+            PermissionManager.getGuildCategory(guild)
+                    .map(GuildCategory::getAutoJoinChannel)
                     .filter(id -> id > 0)
                     .map(guild::getVoiceChannelById)
                     .ifPresent(guild.getAudioManager()::openAudioConnection);

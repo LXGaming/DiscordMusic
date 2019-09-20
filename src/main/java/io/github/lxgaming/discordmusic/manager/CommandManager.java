@@ -23,6 +23,7 @@ import io.github.lxgaming.discordmusic.command.DebugCommand;
 import io.github.lxgaming.discordmusic.command.HelpCommand;
 import io.github.lxgaming.discordmusic.command.InfoCommand;
 import io.github.lxgaming.discordmusic.command.JoinCommand;
+import io.github.lxgaming.discordmusic.command.PermissionCommand;
 import io.github.lxgaming.discordmusic.command.PlayCommand;
 import io.github.lxgaming.discordmusic.command.PlayingCommand;
 import io.github.lxgaming.discordmusic.command.QueueCommand;
@@ -84,7 +85,7 @@ public class CommandManager {
             MessageManager.MESSAGES.add(message);
         }
         
-        if (StringUtils.isBlank(command.getPermission()) || !GroupManager.hasPermission(message.getMember(), command.getPermission())) {
+        if (StringUtils.isBlank(command.getPermission()) || !PermissionManager.hasPermission(message.getMember(), command.getPermission())) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("You do not have permission to execute this command");
@@ -94,13 +95,13 @@ public class CommandManager {
         }
         
         if (!arguments.isEmpty()) {
-            DiscordMusic.getInstance().getLogger().debug("Processing {} {} for {}",
+            DiscordMusic.getInstance().getLogger().debug("Processing {} {} for {}#{} ({})",
                     command.getPrimaryAlias().orElse("Unknown"), String.join(" ", arguments),
-                    GroupManager.getUsername(message.getAuthor()));
+                    message.getAuthor().getName(), message.getAuthor().getDiscriminator(), message.getAuthor().getIdLong());
         } else {
-            DiscordMusic.getInstance().getLogger().debug("Processing {} for {}",
+            DiscordMusic.getInstance().getLogger().debug("Processing {} for {}#{} ({})",
                     command.getPrimaryAlias().orElse("Unknown"),
-                    GroupManager.getUsername(message.getAuthor()));
+                    message.getAuthor().getName(), message.getAuthor().getDiscriminator(), message.getAuthor().getIdLong());
         }
         
         try {
