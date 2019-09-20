@@ -58,6 +58,7 @@ public class CommandManager {
         registerCommand(HelpCommand.class);
         registerCommand(InfoCommand.class);
         registerCommand(JoinCommand.class);
+        registerCommand(PermissionCommand.class);
         registerCommand(PlayCommand.class);
         registerCommand(PlayingCommand.class);
         registerCommand(QueueCommand.class);
