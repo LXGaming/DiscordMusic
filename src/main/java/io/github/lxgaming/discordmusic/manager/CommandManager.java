@@ -86,6 +86,10 @@ public class CommandManager {
             MessageManager.MESSAGES.add(message);
         }
         
+        if (DiscordMusic.getInstance().getConfig().map(Config::getMessageCategory).map(MessageCategory::isSendTyping).orElse(false)) {
+            message.getChannel().sendTyping().queue();
+        }
+        
         if (StringUtils.isBlank(command.getPermission()) || !PermissionManager.hasPermission(message.getMember(), command.getPermission())) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(MessageManager.getColor(Color.ERROR));

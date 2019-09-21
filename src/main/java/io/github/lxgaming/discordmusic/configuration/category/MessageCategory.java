@@ -28,6 +28,7 @@ public class MessageCategory {
     private long deleteInterval = 60000L;
     private boolean deleteInvoking = true;
     private boolean deleteMessages = true;
+    private boolean sendTyping = true;
     
     public long getActionTimeout() {
         return actionTimeout;
@@ -47,5 +48,9 @@ public class MessageCategory {
     
     public boolean isDeleteMessages() {
         return deleteMessages;
+    }
+    
+    public boolean isSendTyping() {
+        return sendTyping;
     }
 }
