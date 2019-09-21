@@ -29,7 +29,6 @@ public class PermissionCommand extends AbstractCommand {
     
     public PermissionCommand() {
         addAlias("permission");
-        addAlias("version");
         addChild(AddPermissionCommand.class);
         addChild(ListPermissionCommand.class);
         addChild(RemovePermissionCommand.class);
