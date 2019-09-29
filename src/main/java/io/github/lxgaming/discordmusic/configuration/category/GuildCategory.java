@@ -16,6 +16,7 @@
 
 package io.github.lxgaming.discordmusic.configuration.category;
 
+import com.google.gson.annotations.SerializedName;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 
 import java.util.Set;
@@ -25,7 +26,11 @@ public class GuildCategory {
     private long id = 0L;
     private String name = "Unknown";
     private long autoJoinChannel = 0L;
+    
+    @SerializedName(value = "roles", alternate = "roleCategories")
     private Set<RoleCategory> roleCategories = Toolbox.newLinkedHashSet();
+    
+    @SerializedName(value = "users", alternate = "userCategories")
     private Set<UserCategory> userCategories = Toolbox.newLinkedHashSet();
     
     public long getId() {
