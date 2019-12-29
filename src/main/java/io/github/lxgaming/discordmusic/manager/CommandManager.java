@@ -49,7 +49,7 @@ import java.util.Set;
 
 public class CommandManager {
     
-    public static final Set<AbstractCommand> COMMANDS = Toolbox.newHashSet();
+    public static final Set<AbstractCommand> COMMANDS = Toolbox.newLinkedHashSet();
     private static final Set<Class<? extends AbstractCommand>> COMMAND_CLASSES = Toolbox.newHashSet();
     
     public static void prepare() {
