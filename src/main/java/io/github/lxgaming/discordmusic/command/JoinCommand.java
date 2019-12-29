@@ -22,7 +22,6 @@ import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.exceptions.GuildUnavailableException;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -76,7 +75,7 @@ public class JoinCommand extends AbstractCommand {
                 embedBuilder.setTitle("Joining " + voiceChannel.getName());
                 MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
                 return;
-            } catch (GuildUnavailableException | IllegalArgumentException | UnsupportedOperationException ex) {
+            } catch (IllegalArgumentException | UnsupportedOperationException ex) {
                 embedBuilder.getDescriptionBuilder().setLength(0);
                 embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
                 embedBuilder.setTitle("Encountered an error");
