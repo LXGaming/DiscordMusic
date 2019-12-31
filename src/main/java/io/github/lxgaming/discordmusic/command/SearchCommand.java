@@ -21,24 +21,26 @@ import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.handler.AudioPlayerLoadResultHandler;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
+import io.github.lxgaming.discordmusic.util.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.utils.MarkdownSanitizer;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
-public class SearchCommand extends AbstractCommand {
+public class SearchCommand extends Command {
     
-    public SearchCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("search");
-        setDescription("Searches YouTube.");
-        setPermission("search.base");
-        setUsage("<Query...>");
+        description("Searches YouTube.");
+        permission("search.base");
+        usage("<Query...>");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         
         if (arguments.isEmpty()) {

@@ -24,27 +24,29 @@ import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.handler.AudioPlayerLoadResultHandler;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
+import io.github.lxgaming.discordmusic.util.StringUtils;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class PlayCommand extends AbstractCommand {
+public class PlayCommand extends Command {
     
-    public PlayCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("play");
-        setDescription("Plays audio from the specific URLs.");
-        setUsage("[URL...]");
-        setPermission("play.base");
+        description("Plays audio from the specific URLs.");
+        usage("[URL...]");
+        permission("play.base");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         
         if (arguments.isEmpty()) {

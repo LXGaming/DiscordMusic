@@ -19,7 +19,7 @@ package io.github.lxgaming.discordmusic.manager;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.ServiceCategory;
-import io.github.lxgaming.discordmusic.service.AbstractService;
+import io.github.lxgaming.discordmusic.service.Service;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 
 import java.util.Optional;
@@ -27,7 +27,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class ServiceManager {
+public final class ServiceManager {
     
     public static final ScheduledThreadPoolExecutor SCHEDULED_EXECUTOR_SERVICE = new ScheduledThreadPoolExecutor(0, Toolbox.newThreadFactory("Service Thread #%d"));
     
@@ -53,27 +53,27 @@ public class ServiceManager {
         SCHEDULED_EXECUTOR_SERVICE.setKeepAliveTime(serviceCategory.getKeepAliveTime(), TimeUnit.MILLISECONDS);
     }
     
-    public static void schedule(AbstractService abstractService) {
+    public static void schedule(Service service) {
         try {
-            if (!abstractService.prepare()) {
+            if (!service.prepare()) {
                 throw new IllegalStateException("Service preparation failed");
             }
             
-            schedule(abstractService, abstractService.getDelay(), abstractService.getInterval()).ifPresent(abstractService::setScheduledFuture);
+            schedule(service, service.getDelay(), service.getInterval()).ifPresent(service::setScheduledFuture);
         } catch (Exception ex) {
             DiscordMusic.getInstance().getLogger().error("Encountered an error while scheduling service", ex);
         }
     }
     
-    public static Optional<ScheduledFuture> schedule(Runnable runnable) {
+    public static Optional<ScheduledFuture<?>> schedule(Runnable runnable) {
         return schedule(runnable, 0L, 0L);
     }
     
-    public static Optional<ScheduledFuture> schedule(Runnable runnable, long delay, long interval) {
+    public static Optional<ScheduledFuture<?>> schedule(Runnable runnable, long delay, long interval) {
         return schedule(runnable, delay, interval, TimeUnit.MILLISECONDS);
     }
     
-    public static Optional<ScheduledFuture> schedule(Runnable runnable, long delay, long interval, TimeUnit unit) {
+    public static Optional<ScheduledFuture<?>> schedule(Runnable runnable, long delay, long interval, TimeUnit unit) {
         try {
             if (interval <= 0L) {
                 return Optional.of(SCHEDULED_EXECUTOR_SERVICE.schedule(runnable, Math.max(delay, 0L), unit));

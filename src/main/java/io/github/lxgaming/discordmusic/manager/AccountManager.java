@@ -21,16 +21,16 @@ import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.AccountCategory;
 import io.github.lxgaming.discordmusic.listener.DiscordListener;
+import io.github.lxgaming.discordmusic.util.StringUtils;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
-public class AccountManager {
+public final class AccountManager {
     
     public static final EventWaiter EVENT_WAITER = new EventWaiter(ServiceManager.SCHEDULED_EXECUTOR_SERVICE, false);
     private static JDA jda;

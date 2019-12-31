@@ -25,16 +25,18 @@ import net.dv8tion.jda.api.entities.Message;
 
 import java.util.List;
 
-public class SkipCommand extends AbstractCommand {
+public class SkipCommand extends Command {
     
-    public SkipCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("skip");
-        setDescription("Skip the current media");
-        setPermission("skip.base");
+        description("Skip the current media");
+        permission("skip.base");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         
         AudioTrack audioTrack = AudioManager.getAudioPlayer(message.getGuild()).getPlayingTrack();

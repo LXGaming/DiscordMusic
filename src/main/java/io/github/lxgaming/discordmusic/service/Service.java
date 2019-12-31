@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Alex Thomson
+ * Copyright 2019 Alex Thomson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ import io.github.lxgaming.discordmusic.DiscordMusic;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public abstract class AbstractService implements Runnable {
+public abstract class Service implements Runnable {
     
     private long delay;
     private long interval;
-    private ScheduledFuture scheduledFuture;
+    private ScheduledFuture<?> scheduledFuture;
     
     public final void run() {
         try {
@@ -48,7 +48,7 @@ public abstract class AbstractService implements Runnable {
         return delay;
     }
     
-    protected final void setDelay(long delay) {
+    protected final void delay(long delay) {
         this.delay = delay;
     }
     
@@ -56,15 +56,15 @@ public abstract class AbstractService implements Runnable {
         return interval;
     }
     
-    protected final void setInterval(long interval) {
+    protected final void interval(long interval) {
         this.interval = interval;
     }
     
-    public final ScheduledFuture getScheduledFuture() {
+    public final ScheduledFuture<?> getScheduledFuture() {
         return scheduledFuture;
     }
     
-    public final void setScheduledFuture(ScheduledFuture scheduledFuture) {
+    public final void setScheduledFuture(ScheduledFuture<?> scheduledFuture) {
         this.scheduledFuture = scheduledFuture;
     }
 }

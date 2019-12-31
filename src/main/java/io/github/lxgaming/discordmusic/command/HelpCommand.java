@@ -23,31 +23,33 @@ import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.manager.CommandManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.manager.PermissionManager;
+import io.github.lxgaming.discordmusic.util.StringUtils;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class HelpCommand extends AbstractCommand {
+public class HelpCommand extends Command {
     
-    public HelpCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("help");
         addAlias("?");
-        setDescription("Displays helpful information.");
-        setPermission("help.base");
-        setUsage("[Command]");
+        description("Displays helpful information.");
+        permission("help.base");
+        usage("[Command]");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         
         if (arguments.isEmpty()) {
-            for (AbstractCommand command : CommandManager.COMMANDS) {
+            for (Command command : CommandManager.COMMANDS) {
                 if (command.getAliases().isEmpty() || !PermissionManager.hasPermission(message.getMember(), command.getPermission())) {
                     continue;
                 }
@@ -68,7 +70,7 @@ public class HelpCommand extends AbstractCommand {
         }
         
         List<String> childArguments = Toolbox.newArrayList(arguments.toArray(new String[0]));
-        AbstractCommand command = CommandManager.getCommand(childArguments).orElse(null);
+        Command command = CommandManager.getCommand(childArguments);
         if (command == null) {
             embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("Unknown command");
@@ -95,7 +97,7 @@ public class HelpCommand extends AbstractCommand {
         }
         
         List<String> children = Toolbox.newArrayList();
-        for (AbstractCommand childCommand : command.getChildren()) {
+        for (Command childCommand : command.getChildren()) {
             children.add(childCommand.getPrimaryAlias().orElse("Unknown"));
         }
         
@@ -106,6 +108,8 @@ public class HelpCommand extends AbstractCommand {
         
         embedBuilder.getDescriptionBuilder().append("**Description**: ");
         embedBuilder.getDescriptionBuilder().append(StringUtils.defaultIfBlank(command.getDescription(), "No description provided.")).append("\n");
+        embedBuilder.getDescriptionBuilder().append("**Permission**: ");
+        embedBuilder.getDescriptionBuilder().append(StringUtils.defaultIfBlank(command.getPermission(), "None")).append("\n");
         embedBuilder.getDescriptionBuilder().append("**Usage**: ")
                 .append(DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).map(GeneralCategory::getCommandPrefix).orElse("/"))
                 .append(" ")

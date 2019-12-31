@@ -25,16 +25,18 @@ import net.dv8tion.jda.api.entities.Message;
 
 import java.util.List;
 
-public class StopCommand extends AbstractCommand {
+public class StopCommand extends Command {
     
-    public StopCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("stop");
-        setDescription("Stops the Player");
-        setPermission("stop.base");
+        description("Stops the Player");
+        permission("stop.base");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         
         AudioPlayer audioPlayer = AudioManager.getAudioPlayer(message.getGuild());

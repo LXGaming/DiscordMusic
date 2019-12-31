@@ -16,7 +16,7 @@
 
 package io.github.lxgaming.discordmusic.configuration.category;
 
-import io.github.lxgaming.discordmusic.util.Reference;
+import io.github.lxgaming.discordmusic.DiscordMusic;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.audio.SpeakingMode;
 import net.dv8tion.jda.api.entities.Activity;
@@ -26,7 +26,7 @@ public class AccountCategory {
     private long id = 0L;
     private String name = "Unknown";
     private String token = "";
-    private String activityTitle = Reference.NAME;
+    private String activityTitle = DiscordMusic.NAME;
     private Activity.ActivityType activityType = Activity.ActivityType.DEFAULT;
     private OnlineStatus onlineStatus = OnlineStatus.ONLINE;
     private SpeakingMode speakingMode = SpeakingMode.VOICE;

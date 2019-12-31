@@ -21,16 +21,16 @@ import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.GuildCategory;
 import io.github.lxgaming.discordmusic.configuration.category.RoleCategory;
 import io.github.lxgaming.discordmusic.configuration.category.UserCategory;
+import io.github.lxgaming.discordmusic.util.StringUtils;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
 
 import java.util.Optional;
 import java.util.Set;
 
-public class PermissionManager {
+public final class PermissionManager {
     
     public static void register(Guild guild) {
         Set<RoleCategory> roleCategories = Toolbox.newLinkedHashSet();
@@ -57,7 +57,7 @@ public class PermissionManager {
             return false;
         }
         
-        return Toolbox.containsIgnoreCase(permissions, permission) || Toolbox.containsIgnoreCase(permissions, "*");
+        return StringUtils.containsIgnoreCase(permissions, permission) || StringUtils.containsIgnoreCase(permissions, "*");
     }
     
     public static Set<String> getPermissions(Member member) {
@@ -79,10 +79,6 @@ public class PermissionManager {
         }
         
         permissions.add(permission);
-    }
-    
-    public static String getUsername(User user) {
-        return user.getName() + "#" + user.getDiscriminator() + " (" + user.getId() + ")";
     }
     
     public static Set<RoleCategory> getRoleCategories(Member member) {

@@ -17,7 +17,7 @@
 package io.github.lxgaming.discordmusic.command.permission;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
-import io.github.lxgaming.discordmusic.command.AbstractCommand;
+import io.github.lxgaming.discordmusic.command.Command;
 import io.github.lxgaming.discordmusic.configuration.category.RoleCategory;
 import io.github.lxgaming.discordmusic.configuration.category.UserCategory;
 import io.github.lxgaming.discordmusic.data.Color;
@@ -30,19 +30,21 @@ import net.dv8tion.jda.api.entities.Role;
 
 import java.util.List;
 
-public class RemovePermissionCommand extends AbstractCommand {
+public class RemovePermissionCommand extends Command {
     
-    public RemovePermissionCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("remove");
         addAlias("-");
         addAlias("revoke");
-        setDescription("Remove permission");
-        setPermission("permission.remove");
-        setUsage("<Permission> [@User | @Role]");
+        description("Remove permission");
+        permission("permission.remove");
+        usage("<Permission> [@User | @Role]");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         if (arguments.isEmpty()) {
             embedBuilder.setColor(MessageManager.getColor(Color.WARNING));

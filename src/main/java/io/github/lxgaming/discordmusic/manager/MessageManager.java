@@ -36,8 +36,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class MessageManager {
+public final class MessageManager {
     
+    public static final String DEFAULT_COLOR = "#7289DA"; // Blurple
     public static final List<Message> MESSAGES = Collections.synchronizedList(Toolbox.newArrayList());
     
     public static void prepare() {
@@ -47,7 +48,7 @@ public class MessageManager {
         messageCategory.getColors().putIfAbsent(Color.WARNING, "#EAA245");
         
         for (Color color : Color.values()) {
-            messageCategory.getColors().putIfAbsent(color, "#7289DA"); // Blurple
+            messageCategory.getColors().putIfAbsent(color, DEFAULT_COLOR);
         }
     }
     

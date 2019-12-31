@@ -16,7 +16,7 @@
 
 package io.github.lxgaming.discordmusic.util;
 
-import org.apache.commons.lang3.StringUtils;
+import net.dv8tion.jda.api.utils.MarkdownSanitizer;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.awt.Color;
@@ -25,7 +25,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -45,6 +44,12 @@ public class Toolbox {
      */
     public static String filter(String string) {
         return string.replaceAll("[^\\x20-\\x7E\\x0A\\x0D]", "");
+    }
+    
+    public static String sanitize(String sequence) {
+        return MarkdownSanitizer.sanitize(sequence)
+                .replace("[", "\\[").replace("]", "\\]")
+                .replace("(", "\\(").replace(")", "\\)");
     }
     
     /**
@@ -122,25 +127,19 @@ public class Toolbox {
         }
     }
     
-    public static boolean containsIgnoreCase(Collection<String> list, String targetString) {
-        if (list == null || targetString == null) {
-            return false;
+    public static String getClassSimpleName(Class<?> type) {
+        if (type.getEnclosingClass() != null) {
+            return getClassSimpleName(type.getEnclosingClass()) + "." + type.getSimpleName();
         }
         
-        for (String string : list) {
-            if (string != null && string.equalsIgnoreCase(targetString)) {
-                return true;
-            }
-        }
-        
-        return false;
+        return type.getSimpleName();
     }
     
-    public static <T> Optional<T> newInstance(Class<? extends T> typeOfT) {
+    public static <T> T newInstance(Class<? extends T> type) {
         try {
-            return Optional.of(typeOfT.newInstance());
-        } catch (Exception ex) {
-            return Optional.empty();
+            return type.newInstance();
+        } catch (Throwable ex) {
+            return null;
         }
     }
     

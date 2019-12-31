@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Alex Thomson
+ * Copyright 2019 Alex Thomson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.discordmusic.util;
+package io.github.lxgaming.discordmusic.exception;
 
-public class Reference {
+public class CommandException extends Exception {
     
-    public static final String ID = "discordmusic";
-    public static final String NAME = "DiscordMusic";
-    public static final String VERSION = "2.2.1";
-    public static final String AUTHORS = "LX_Gaming";
-    public static final String SOURCE = "https://github.com/LXGaming/DiscordMusic";
-    public static final String WEBSITE = "https://lxgaming.github.io/";
+    public CommandException(String message) {
+        super(message);
+    }
+    
+    public CommandException(String message, Throwable cause) {
+        super(message, cause);
+    }
+    
+    public CommandException(Throwable cause) {
+        super(cause);
+    }
 }

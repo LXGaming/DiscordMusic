@@ -17,7 +17,7 @@
 package io.github.lxgaming.discordmusic.command.permission;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
-import io.github.lxgaming.discordmusic.command.AbstractCommand;
+import io.github.lxgaming.discordmusic.command.Command;
 import io.github.lxgaming.discordmusic.configuration.category.RoleCategory;
 import io.github.lxgaming.discordmusic.configuration.category.UserCategory;
 import io.github.lxgaming.discordmusic.data.Color;
@@ -30,19 +30,21 @@ import net.dv8tion.jda.api.entities.Role;
 
 import java.util.List;
 
-public class AddPermissionCommand extends AbstractCommand {
+public class AddPermissionCommand extends Command {
     
-    public AddPermissionCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("add");
         addAlias("+");
         addAlias("grant");
-        setDescription("Add permission");
-        setPermission("permission.add");
-        setUsage("<Permission> [@User | @Role]");
+        description("Add permission");
+        permission("permission.add");
+        usage("<Permission> [@User | @Role]");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         if (arguments.isEmpty()) {
             embedBuilder.setColor(MessageManager.getColor(Color.WARNING));

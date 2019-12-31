@@ -27,16 +27,18 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
-public class ShutdownCommand extends AbstractCommand {
+public class ShutdownCommand extends Command {
     
-    public ShutdownCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("shutdown");
-        setDescription("Safely shutdowns the bot.");
-        setPermission("shutdown.base");
+        description("Safely shutdowns the bot.");
+        permission("shutdown.base");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
         embedBuilder.setTitle("Shutting down...");

@@ -20,24 +20,28 @@ import io.github.lxgaming.discordmusic.command.permission.AddPermissionCommand;
 import io.github.lxgaming.discordmusic.command.permission.ListPermissionCommand;
 import io.github.lxgaming.discordmusic.command.permission.RemovePermissionCommand;
 import io.github.lxgaming.discordmusic.manager.CommandManager;
-import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.entities.Message;
 
 import java.util.List;
 
-public class PermissionCommand extends AbstractCommand {
+public class PermissionCommand extends Command {
     
-    public PermissionCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("permission");
         addChild(AddPermissionCommand.class);
         addChild(ListPermissionCommand.class);
         addChild(RemovePermissionCommand.class);
-        setDescription("Base permission command");
-        setPermission("permission.base");
+        description("Base permission command");
+        permission("permission.base");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
-        CommandManager.getCommand(HelpCommand.class).ifPresent(command -> command.execute(message, getPrimaryAlias().map(Toolbox::newArrayList).orElseGet(Toolbox::newArrayList)));
+    public void execute(Message message, List<String> arguments) throws Exception {
+        Command command = CommandManager.getCommand(HelpCommand.class);
+        if (command != null) {
+            command.execute(message, getPath());
+        }
     }
 }

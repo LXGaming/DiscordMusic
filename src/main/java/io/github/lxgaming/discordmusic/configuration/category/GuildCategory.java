@@ -27,10 +27,10 @@ public class GuildCategory {
     private String name = "Unknown";
     private long autoJoinChannel = 0L;
     
-    @SerializedName(value = "roles", alternate = "roleCategories")
+    @SerializedName("roles")
     private Set<RoleCategory> roleCategories = Toolbox.newLinkedHashSet();
     
-    @SerializedName(value = "users", alternate = "userCategories")
+    @SerializedName("users")
     private Set<UserCategory> userCategories = Toolbox.newLinkedHashSet();
     
     public long getId() {

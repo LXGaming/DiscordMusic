@@ -29,17 +29,19 @@ import net.dv8tion.jda.api.entities.Message;
 import java.util.List;
 import java.util.Optional;
 
-public class SelectCommand extends AbstractCommand {
+public class SelectCommand extends Command {
     
-    public SelectCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("select");
-        setDescription("Select from search results.");
-        setPermission("select.base");
-        setUsage("<ID...>");
+        description("Select from search results.");
+        permission("select.base");
+        usage("<ID...>");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         
         if (arguments.isEmpty()) {

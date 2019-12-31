@@ -25,11 +25,11 @@ import net.dv8tion.jda.api.entities.Message;
 import java.time.Instant;
 import java.util.Iterator;
 
-public class MessageService extends AbstractService {
+public class MessageService extends Service {
     
     @Override
     public boolean prepare() {
-        setInterval(1000L);
+        interval(1000L);
         return true;
     }
     

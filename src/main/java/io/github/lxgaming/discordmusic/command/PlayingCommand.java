@@ -26,18 +26,20 @@ import net.dv8tion.jda.api.entities.Message;
 
 import java.util.List;
 
-public class PlayingCommand extends AbstractCommand {
+public class PlayingCommand extends Command {
     
-    public PlayingCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("playing");
         addAlias("nowplaying");
         addAlias("np");
-        setDescription("Displays the media that is currently being played.");
-        setPermission("playing.base");
+        description("Displays the media that is currently being played.");
+        permission("playing.base");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         
         AudioTrack audioTrack = AudioManager.getAudioPlayer(message.getGuild()).getPlayingTrack();

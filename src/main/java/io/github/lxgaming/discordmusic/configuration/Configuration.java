@@ -27,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Optional;
 
 public class Configuration {
     
@@ -46,9 +45,9 @@ public class Configuration {
     }
     
     public boolean loadConfiguration() {
-        Optional<Config> config = loadFile(this.path.resolve("config.json"), Config.class);
-        if (config.isPresent()) {
-            this.config = config.get();
+        Config config = loadFile(this.path.resolve("config.json"), Config.class);
+        if (config != null) {
+            this.config = config;
             return true;
         }
         
@@ -59,12 +58,17 @@ public class Configuration {
         return saveFile(this.path.resolve("config.json"), config);
     }
     
-    public static <T> Optional<T> loadFile(Path path, Class<T> typeOfT) {
+    public static <T> T loadFile(Path path, Class<T> type) {
         if (Files.exists(path)) {
-            return deserializeFile(path, typeOfT);
+            return deserializeFile(path, type);
         }
         
-        return Toolbox.newInstance(typeOfT).filter(object -> saveFile(path, object));
+        T object = Toolbox.newInstance(type);
+        if (object != null && saveFile(path, object)) {
+            return object;
+        }
+        
+        return null;
     }
     
     public static boolean saveFile(Path path, Object object) {
@@ -75,12 +79,12 @@ public class Configuration {
         return false;
     }
     
-    public static <T> Optional<T> deserializeFile(Path path, Class<T> typeOfT) {
+    public static <T> T deserializeFile(Path path, Class<T> type) {
         try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            return Optional.ofNullable(GSON.fromJson(reader, typeOfT));
+            return GSON.fromJson(reader, type);
         } catch (Exception ex) {
             DiscordMusic.getInstance().getLogger().error("Encountered an error while deserializing {}", path, ex);
-            return Optional.empty();
+            return null;
         }
     }
     

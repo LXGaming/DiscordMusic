@@ -20,51 +20,66 @@ import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
 import io.github.lxgaming.discordmusic.data.Color;
+import io.github.lxgaming.discordmusic.exception.CommandException;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
+import io.github.lxgaming.discordmusic.util.StringUtils;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import org.apache.commons.lang3.BooleanUtils;
 
 import java.util.List;
 
-public class DebugCommand extends AbstractCommand {
+public class DebugCommand extends Command {
     
-    public DebugCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("debug");
-        setDescription("For development purposes.");
-        setPermission("debug.base");
+        description("For development purposes.");
+        permission("debug.base");
+        usage("[State]");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        
-        if (!arguments.isEmpty()) {
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("Invalid arguments");
-            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
-            return;
-        }
-        
+    public void execute(Message message, List<String> arguments) throws Exception {
         GeneralCategory generalCategory = DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).orElse(null);
         if (generalCategory == null) {
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("GeneralCategory is unavailable");
-            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
-            return;
+            throw new CommandException("GeneralCategory is unavailable");
         }
         
-        if (generalCategory.isDebug()) {
-            generalCategory.setDebug(false);
-            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
-            embedBuilder.setTitle("Debugging disabled");
+        Boolean state;
+        if (!arguments.isEmpty()) {
+            String argument = arguments.remove(0);
+            if (StringUtils.isNotBlank(argument)) {
+                state = BooleanUtils.toBooleanObject(argument);
+                if (state == null) {
+                    throw new CommandException(String.format("Failed to parse %s as a boolean", Toolbox.sanitize(argument)));
+                }
+            } else {
+                state = null;
+            }
         } else {
-            generalCategory.setDebug(true);
-            embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
-            embedBuilder.setTitle("Debugging enabled");
+            state = null;
+        }
+        
+        if (state != null) {
+            generalCategory.setDebug(state);
+        } else {
+            generalCategory.setDebug(!generalCategory.isDebug());
         }
         
         DiscordMusic.getInstance().getConfiguration().saveConfiguration();
-        DiscordMusic.getInstance().reload();
+        DiscordMusic.getInstance().reloadLogger();
+        
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        if (generalCategory.isDebug()) {
+            embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
+            embedBuilder.setTitle("Debugging enabled");
+        } else {
+            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
+            embedBuilder.setTitle("Debugging disabled");
+        }
         
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
     }

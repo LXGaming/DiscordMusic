@@ -16,7 +16,7 @@
 
 package io.github.lxgaming.discordmusic.command.permission;
 
-import io.github.lxgaming.discordmusic.command.AbstractCommand;
+import io.github.lxgaming.discordmusic.command.Command;
 import io.github.lxgaming.discordmusic.configuration.category.RoleCategory;
 import io.github.lxgaming.discordmusic.configuration.category.UserCategory;
 import io.github.lxgaming.discordmusic.data.Color;
@@ -30,17 +30,19 @@ import net.dv8tion.jda.api.entities.Role;
 import java.util.List;
 import java.util.Set;
 
-public class ListPermissionCommand extends AbstractCommand {
+public class ListPermissionCommand extends Command {
     
-    public ListPermissionCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("list");
-        setDescription("List permission");
-        setPermission("permission.list");
-        setUsage("[@User | @Role]");
+        description("List permission");
+        permission("permission.list");
+        usage("[@User | @Role]");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         
         List<Member> members = message.getMentionedMembers(message.getGuild());

@@ -28,17 +28,19 @@ import net.dv8tion.jda.api.entities.Message;
 
 import java.util.List;
 
-public class VolumeCommand extends AbstractCommand {
+public class VolumeCommand extends Command {
     
-    public VolumeCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("volume");
-        setDescription("Adjusts playback volume.");
-        setUsage("[0 ~ 1000]");
-        setPermission("volume.base");
+        description("Adjusts playback volume.");
+        usage("[0 ~ 1000]");
+        permission("volume.base");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         if (arguments.isEmpty()) {

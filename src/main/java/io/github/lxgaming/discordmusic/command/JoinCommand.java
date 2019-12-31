@@ -18,27 +18,29 @@ package io.github.lxgaming.discordmusic.command;
 
 import io.github.lxgaming.discordmusic.data.Color;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
+import io.github.lxgaming.discordmusic.util.StringUtils;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Set;
 
-public class JoinCommand extends AbstractCommand {
+public class JoinCommand extends Command {
     
-    public JoinCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("join");
-        setDescription("Connects to your current voice channel or one matching the name provided.");
-        setPermission("join.base");
-        setUsage("[Channel name]");
+        description("Connects to your current voice channel or one matching the name provided.");
+        permission("join.base");
+        usage("[Channel name]");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         
         Set<VoiceChannel> voiceChannels = Toolbox.newLinkedHashSet();

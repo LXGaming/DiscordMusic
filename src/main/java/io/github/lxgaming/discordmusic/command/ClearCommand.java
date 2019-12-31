@@ -26,16 +26,18 @@ import net.dv8tion.jda.api.entities.Message;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
-public class ClearCommand extends AbstractCommand {
+public class ClearCommand extends Command {
     
-    public ClearCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("clear");
-        setDescription("Clears all of the media that is queued.");
-        setPermission("clear.base");
+        description("Clears all of the media that is queued.");
+        permission("clear.base");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         
         BlockingQueue<AudioTrack> audioQueue = AudioManager.getAudioQueue(message.getGuild());

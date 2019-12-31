@@ -27,16 +27,18 @@ import net.dv8tion.jda.api.entities.Message;
 import java.util.List;
 import java.util.Set;
 
-public class SourcesCommand extends AbstractCommand {
+public class SourcesCommand extends Command {
     
-    public SourcesCommand() {
+    @Override
+    public boolean prepare() {
         addAlias("sources");
-        setDescription("Displays the allows sources which media can be played from.");
-        setPermission("sources.base");
+        description("Displays the allows sources which media can be played from.");
+        permission("sources.base");
+        return true;
     }
     
     @Override
-    public void execute(Message message, List<String> arguments) {
+    public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         
         Set<String> allowedSources = DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).map(GeneralCategory::getAllowedSources).orElse(null);
