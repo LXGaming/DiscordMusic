@@ -99,7 +99,7 @@ public final class CommandManager {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("You do not have permission to execute this command");
-            embedBuilder.setFooter("Missing permission: " + command.getPermission(), "https://api.lxgaming.me/assets/discord/warning.png");
+            embedBuilder.setFooter("Missing permission: " + command.getPermission(), "https://repo.lxgaming.me/assets/discord/warning.png");
             MessageManager.sendTemporaryMessage(message.getTextChannel(), embedBuilder.build());
             return false;
         }
@@ -119,7 +119,7 @@ public final class CommandManager {
                     .append("```")
                     .append(ex.getMessage())
                     .append("```");
-            embedBuilder.setFooter("Exception: " + ex.getClass().getName(), "https://api.lxgaming.me/assets/discord/error.png");
+            embedBuilder.setFooter("Exception: " + ex.getClass().getName(), "https://repo.lxgaming.me/assets/discord/error.png");
             MessageManager.sendMessage(message.getTextChannel(), embedBuilder.build());
             return false;
         } catch (Exception ex) {
@@ -127,7 +127,7 @@ public final class CommandManager {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("An unexpected error has occurred. Details are available in console.");
-            embedBuilder.setFooter("Exception: " + ex.getClass().getName(), "https://api.lxgaming.me/assets/discord/error.png");
+            embedBuilder.setFooter("Exception: " + ex.getClass().getName(), "https://repo.lxgaming.me/assets/discord/error.png");
             MessageManager.sendMessage(message.getTextChannel(), embedBuilder.build());
             return false;
         }
