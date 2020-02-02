@@ -17,7 +17,7 @@
 package io.github.lxgaming.discordmusic.command;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import io.github.lxgaming.discordmusic.data.Color;
+import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.util.Toolbox;
@@ -53,9 +53,9 @@ public class PlayingCommand extends Command {
         embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
         embedBuilder.setTitle(audioTrack.getInfo().title, audioTrack.getInfo().uri);
         if (audioTrack.getInfo().isStream) {
-            embedBuilder.setFooter(Toolbox.getTimeString(audioTrack.getPosition()), null);
+            embedBuilder.setFooter(Toolbox.getDuration(audioTrack.getPosition()), null);
         } else {
-            embedBuilder.setFooter(Toolbox.getTimeString(audioTrack.getPosition()) + " / " + Toolbox.getTimeString(audioTrack.getDuration()), null);
+            embedBuilder.setFooter(Toolbox.getDuration(audioTrack.getPosition()) + " / " + Toolbox.getDuration(audioTrack.getDuration()), null);
         }
         
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());

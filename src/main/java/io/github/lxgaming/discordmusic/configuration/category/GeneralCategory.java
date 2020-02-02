@@ -16,7 +16,8 @@
 
 package io.github.lxgaming.discordmusic.configuration.category;
 
-import io.github.lxgaming.discordmusic.util.Toolbox;
+import com.google.common.collect.Sets;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.Set;
 
@@ -26,20 +27,58 @@ public class GeneralCategory {
     public static final int DEFAULT_MAX_VOLUME = 200;
     public static final int DEFAULT_SEARCH_LIMIT = 5;
     
+    @SerializedName("debug")
     private boolean debug = false;
+    
+    @SerializedName("commandPrefix")
     private String commandPrefix = "!Music";
+    
+    @SerializedName("defaultVolume")
     private int defaultVolume = DEFAULT_VOLUME;
+    
+    @SerializedName("maxVolume")
     private int maxVolume = DEFAULT_MAX_VOLUME;
+    
+    @SerializedName("searchLimit")
     private int searchLimit = DEFAULT_SEARCH_LIMIT;
-    private Set<String> allowedSources = Toolbox.newLinkedHashSet(
-            "bandcamp.com", // Bandcamp
-            "beam.pro", "mixer.com", "www.beam.pro", "www.mixer.com", // Mixer
-            "nicovideo.jp", "www.nicovideo.jp", // Nico
-            "m.soundcloud.com", "soundcloud.com", "www.soundcloud.com", // SoundCloud
-            "go.twitch.tv", "twitch.tv", "www.twitch.tv", // Twitch
-            "vimeo.com", // Vimeo
-            "m.youtube.com", "music.youtube.com", "www.youtube.com", "youtu.be", "youtube.com" // YouTube
-    );
+    
+    @SerializedName("allowedSources")
+    private Set<String> allowedSources = Sets.newLinkedHashSet();
+    
+    public GeneralCategory() {
+        // Bandcamp
+        allowedSources.add("bandcamp.com");
+        
+        // Mixer
+        allowedSources.add("beam.pro");
+        allowedSources.add("mixer.com");
+        allowedSources.add("www.beam.pro");
+        allowedSources.add("www.mixer.com");
+        
+        // Nico
+        allowedSources.add("nicovideo.jp");
+        allowedSources.add("www.nicovideo.jp");
+        
+        // SoundCloud
+        allowedSources.add("m.soundcloud.com");
+        allowedSources.add("soundcloud.com");
+        allowedSources.add("www.soundcloud.com");
+        
+        // Twitch
+        allowedSources.add("go.twitch.tv");
+        allowedSources.add("twitch.tv");
+        allowedSources.add("www.twitch.tv");
+        
+        // Vimeo
+        allowedSources.add("vimeo.com");
+        
+        // YouTube
+        allowedSources.add("m.youtube.com");
+        allowedSources.add("music.youtube.com");
+        allowedSources.add("www.youtube.com");
+        allowedSources.add("youtu.be");
+        allowedSources.add("youtube.com");
+    }
     
     public boolean isDebug() {
         return debug;

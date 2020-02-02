@@ -16,9 +16,10 @@
 
 package io.github.lxgaming.discordmusic.command;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import io.github.lxgaming.discordmusic.manager.CommandManager;
 import io.github.lxgaming.discordmusic.util.StringUtils;
-import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.entities.Message;
 
 import java.util.List;
@@ -27,8 +28,8 @@ import java.util.Set;
 
 public abstract class Command {
     
-    private final Set<String> aliases = Toolbox.newLinkedHashSet();
-    private final Set<Command> children = Toolbox.newLinkedHashSet();
+    private final Set<String> aliases = Sets.newLinkedHashSet();
+    private final Set<Command> children = Sets.newLinkedHashSet();
     private Command parentCommand;
     private String description;
     private String permission;
@@ -49,7 +50,7 @@ public abstract class Command {
     }
     
     public final List<String> getPath() {
-        List<String> paths = Toolbox.newArrayList();
+        List<String> paths = Lists.newArrayList();
         if (parentCommand != null) {
             paths.addAll(parentCommand.getPath());
         }

@@ -19,7 +19,7 @@ package io.github.lxgaming.discordmusic.command;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
-import io.github.lxgaming.discordmusic.data.Color;
+import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.exception.CommandException;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.util.StringUtils;
@@ -54,7 +54,7 @@ public class DebugCommand extends Command {
             if (StringUtils.isNotBlank(argument)) {
                 state = BooleanUtils.toBooleanObject(argument);
                 if (state == null) {
-                    throw new CommandException(String.format("Failed to parse %s as a boolean", Toolbox.sanitize(argument)));
+                    throw new CommandException(String.format("Failed to parse %s as a boolean", Toolbox.escapeMarkdown(argument)));
                 }
             } else {
                 state = null;

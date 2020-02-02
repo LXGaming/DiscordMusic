@@ -19,20 +19,12 @@ package io.github.lxgaming.discordmusic.util;
 import net.dv8tion.jda.api.utils.MarkdownSanitizer;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
-import java.awt.Color;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Optional;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Toolbox {
     
@@ -46,27 +38,13 @@ public class Toolbox {
         return string.replaceAll("[^\\x20-\\x7E\\x0A\\x0D]", "");
     }
     
-    public static String sanitize(String sequence) {
+    public static String escapeMarkdown(String sequence) {
         return MarkdownSanitizer.sanitize(sequence)
                 .replace("[", "\\[").replace("]", "\\]")
                 .replace("(", "\\(").replace(")", "\\)");
     }
     
-    /**
-     * Decodes the provided {@link java.lang.String String} into a {@link java.awt.Color Color}.
-     *
-     * @param string The {@link java.lang.String String} to decode.
-     * @return The {@link java.awt.Color Color}.
-     */
-    public static Optional<Color> decodeColor(String string) {
-        try {
-            return Optional.of(Color.decode(string));
-        } catch (NumberFormatException ex) {
-            return Optional.empty();
-        }
-    }
-    
-    public static String getTimeString(long millisecond) {
+    public static String getDuration(long millisecond) {
         long second = Math.abs(millisecond) / 1000;
         long minute = second / 60;
         long hour = minute / 60;
@@ -154,29 +132,5 @@ public class Toolbox {
     
     public static ThreadFactory newThreadFactory(String namingPattern) {
         return new BasicThreadFactory.Builder().namingPattern(namingPattern).daemon(true).priority(Thread.NORM_PRIORITY).build();
-    }
-    
-    @SafeVarargs
-    public static <E> ArrayList<E> newArrayList(E... elements) {
-        return Stream.of(elements).collect(Collectors.toCollection(ArrayList::new));
-    }
-    
-    public static <K, V> HashMap<K, V> newHashMap() {
-        return new HashMap<>();
-    }
-    
-    @SafeVarargs
-    public static <E> HashSet<E> newHashSet(E... elements) {
-        return Stream.of(elements).collect(Collectors.toCollection(HashSet::new));
-    }
-    
-    @SafeVarargs
-    public static <E> LinkedBlockingQueue<E> newLinkedBlockingQueue(E... elements) {
-        return Stream.of(elements).collect(Collectors.toCollection(LinkedBlockingQueue::new));
-    }
-    
-    @SafeVarargs
-    public static <E> LinkedHashSet<E> newLinkedHashSet(E... elements) {
-        return Stream.of(elements).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

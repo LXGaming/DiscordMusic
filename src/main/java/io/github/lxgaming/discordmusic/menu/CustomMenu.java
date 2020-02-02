@@ -16,9 +16,9 @@
 
 package io.github.lxgaming.discordmusic.menu;
 
+import com.google.common.collect.Sets;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.menu.Menu;
-import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Message;
@@ -140,7 +140,7 @@ public class CustomMenu extends Menu {
     
     public static class Builder extends Menu.Builder<Builder, CustomMenu> {
         
-        private final Set<String> choices = Toolbox.newLinkedHashSet();
+        private final Set<String> choices = Sets.newLinkedHashSet();
         private Function<MessageReactionAddEvent, Boolean> action;
         private Consumer<Message> finalAction = message -> {
         };

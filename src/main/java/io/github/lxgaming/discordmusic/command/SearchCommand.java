@@ -16,8 +16,8 @@
 
 package io.github.lxgaming.discordmusic.command;
 
-import io.github.lxgaming.discordmusic.data.AudioTrackData;
-import io.github.lxgaming.discordmusic.data.Color;
+import io.github.lxgaming.discordmusic.entity.AudioTrackData;
+import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.handler.AudioPlayerLoadResultHandler;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;

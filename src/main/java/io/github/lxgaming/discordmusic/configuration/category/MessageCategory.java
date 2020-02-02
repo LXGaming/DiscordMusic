@@ -16,18 +16,34 @@
 
 package io.github.lxgaming.discordmusic.configuration.category;
 
-import io.github.lxgaming.discordmusic.data.Color;
-import io.github.lxgaming.discordmusic.util.Toolbox;
+import com.google.common.collect.Maps;
+import com.google.gson.annotations.SerializedName;
+import io.github.lxgaming.discordmusic.entity.Color;
+import io.github.lxgaming.discordmusic.entity.Emote;
 
 import java.util.Map;
 
 public class MessageCategory {
     
+    @SerializedName("actionTimeout")
     private long actionTimeout = 900000L;
-    private Map<Color, String> colors = Toolbox.newHashMap();
+    
+    @SerializedName("colors")
+    private Map<Color, String> colors = Maps.newHashMap();
+    
+    @SerializedName("deleteInterval")
     private long deleteInterval = 60000L;
+    
+    @SerializedName("deleteInvoking")
     private boolean deleteInvoking = true;
+    
+    @SerializedName("deleteMessages")
     private boolean deleteMessages = true;
+    
+    @SerializedName("emotes")
+    private Map<Emote, String> emotes = Maps.newHashMap();
+    
+    @SerializedName("sendTyping")
     private boolean sendTyping = true;
     
     public long getActionTimeout() {
@@ -48,6 +64,10 @@ public class MessageCategory {
     
     public boolean isDeleteMessages() {
         return deleteMessages;
+    }
+    
+    public Map<Emote, String> getEmotes() {
+        return emotes;
     }
     
     public boolean isSendTyping() {

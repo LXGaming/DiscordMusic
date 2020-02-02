@@ -16,13 +16,13 @@
 
 package io.github.lxgaming.discordmusic.manager;
 
+import com.google.common.collect.Sets;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.GuildCategory;
 import io.github.lxgaming.discordmusic.configuration.category.RoleCategory;
 import io.github.lxgaming.discordmusic.configuration.category.UserCategory;
 import io.github.lxgaming.discordmusic.util.StringUtils;
-import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -33,11 +33,15 @@ import java.util.Set;
 public final class PermissionManager {
     
     public static void register(Guild guild) {
-        Set<RoleCategory> roleCategories = Toolbox.newLinkedHashSet();
+        Set<RoleCategory> roleCategories = Sets.newLinkedHashSet();
         for (Role role : guild.getRoles()) {
             RoleCategory roleCategory = getRoleCategory(role).orElse(new RoleCategory());
             roleCategory.setId(role.getIdLong());
             roleCategory.setName(role.getName());
+            if (role.isPublicRole()) {
+                roleCategory.setInheritable(true);
+            }
+            
             roleCategories.add(roleCategory);
         }
         
@@ -61,7 +65,7 @@ public final class PermissionManager {
     }
     
     public static Set<String> getPermissions(Member member) {
-        Set<String> permissions = Toolbox.newLinkedHashSet();
+        Set<String> permissions = Sets.newLinkedHashSet();
         getUserCategory(member).ifPresent(userCategory -> {
             userCategory.getPermissions().forEach(permission -> appendPermission(permissions, permission));
         });
@@ -82,12 +86,18 @@ public final class PermissionManager {
     }
     
     public static Set<RoleCategory> getRoleCategories(Member member) {
-        Set<RoleCategory> roleCategories = Toolbox.newLinkedHashSet();
-        for (Role role : member.getRoles()) {
-            getRoleCategory(role).ifPresent(roleCategories::add);
+        Set<RoleCategory> roleCategories = Sets.newLinkedHashSet();
+        for (Role role : member.getGuild().getRoles()) {
+            if (member.getRoles().contains(role) || role.isPublicRole()) {
+                getRoleCategory(role).ifPresent(roleCategories::add);
+                continue;
+            }
+            
+            if (!roleCategories.isEmpty()) {
+                getRoleCategory(role).filter(RoleCategory::isInheritable).ifPresent(roleCategories::add);
+            }
         }
         
-        getRoleCategory(member.getGuild().getPublicRole()).ifPresent(roleCategories::add);
         return roleCategories;
     }
     

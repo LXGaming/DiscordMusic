@@ -22,7 +22,6 @@ import io.github.lxgaming.discordmusic.configuration.category.ServiceCategory;
 import io.github.lxgaming.discordmusic.service.Service;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 
-import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -56,33 +55,36 @@ public final class ServiceManager {
     public static void schedule(Service service) {
         try {
             if (!service.prepare()) {
-                throw new IllegalStateException("Service preparation failed");
+                DiscordMusic.getInstance().getLogger().warn("{} failed to prepare", Toolbox.getClassSimpleName(service.getClass()));
+                return;
             }
-            
-            schedule(service, service.getDelay(), service.getInterval()).ifPresent(service::setScheduledFuture);
         } catch (Exception ex) {
-            DiscordMusic.getInstance().getLogger().error("Encountered an error while scheduling service", ex);
+            DiscordMusic.getInstance().getLogger().error("Encountered an error while preparing {}", Toolbox.getClassSimpleName(service.getClass()), ex);
+            return;
         }
+        
+        ScheduledFuture<?> scheduledFuture = schedule(service, service.getDelay(), service.getInterval());
+        service.setScheduledFuture(scheduledFuture);
     }
     
-    public static Optional<ScheduledFuture<?>> schedule(Runnable runnable) {
+    public static ScheduledFuture<?> schedule(Runnable runnable) {
         return schedule(runnable, 0L, 0L);
     }
     
-    public static Optional<ScheduledFuture<?>> schedule(Runnable runnable, long delay, long interval) {
+    public static ScheduledFuture<?> schedule(Runnable runnable, long delay, long interval) {
         return schedule(runnable, delay, interval, TimeUnit.MILLISECONDS);
     }
     
-    public static Optional<ScheduledFuture<?>> schedule(Runnable runnable, long delay, long interval, TimeUnit unit) {
+    public static ScheduledFuture<?> schedule(Runnable runnable, long delay, long interval, TimeUnit unit) {
         try {
             if (interval <= 0L) {
-                return Optional.of(SCHEDULED_EXECUTOR_SERVICE.schedule(runnable, Math.max(delay, 0L), unit));
+                return SCHEDULED_EXECUTOR_SERVICE.schedule(runnable, Math.max(delay, 0L), unit);
             }
             
-            return Optional.of(SCHEDULED_EXECUTOR_SERVICE.scheduleWithFixedDelay(runnable, Math.max(delay, 0L), Math.max(interval, 0L), unit));
+            return SCHEDULED_EXECUTOR_SERVICE.scheduleWithFixedDelay(runnable, Math.max(delay, 0L), Math.max(interval, 0L), unit);
         } catch (Exception ex) {
             DiscordMusic.getInstance().getLogger().error("Encountered an error while scheduling service", ex);
-            return Optional.empty();
+            return null;
         }
     }
     

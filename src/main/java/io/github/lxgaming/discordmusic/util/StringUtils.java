@@ -39,12 +39,12 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         return count;
     }
     
-    public static boolean containsIgnoreCase(Collection<String> list, String targetString) {
-        if (list == null || list.isEmpty()) {
+    public static boolean containsIgnoreCase(Collection<String> collection, String targetString) {
+        if (collection == null || collection.isEmpty()) {
             return false;
         }
         
-        for (String string : list) {
+        for (String string : collection) {
             if (string.equalsIgnoreCase(targetString)) {
                 return true;
             }

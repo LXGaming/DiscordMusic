@@ -20,7 +20,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import io.github.lxgaming.discordmusic.data.AudioTrackData;
+import io.github.lxgaming.discordmusic.entity.AudioTrackData;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 
 public final class AudioPlayerLoadResultHandler implements AudioLoadResultHandler {

@@ -16,6 +16,7 @@
 
 package io.github.lxgaming.discordmusic.listener;
 
+import com.google.common.collect.Sets;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
@@ -83,7 +84,7 @@ public class DiscordListener extends ListenerAdapter {
     
     @Override
     public void onMessageDelete(MessageDeleteEvent event) {
-        MessageManager.removeMessages(Toolbox.newHashSet(event.getMessageId()));
+        MessageManager.removeMessages(Sets.newHashSet(event.getMessageId()));
     }
     
     @Override

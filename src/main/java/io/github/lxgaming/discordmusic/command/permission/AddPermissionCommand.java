@@ -20,7 +20,7 @@ import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.command.Command;
 import io.github.lxgaming.discordmusic.configuration.category.RoleCategory;
 import io.github.lxgaming.discordmusic.configuration.category.UserCategory;
-import io.github.lxgaming.discordmusic.data.Color;
+import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.manager.PermissionManager;
 import net.dv8tion.jda.api.EmbedBuilder;

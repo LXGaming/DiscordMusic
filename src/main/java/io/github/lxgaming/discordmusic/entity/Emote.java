@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Alex Thomson
+ * Copyright 2020 Alex Thomson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,41 +14,27 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.discordmusic.configuration.category;
+package io.github.lxgaming.discordmusic.entity;
 
-import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Set;
-
-public class UserCategory {
+public enum Emote {
     
-    @SerializedName("id")
-    private long id = 0L;
+    @SerializedName("accept") ACCEPT("Accept"),
+    @SerializedName("decline") DECLINE("Decline");
     
-    @SerializedName("name")
-    private String name = "Unknown";
+    private final String name;
     
-    @SerializedName("permissions")
-    private Set<String> permissions = Sets.newConcurrentHashSet();
-    
-    public long getId() {
-        return id;
-    }
-    
-    public void setId(long id) {
-        this.id = id;
+    Emote(String name) {
+        this.name = name;
     }
     
     public String getName() {
         return name;
     }
     
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    public Set<String> getPermissions() {
-        return permissions;
+    @Override
+    public String toString() {
+        return name().toLowerCase();
     }
 }

@@ -16,11 +16,12 @@
 
 package io.github.lxgaming.discordmusic.manager;
 
+import com.google.common.collect.Lists;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.MessageCategory;
-import io.github.lxgaming.discordmusic.data.Color;
-import io.github.lxgaming.discordmusic.util.Toolbox;
+import io.github.lxgaming.discordmusic.entity.Color;
+import io.github.lxgaming.discordmusic.entity.Emote;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -30,16 +31,17 @@ import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.exceptions.VerificationLevelException;
 import net.dv8tion.jda.internal.entities.DataMessage;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
 public final class MessageManager {
     
     public static final String DEFAULT_COLOR = "#7289DA"; // Blurple
-    public static final List<Message> MESSAGES = Collections.synchronizedList(Toolbox.newArrayList());
+    public static final String DEFAULT_EMOTE = "\\u2753"; // ?
+    public static final List<Message> MESSAGES = Lists.newCopyOnWriteArrayList();
     
     public static void prepare() {
         MessageCategory messageCategory = DiscordMusic.getInstance().getConfig().map(Config::getMessageCategory).orElseThrow(NullPointerException::new);
@@ -49,6 +51,15 @@ public final class MessageManager {
         
         for (Color color : Color.values()) {
             messageCategory.getColors().putIfAbsent(color, DEFAULT_COLOR);
+        }
+        
+        // https://getemoji.com/
+        // https://r12a.github.io/app-conversion/
+        messageCategory.getEmotes().putIfAbsent(Emote.ACCEPT, "\\u2705");
+        messageCategory.getEmotes().putIfAbsent(Emote.DECLINE, "\\u274C");
+        
+        for (Emote emote : Emote.values()) {
+            messageCategory.getEmotes().putIfAbsent(emote, DEFAULT_EMOTE);
         }
     }
     
@@ -92,6 +103,15 @@ public final class MessageManager {
                 .map(colors -> colors.get(color))
                 .map(NumberUtils::createInteger)
                 .orElse(Role.DEFAULT_COLOR_RAW);
+    }
+    
+    public static String getEmote(Emote emote) {
+        return DiscordMusic.getInstance().getConfig()
+                .map(Config::getMessageCategory)
+                .map(MessageCategory::getEmotes)
+                .map(emotes -> emotes.get(emote))
+                .map(StringEscapeUtils::unescapeJava)
+                .orElse(DEFAULT_EMOTE);
     }
     
     public static String getMessageContent(Message message) {

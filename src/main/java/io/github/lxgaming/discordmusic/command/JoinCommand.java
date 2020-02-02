@@ -16,10 +16,10 @@
 
 package io.github.lxgaming.discordmusic.command;
 
-import io.github.lxgaming.discordmusic.data.Color;
+import com.google.common.collect.Sets;
+import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.util.StringUtils;
-import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.VoiceChannel;
@@ -43,7 +43,7 @@ public class JoinCommand extends Command {
     public void execute(Message message, List<String> arguments) throws Exception {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         
-        Set<VoiceChannel> voiceChannels = Toolbox.newLinkedHashSet();
+        Set<VoiceChannel> voiceChannels = Sets.newLinkedHashSet();
         if (arguments.isEmpty()) {
             if (!message.getMember().getVoiceState().inVoiceChannel()) {
                 embedBuilder.setColor(MessageManager.getColor(Color.WARNING));

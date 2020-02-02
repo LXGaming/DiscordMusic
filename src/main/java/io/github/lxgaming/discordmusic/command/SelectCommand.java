@@ -16,10 +16,11 @@
 
 package io.github.lxgaming.discordmusic.command;
 
+import com.google.common.collect.Lists;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
-import io.github.lxgaming.discordmusic.data.Color;
+import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.util.Toolbox;
@@ -59,7 +60,7 @@ public class SelectCommand extends Command {
             return;
         }
         
-        List<AudioTrack> audioTracks = Toolbox.newArrayList();
+        List<AudioTrack> audioTracks = Lists.newArrayList();
         for (String string : arguments) {
             if (embedBuilder.getDescriptionBuilder().length() != 0) {
                 embedBuilder.getDescriptionBuilder().append("\n");

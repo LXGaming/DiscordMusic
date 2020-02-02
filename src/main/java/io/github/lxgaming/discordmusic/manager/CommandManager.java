@@ -16,6 +16,8 @@
 
 package io.github.lxgaming.discordmusic.manager;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.command.ClearCommand;
 import io.github.lxgaming.discordmusic.command.Command;
@@ -37,7 +39,7 @@ import io.github.lxgaming.discordmusic.command.VolumeCommand;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
 import io.github.lxgaming.discordmusic.configuration.category.MessageCategory;
-import io.github.lxgaming.discordmusic.data.Color;
+import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.exception.CommandException;
 import io.github.lxgaming.discordmusic.util.StringUtils;
 import io.github.lxgaming.discordmusic.util.Toolbox;
@@ -49,8 +51,8 @@ import java.util.Set;
 
 public final class CommandManager {
     
-    public static final Set<Command> COMMANDS = Toolbox.newLinkedHashSet();
-    private static final Set<Class<? extends Command>> COMMAND_CLASSES = Toolbox.newHashSet();
+    public static final Set<Command> COMMANDS = Sets.newLinkedHashSet();
+    private static final Set<Class<? extends Command>> COMMAND_CLASSES = Sets.newHashSet();
     
     public static void prepare() {
         registerCommand(ClearCommand.class);
@@ -183,8 +185,13 @@ public final class CommandManager {
             return null;
         }
         
-        if (!command.prepare()) {
-            DiscordMusic.getInstance().getLogger().warn("{} failed to prepare", Toolbox.getClassSimpleName(commandClass));
+        try {
+            if (!command.prepare()) {
+                DiscordMusic.getInstance().getLogger().warn("{} failed to prepare", Toolbox.getClassSimpleName(commandClass));
+                return null;
+            }
+        } catch (Exception ex) {
+            DiscordMusic.getInstance().getLogger().error("Encountered an error while preparing {}", Toolbox.getClassSimpleName(commandClass), ex);
             return null;
         }
         
@@ -200,7 +207,7 @@ public final class CommandManager {
     }
     
     public static Command getCommand(Command parentCommand, Class<? extends Command> commandClass) {
-        Set<Command> commands = Toolbox.newLinkedHashSet();
+        Set<Command> commands = Sets.newLinkedHashSet();
         if (parentCommand != null) {
             commands.addAll(parentCommand.getChildren());
         } else {
@@ -230,7 +237,7 @@ public final class CommandManager {
             return parentCommand;
         }
         
-        Set<Command> commands = Toolbox.newLinkedHashSet();
+        Set<Command> commands = Sets.newLinkedHashSet();
         if (parentCommand != null) {
             commands.addAll(parentCommand.getChildren());
         } else {
@@ -248,7 +255,7 @@ public final class CommandManager {
     }
     
     private static List<String> getArguments(String string) {
-        return Toolbox.newArrayList(StringUtils.split(string, " "));
+        return Lists.newArrayList(StringUtils.split(string, " "));
     }
     
     private static String parseMessage(String message) {

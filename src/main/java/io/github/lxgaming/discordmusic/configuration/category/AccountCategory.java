@@ -16,6 +16,7 @@
 
 package io.github.lxgaming.discordmusic.configuration.category;
 
+import com.google.gson.annotations.SerializedName;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.audio.SpeakingMode;
@@ -23,12 +24,25 @@ import net.dv8tion.jda.api.entities.Activity;
 
 public class AccountCategory {
     
+    @SerializedName("id")
     private long id = 0L;
+    
+    @SerializedName("name")
     private String name = "Unknown";
+    
+    @SerializedName("token")
     private String token = "";
+    
+    @SerializedName("activityTitle")
     private String activityTitle = DiscordMusic.NAME;
+    
+    @SerializedName("activityType")
     private Activity.ActivityType activityType = Activity.ActivityType.DEFAULT;
+    
+    @SerializedName("onlineStatus")
     private OnlineStatus onlineStatus = OnlineStatus.ONLINE;
+    
+    @SerializedName("speakingMode")
     private SpeakingMode speakingMode = SpeakingMode.VOICE;
     
     public long getId() {

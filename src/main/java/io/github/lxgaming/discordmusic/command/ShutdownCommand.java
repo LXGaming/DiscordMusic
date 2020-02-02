@@ -17,7 +17,7 @@
 package io.github.lxgaming.discordmusic.command;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
-import io.github.lxgaming.discordmusic.data.Color;
+import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -42,7 +42,7 @@ public class ShutdownCommand extends Command {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
         embedBuilder.setTitle("Shutting down...");
-        embedBuilder.setFooter("Uptime: " + Toolbox.getTimeString(Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis()), null);
+        embedBuilder.setFooter("Uptime: " + Toolbox.getDuration(Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis()), null);
         MessageManager.sendMessage(message.getChannel(), embedBuilder.build());
         Runtime.getRuntime().exit(0);
     }

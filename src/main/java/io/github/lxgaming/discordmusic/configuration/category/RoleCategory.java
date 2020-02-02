@@ -16,15 +16,24 @@
 
 package io.github.lxgaming.discordmusic.configuration.category;
 
-import io.github.lxgaming.discordmusic.util.Toolbox;
+import com.google.common.collect.Sets;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.Set;
 
 public class RoleCategory {
     
+    @SerializedName("id")
     private long id = 0L;
+    
+    @SerializedName("name")
     private String name = "Unknown";
-    private Set<String> permissions = Toolbox.newLinkedHashSet();
+    
+    @SerializedName("inheritable")
+    private boolean inheritable = false;
+    
+    @SerializedName("permissions")
+    private Set<String> permissions = Sets.newConcurrentHashSet();
     
     public long getId() {
         return id;
@@ -40,6 +49,14 @@ public class RoleCategory {
     
     public void setName(String name) {
         this.name = name;
+    }
+    
+    public boolean isInheritable() {
+        return inheritable;
+    }
+    
+    public void setInheritable(boolean inheritable) {
+        this.inheritable = inheritable;
     }
     
     public Set<String> getPermissions() {

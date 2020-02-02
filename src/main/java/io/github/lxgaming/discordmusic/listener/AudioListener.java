@@ -22,7 +22,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import io.github.lxgaming.discordmusic.DiscordMusic;
-import io.github.lxgaming.discordmusic.data.AudioTrackData;
+import io.github.lxgaming.discordmusic.entity.AudioTrackData;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 
 public class AudioListener extends AudioEventAdapter {

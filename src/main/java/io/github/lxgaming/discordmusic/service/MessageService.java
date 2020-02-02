@@ -20,21 +20,20 @@ import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.MessageCategory;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
-import net.dv8tion.jda.api.entities.Message;
 
 import java.time.Instant;
-import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 public class MessageService extends Service {
     
     @Override
     public boolean prepare() {
-        interval(1000L);
+        interval(1L, TimeUnit.SECONDS);
         return true;
     }
     
     @Override
-    public void execute() {
+    public void execute() throws Exception {
         Instant deleteTime = DiscordMusic.getInstance().getConfig()
                 .map(Config::getMessageCategory)
                 .map(MessageCategory::getDeleteInterval)
@@ -45,25 +44,21 @@ public class MessageService extends Service {
             return;
         }
         
-        synchronized (MessageManager.MESSAGES) {
-            for (Iterator<Message> iterator = MessageManager.MESSAGES.iterator(); iterator.hasNext(); ) {
-                Message message = iterator.next();
-                if (message.getIdLong() == 0L) {
-                    iterator.remove();
-                    continue;
-                }
-                
-                if (message.getTimeCreated().toInstant().isAfter(deleteTime)) {
-                    continue;
-                }
-                
-                message.delete().queue(
-                        success -> DiscordMusic.getInstance().getLogger().debug("Successfully deleted Message {}", message.getIdLong()),
-                        failure -> DiscordMusic.getInstance().getLogger().error("Encountered an error deleting message {}", message.getIdLong(), failure)
-                );
-                
-                iterator.remove();
+        MessageManager.MESSAGES.removeIf(message -> {
+            if (message.getIdLong() == 0L) {
+                return true;
             }
-        }
+            
+            if (message.getTimeCreated().toInstant().isAfter(deleteTime)) {
+                return false;
+            }
+            
+            message.delete().queue(
+                    success -> DiscordMusic.getInstance().getLogger().debug("Successfully deleted Message {}", message.getIdLong()),
+                    failure -> DiscordMusic.getInstance().getLogger().error("Encountered an error deleting message {}", message.getIdLong(), failure)
+            );
+            
+            return true;
+        });
     }
 }

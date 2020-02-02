@@ -16,14 +16,21 @@
 
 package io.github.lxgaming.discordmusic.configuration.category;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ServiceCategory {
     
     public static final int DEFAULT_CORE_POOL_SIZE = 5;
     public static final int DEFAULT_MAXIMUM_POOL_SIZE = 10;
     public static final long DEFAULT_KEEP_ALIVE_TIME = 60000L;
     
+    @SerializedName("corePoolSize")
     private int corePoolSize = DEFAULT_CORE_POOL_SIZE;
+    
+    @SerializedName("maximumPoolSize")
     private int maximumPoolSize = DEFAULT_MAXIMUM_POOL_SIZE;
+    
+    @SerializedName("keepAliveTime")
     private long keepAliveTime = DEFAULT_KEEP_ALIVE_TIME;
     
     public int getCorePoolSize() {

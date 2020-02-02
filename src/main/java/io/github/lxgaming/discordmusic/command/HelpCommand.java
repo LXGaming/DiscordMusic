@@ -16,15 +16,15 @@
 
 package io.github.lxgaming.discordmusic.command;
 
+import com.google.common.collect.Lists;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
-import io.github.lxgaming.discordmusic.data.Color;
+import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.manager.CommandManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.manager.PermissionManager;
 import io.github.lxgaming.discordmusic.util.StringUtils;
-import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 
@@ -69,7 +69,7 @@ public class HelpCommand extends Command {
             return;
         }
         
-        List<String> childArguments = Toolbox.newArrayList(arguments.toArray(new String[0]));
+        List<String> childArguments = Lists.newArrayList(arguments.toArray(new String[0]));
         Command command = CommandManager.getCommand(childArguments);
         if (command == null) {
             embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
@@ -96,7 +96,7 @@ public class HelpCommand extends Command {
             embedBuilder.getDescriptionBuilder().append("\n");
         }
         
-        List<String> children = Toolbox.newArrayList();
+        List<String> children = Lists.newArrayList();
         for (Command childCommand : command.getChildren()) {
             children.add(childCommand.getPrimaryAlias().orElse("Unknown"));
         }

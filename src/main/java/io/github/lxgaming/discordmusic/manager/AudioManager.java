@@ -16,6 +16,9 @@
 
 package io.github.lxgaming.discordmusic.manager;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
 import com.jagrosh.jdautilities.menu.OrderedMenu;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -27,13 +30,12 @@ import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
 import io.github.lxgaming.discordmusic.configuration.category.MessageCategory;
-import io.github.lxgaming.discordmusic.data.AudioTrackData;
-import io.github.lxgaming.discordmusic.data.Color;
+import io.github.lxgaming.discordmusic.entity.AudioTrackData;
+import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.handler.AudioPlayerSendHandler;
 import io.github.lxgaming.discordmusic.listener.AudioListener;
 import io.github.lxgaming.discordmusic.menu.CustomMenu;
 import io.github.lxgaming.discordmusic.util.StringUtils;
-import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audio.SpeakingMode;
 import net.dv8tion.jda.api.entities.Guild;
@@ -41,7 +43,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,9 +53,9 @@ public final class AudioManager {
     
     public static final AudioPlayerManager AUDIO_PLAYER_MANAGER = new DefaultAudioPlayerManager();
     private static final AudioListener AUDIO_LISTENER = new AudioListener();
-    private static final Map<Long, AudioPlayer> AUDIO_PLAYERS = Collections.synchronizedMap(Toolbox.newHashMap());
-    private static final Map<Long, BlockingQueue<AudioTrack>> AUDIO_QUEUES = Collections.synchronizedMap(Toolbox.newHashMap());
-    private static final Map<Long, Map<AudioTrackData, List<AudioTrack>>> SEARCH_RESULTS = Collections.synchronizedMap(Toolbox.newHashMap());
+    private static final Map<Long, AudioPlayer> AUDIO_PLAYERS = Maps.newConcurrentMap();
+    private static final Map<Long, BlockingQueue<AudioTrack>> AUDIO_QUEUES = Maps.newConcurrentMap();
+    private static final Map<Long, Map<AudioTrackData, List<AudioTrack>>> SEARCH_RESULTS = Maps.newConcurrentMap();
     
     public static void prepare() {
         GeneralCategory generalCategory = DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).orElseThrow(NullPointerException::new);
@@ -99,8 +100,8 @@ public final class AudioManager {
         }
         
         AUDIO_PLAYERS.put(guild.getIdLong(), audioPlayer);
-        AUDIO_QUEUES.put(guild.getIdLong(), Toolbox.newLinkedBlockingQueue());
-        SEARCH_RESULTS.put(guild.getIdLong(), Collections.synchronizedMap(Toolbox.newHashMap()));
+        AUDIO_QUEUES.put(guild.getIdLong(), Queues.newLinkedBlockingQueue());
+        SEARCH_RESULTS.put(guild.getIdLong(), Maps.newConcurrentMap());
     }
     
     public static void unregister(Guild guild) {
@@ -167,7 +168,7 @@ public final class AudioManager {
     public static void playlist(AudioPlaylist audioPlaylist) throws IllegalArgumentException {
         if (audioPlaylist.isSearchResult()) {
             int searchLimit = DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).map(GeneralCategory::getSearchLimit).orElse(GeneralCategory.DEFAULT_SEARCH_LIMIT);
-            Map<AudioTrackData, List<AudioTrack>> data = Toolbox.newHashMap();
+            Map<AudioTrackData, List<AudioTrack>> data = Maps.newHashMap();
             for (AudioTrack audioTrack : audioPlaylist.getTracks()) {
                 AudioTrackData audioTrackData = getData(audioTrack).orElse(null);
                 if (audioTrackData == null) {
@@ -183,7 +184,7 @@ public final class AudioManager {
                         
                         return value;
                     } else {
-                        return Toolbox.newArrayList(audioTrack);
+                        return Lists.newArrayList(audioTrack);
                     }
                 });
             }
@@ -238,7 +239,7 @@ public final class AudioManager {
         }
         
         if (!audioPlaylist.getTracks().isEmpty()) {
-            Map<AudioTrackData, List<AudioTrack>> data = Toolbox.newHashMap();
+            Map<AudioTrackData, List<AudioTrack>> data = Maps.newHashMap();
             for (AudioTrack audioTrack : audioPlaylist.getTracks()) {
                 AudioTrackData audioTrackData = getData(audioTrack).orElse(null);
                 if (audioTrackData == null) {
@@ -247,7 +248,7 @@ public final class AudioManager {
                 }
                 
                 // noinspection Convert2MethodRef
-                data.computeIfAbsent(audioTrackData, key -> Toolbox.newArrayList()).add(audioTrack);
+                data.computeIfAbsent(audioTrackData, key -> Lists.newArrayList()).add(audioTrack);
             }
             
             for (Map.Entry<AudioTrackData, List<AudioTrack>> entry : data.entrySet()) {

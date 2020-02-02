@@ -19,7 +19,7 @@ package io.github.lxgaming.discordmusic.command;
 import com.jagrosh.jdautilities.commons.JDAUtilitiesInfo;
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import io.github.lxgaming.discordmusic.DiscordMusic;
-import io.github.lxgaming.discordmusic.data.Color;
+import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -35,6 +35,7 @@ public class InfoCommand extends Command {
     @Override
     public boolean prepare() {
         addAlias("info");
+        addAlias("information");
         addAlias("version");
         description("Displays bot information.");
         permission("info.base");
@@ -46,10 +47,11 @@ public class InfoCommand extends Command {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setAuthor(DiscordMusic.NAME + " v" + DiscordMusic.VERSION, DiscordMusic.SOURCE, message.getJDA().getSelfUser().getEffectiveAvatarUrl());
         embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
-        embedBuilder.addField("Uptime", Toolbox.getTimeString(Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis()), false);
+        embedBuilder.addField("Uptime", Toolbox.getDuration(Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis()), false);
         embedBuilder.addField("Authors", DiscordMusic.AUTHORS, false);
         embedBuilder.addField("Source", DiscordMusic.SOURCE, false);
         embedBuilder.addField("Website", DiscordMusic.WEBSITE, false);
+        embedBuilder.addField("Java Version", System.getProperty("java.version"), false);
         embedBuilder.addField("Dependencies", ""
                 + "\n- " + "JDA v" + JDAInfo.VERSION
                 + "\n- " + "JDA-Utilities v" + JDAUtilitiesInfo.VERSION
