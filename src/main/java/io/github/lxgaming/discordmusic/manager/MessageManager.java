@@ -28,7 +28,6 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
-import net.dv8tion.jda.api.exceptions.VerificationLevelException;
 import net.dv8tion.jda.internal.entities.DataMessage;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -91,7 +90,7 @@ public final class MessageManager {
     public static void sendMessage(MessageChannel messageChannel, Message message, Consumer<Message> success, Consumer<Throwable> failure) {
         try {
             messageChannel.sendMessage(message).queue(success, failure);
-        } catch (IllegalArgumentException | InsufficientPermissionException | UnsupportedOperationException | VerificationLevelException ex) {
+        } catch (IllegalArgumentException | InsufficientPermissionException | UnsupportedOperationException ex) {
             failure.accept(ex);
         }
     }

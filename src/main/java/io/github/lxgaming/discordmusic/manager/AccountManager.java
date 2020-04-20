@@ -16,17 +16,19 @@
 
 package io.github.lxgaming.discordmusic.manager;
 
+import com.google.common.collect.Sets;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.AccountCategory;
 import io.github.lxgaming.discordmusic.listener.DiscordListener;
 import io.github.lxgaming.discordmusic.util.StringUtils;
-import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 import java.util.Optional;
 
@@ -82,8 +84,16 @@ public final class AccountManager {
                 throw new IllegalArgumentException("Token cannot be blank");
             }
             
-            JDABuilder jdaBuilder = new JDABuilder(AccountType.BOT);
+            JDABuilder jdaBuilder = JDABuilder.create(token, Sets.newHashSet(
+                    GatewayIntent.GUILD_MEMBERS,
+                    GatewayIntent.GUILD_VOICE_STATES,
+                    GatewayIntent.GUILD_PRESENCES,
+                    GatewayIntent.GUILD_MESSAGES,
+                    GatewayIntent.GUILD_MESSAGE_REACTIONS
+            ));
+            
             jdaBuilder.addEventListeners(EVENT_WAITER, new DiscordListener());
+            jdaBuilder.disableCache(CacheFlag.EMOTE);
             jdaBuilder.setBulkDeleteSplittingEnabled(false);
             jdaBuilder.setEnableShutdownHook(false);
             jdaBuilder.setToken(token);
