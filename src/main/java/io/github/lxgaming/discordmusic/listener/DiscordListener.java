@@ -40,11 +40,11 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
-public class DiscordListener extends ListenerAdapter {
+public class DiscordListener {
     
-    @Override
+    @SubscribeEvent
     public void onReady(ReadyEvent event) {
         AccountCategory accountCategory = DiscordMusic.getInstance().getConfig().map(Config::getAccountCategory).orElse(null);
         if (accountCategory != null) {
@@ -71,7 +71,7 @@ public class DiscordListener extends ListenerAdapter {
         }
     }
     
-    @Override
+    @SubscribeEvent
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor().isBot() || event.getMessage().isEdited() || event.getAuthor().isFake()) {
             return;
@@ -82,27 +82,27 @@ public class DiscordListener extends ListenerAdapter {
         }
     }
     
-    @Override
+    @SubscribeEvent
     public void onMessageDelete(MessageDeleteEvent event) {
         MessageManager.removeMessages(Sets.newHashSet(event.getMessageId()));
     }
     
-    @Override
+    @SubscribeEvent
     public void onMessageBulkDelete(MessageBulkDeleteEvent event) {
         MessageManager.removeMessages(event.getMessageIds());
     }
     
-    @Override
+    @SubscribeEvent
     public void onGuildJoin(GuildJoinEvent event) {
         AudioManager.register(event.getGuild());
     }
     
-    @Override
+    @SubscribeEvent
     public void onGuildLeave(GuildLeaveEvent event) {
         AudioManager.unregister(event.getGuild());
     }
     
-    @Override
+    @SubscribeEvent
     public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
         DiscordMusic.getInstance().getLogger().debug("GuildVoiceJoinEvent - Joined: {} ({})",
                 event.getChannelJoined().getName(), event.getChannelJoined().getMembers().size());
@@ -116,7 +116,7 @@ public class DiscordListener extends ListenerAdapter {
         }
     }
     
-    @Override
+    @SubscribeEvent
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
         DiscordMusic.getInstance().getLogger().debug("GuildVoiceLeaveEvent - Left: {} ({})",
                 event.getChannelLeft().getName(), event.getChannelLeft().getMembers().size());
@@ -131,7 +131,7 @@ public class DiscordListener extends ListenerAdapter {
         }
     }
     
-    @Override
+    @SubscribeEvent
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         DiscordMusic.getInstance().getLogger().debug("GuildVoiceMoveEvent - Joined: {} ({}), Left: {} ({})",
                 event.getChannelJoined().getName(), event.getChannelJoined().getMembers().size(),

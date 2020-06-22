@@ -22,11 +22,13 @@ import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.AccountCategory;
 import io.github.lxgaming.discordmusic.listener.DiscordListener;
+import io.github.lxgaming.discordmusic.listener.EventWaiterListener;
 import io.github.lxgaming.discordmusic.util.StringUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
@@ -92,10 +94,11 @@ public final class AccountManager {
                     GatewayIntent.GUILD_MESSAGE_REACTIONS
             ));
             
-            jdaBuilder.addEventListeners(EVENT_WAITER, new DiscordListener());
+            jdaBuilder.addEventListeners(new DiscordListener(), new EventWaiterListener());
             jdaBuilder.disableCache(CacheFlag.EMOTE);
             jdaBuilder.setBulkDeleteSplittingEnabled(false);
             jdaBuilder.setEnableShutdownHook(false);
+            jdaBuilder.setEventManager(new AnnotatedEventManager());
             jdaBuilder.setToken(token);
             jda = jdaBuilder.build();
         } catch (Exception ex) {
