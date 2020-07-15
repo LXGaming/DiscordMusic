@@ -73,7 +73,7 @@ public class DiscordListener {
     
     @SubscribeEvent
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getAuthor().isBot() || event.getMessage().isEdited() || event.getAuthor().isFake()) {
+        if (event.getAuthor().isBot() || event.getMessage().isEdited()) {
             return;
         }
         
