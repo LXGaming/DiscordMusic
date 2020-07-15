@@ -1,7 +1,6 @@
-import org.apache.tools.ant.filters.ReplaceTokens
-
 plugins {
     id "java"
+    id "net.kyori.blossom" version "1.1.0"
     id "signing"
 }
 
@@ -12,12 +11,14 @@ group = "io.github.lxgaming"
 archivesBaseName = "DiscordMusic"
 version = "2.4.2"
 
+blossom {
+    replaceToken("@version@", version)
+}
+
 configurations {
     provided {
         compile.extendsFrom(provided)
     }
-
-    compileJava.dependsOn("filterJava")
 }
 
 repositories {
@@ -36,12 +37,6 @@ dependencies {
     compile("org.apache.logging.log4j:log4j-core:2.13.3")
     compile("org.apache.logging.log4j:log4j-slf4j-impl:2.13.3")
     compile("org.fusesource.jansi:jansi:1.18")
-}
-
-compileJava {
-    doFirst {
-        source = filterJava.outputs
-    }
 }
 
 jar {
@@ -70,14 +65,7 @@ jar {
 
 processResources {
     from("LICENSE")
-    rename("LICENSE", "LICENSE-" + archivesBaseName)
-}
-
-task filterJava(type: Sync) {
-    from(sourceSets.main.java)
-    into("$buildDir/tmp/$name")
-
-    filter(ReplaceTokens, tokens: [version: version])
+    rename("LICENSE", "LICENSE-${archivesBaseName}")
 }
 
 task signJar {
