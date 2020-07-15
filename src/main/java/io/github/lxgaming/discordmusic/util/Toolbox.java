@@ -16,8 +16,8 @@
 
 package io.github.lxgaming.discordmusic.util;
 
+import io.github.lxgaming.common.concurrent.BasicThreadFactory;
 import net.dv8tion.jda.api.utils.MarkdownSanitizer;
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -130,7 +130,7 @@ public class Toolbox {
         return Paths.get(".");
     }
     
-    public static ThreadFactory newThreadFactory(String namingPattern) {
-        return new BasicThreadFactory.Builder().namingPattern(namingPattern).daemon(true).priority(Thread.NORM_PRIORITY).build();
+    public static ThreadFactory newThreadFactory(String format) {
+        return BasicThreadFactory.builder().daemon(true).format(format).priority(Thread.NORM_PRIORITY).build();
     }
 }

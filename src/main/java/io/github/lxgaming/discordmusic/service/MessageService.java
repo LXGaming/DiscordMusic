@@ -16,6 +16,8 @@
 
 package io.github.lxgaming.discordmusic.service;
 
+import io.github.lxgaming.common.service.Service;
+import io.github.lxgaming.common.service.ServiceType;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.MessageCategory;
@@ -29,6 +31,7 @@ public class MessageService extends Service {
     @Override
     public boolean prepare() {
         interval(1L, TimeUnit.SECONDS);
+        serviceType(ServiceType.FIXED_DELAY);
         return true;
     }
     
