@@ -112,7 +112,9 @@ public class DiscordListener {
         }
         
         if (event.getMember() == event.getGuild().getSelfMember() || event.getChannelJoined() == event.getGuild().getAudioManager().getConnectedChannel()) {
-            AudioManager.play(event.getGuild());
+            if (PermissionManager.getGuildCategory(event.getGuild()).map(GuildCategory::isAutoPlay).orElse(false)) {
+                AudioManager.play(event.getGuild());
+            }
         }
     }
     
@@ -122,12 +124,16 @@ public class DiscordListener {
                 event.getChannelLeft().getName(), event.getChannelLeft().getMembers().size());
         
         if (event.getMember() == event.getGuild().getSelfMember()) {
-            AudioManager.pause(event.getGuild());
+            if (PermissionManager.getGuildCategory(event.getGuild()).map(GuildCategory::isAutoPause).orElse(false)) {
+                AudioManager.pause(event.getGuild());
+            }
             return;
         }
         
         if (event.getChannelLeft() == event.getGuild().getAudioManager().getConnectedChannel() && event.getChannelLeft().getMembers().size() < 2) {
-            AudioManager.pause(event.getGuild());
+            if (PermissionManager.getGuildCategory(event.getGuild()).map(GuildCategory::isAutoPlay).orElse(false)) {
+                AudioManager.play(event.getGuild());
+            }
         }
     }
     
@@ -139,21 +145,29 @@ public class DiscordListener {
         
         if (event.getMember() == event.getGuild().getSelfMember()) {
             if (event.getChannelJoined().getMembers().size() < 2) {
-                AudioManager.pause(event.getGuild());
+                if (PermissionManager.getGuildCategory(event.getGuild()).map(GuildCategory::isAutoPause).orElse(false)) {
+                    AudioManager.pause(event.getGuild());
+                }
             } else {
-                AudioManager.play(event.getGuild());
+                if (PermissionManager.getGuildCategory(event.getGuild()).map(GuildCategory::isAutoPlay).orElse(false)) {
+                    AudioManager.play(event.getGuild());
+                }
             }
             
             return;
         }
         
         if (event.getChannelLeft() == event.getGuild().getAudioManager().getConnectedChannel() && event.getChannelLeft().getMembers().size() < 2) {
-            AudioManager.pause(event.getGuild());
+            if (PermissionManager.getGuildCategory(event.getGuild()).map(GuildCategory::isAutoPause).orElse(false)) {
+                AudioManager.pause(event.getGuild());
+            }
             return;
         }
         
         if (event.getChannelJoined() == event.getGuild().getAudioManager().getConnectedChannel()) {
-            AudioManager.play(event.getGuild());
+            if (PermissionManager.getGuildCategory(event.getGuild()).map(GuildCategory::isAutoPlay).orElse(false)) {
+                AudioManager.play(event.getGuild());
+            }
         }
     }
 }

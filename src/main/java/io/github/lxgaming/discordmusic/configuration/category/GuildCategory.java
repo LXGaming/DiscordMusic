@@ -32,6 +32,12 @@ public class GuildCategory {
     @SerializedName("autoJoinChannel")
     private long autoJoinChannel = 0L;
     
+    @SerializedName("autoPause")
+    private boolean autoPause = false;
+    
+    @SerializedName("autoPlay")
+    private boolean autoPlay = false;
+    
     @SerializedName("roles")
     private Set<RoleCategory> roleCategories = Sets.newCopyOnWriteArraySet();
     
@@ -56,6 +62,14 @@ public class GuildCategory {
     
     public long getAutoJoinChannel() {
         return autoJoinChannel;
+    }
+    
+    public boolean isAutoPause() {
+        return autoPause;
+    }
+    
+    public boolean isAutoPlay() {
+        return autoPlay;
     }
     
     public Set<RoleCategory> getRoleCategories() {
