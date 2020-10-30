@@ -23,8 +23,8 @@ import io.github.lxgaming.discordmusic.manager.AccountManager;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 import io.github.lxgaming.discordmusic.manager.CommandManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
-import io.github.lxgaming.discordmusic.manager.ServiceManager;
-import io.github.lxgaming.discordmusic.service.MessageService;
+import io.github.lxgaming.discordmusic.manager.TaskManager;
+import io.github.lxgaming.discordmusic.task.MessageTask;
 import io.github.lxgaming.discordmusic.util.ShutdownHook;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import org.apache.logging.log4j.Level;
@@ -65,7 +65,7 @@ public class DiscordMusic {
         }
         
         // Internal
-        ServiceManager.prepare();
+        TaskManager.prepare();
         
         // Discord
         MessageManager.prepare();
@@ -75,7 +75,7 @@ public class DiscordMusic {
         
         getConfiguration().saveConfiguration();
         
-        ServiceManager.schedule(new MessageService());
+        TaskManager.schedule(new MessageTask());
         getLogger().info("{} v{} has loaded", DiscordMusic.NAME, DiscordMusic.VERSION);
     }
     

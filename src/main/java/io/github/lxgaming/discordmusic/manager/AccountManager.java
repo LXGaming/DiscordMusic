@@ -36,7 +36,7 @@ import java.util.Optional;
 
 public final class AccountManager {
     
-    public static final EventWaiter EVENT_WAITER = new EventWaiter(ServiceManager.SCHEDULED_EXECUTOR_SERVICE, false);
+    public static final EventWaiter EVENT_WAITER = new EventWaiter(TaskManager.SCHEDULED_EXECUTOR_SERVICE, false);
     private static JDA jda;
     
     public static void prepare() {

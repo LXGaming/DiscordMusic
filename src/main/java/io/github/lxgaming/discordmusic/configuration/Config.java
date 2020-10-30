@@ -22,7 +22,7 @@ import io.github.lxgaming.discordmusic.configuration.category.AccountCategory;
 import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
 import io.github.lxgaming.discordmusic.configuration.category.GuildCategory;
 import io.github.lxgaming.discordmusic.configuration.category.MessageCategory;
-import io.github.lxgaming.discordmusic.configuration.category.ServiceCategory;
+import io.github.lxgaming.discordmusic.configuration.category.TaskCategory;
 
 import java.util.Set;
 
@@ -40,8 +40,8 @@ public class Config {
     @SerializedName("message")
     private MessageCategory messageCategory = new MessageCategory();
     
-    @SerializedName("service")
-    private ServiceCategory serviceCategory = new ServiceCategory();
+    @SerializedName("task")
+    private TaskCategory taskCategory = new TaskCategory();
     
     public AccountCategory getAccountCategory() {
         return accountCategory;
@@ -59,7 +59,7 @@ public class Config {
         return messageCategory;
     }
     
-    public ServiceCategory getServiceCategory() {
-        return serviceCategory;
+    public TaskCategory getTaskCategory() {
+        return taskCategory;
     }
 }

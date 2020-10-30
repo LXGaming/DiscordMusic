@@ -26,7 +26,7 @@ import io.github.lxgaming.discordmusic.manager.AudioManager;
 import io.github.lxgaming.discordmusic.manager.CommandManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.manager.PermissionManager;
-import io.github.lxgaming.discordmusic.manager.ServiceManager;
+import io.github.lxgaming.discordmusic.manager.TaskManager;
 import io.github.lxgaming.discordmusic.util.StringUtils;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -78,7 +78,7 @@ public class DiscordListener {
         }
         
         if (event.isFromType(ChannelType.TEXT)) {
-            ServiceManager.schedule(() -> CommandManager.execute(event.getMessage()));
+            TaskManager.schedule(() -> CommandManager.execute(event.getMessage()));
         }
     }
     

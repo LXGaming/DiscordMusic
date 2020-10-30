@@ -18,20 +18,16 @@ package io.github.lxgaming.discordmusic.configuration.category;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ServiceCategory {
+public class TaskCategory {
     
-    public static final int DEFAULT_CORE_POOL_SIZE = 5;
-    public static final int DEFAULT_MAXIMUM_POOL_SIZE = 10;
-    public static final long DEFAULT_KEEP_ALIVE_TIME = 60000L;
+    public static final int DEFAULT_CORE_POOL_SIZE = 10;
+    public static final long DEFAULT_SHUTDOWN_TIMEOUT = 15000L; // 15 Seconds
     
     @SerializedName("corePoolSize")
     private int corePoolSize = DEFAULT_CORE_POOL_SIZE;
     
-    @SerializedName("maximumPoolSize")
-    private int maximumPoolSize = DEFAULT_MAXIMUM_POOL_SIZE;
-    
-    @SerializedName("keepAliveTime")
-    private long keepAliveTime = DEFAULT_KEEP_ALIVE_TIME;
+    @SerializedName("shutdownTimeout")
+    private long shutdownTimeout = DEFAULT_SHUTDOWN_TIMEOUT;
     
     public int getCorePoolSize() {
         return corePoolSize;
@@ -41,19 +37,11 @@ public class ServiceCategory {
         this.corePoolSize = corePoolSize;
     }
     
-    public int getMaximumPoolSize() {
-        return maximumPoolSize;
+    public long getShutdownTimeout() {
+        return shutdownTimeout;
     }
     
-    public void setMaximumPoolSize(int maximumPoolSize) {
-        this.maximumPoolSize = maximumPoolSize;
-    }
-    
-    public long getKeepAliveTime() {
-        return keepAliveTime;
-    }
-    
-    public void setKeepAliveTime(long keepAliveTime) {
-        this.keepAliveTime = keepAliveTime;
+    public void setShutdownTimeout(long shutdownTimeout) {
+        this.shutdownTimeout = shutdownTimeout;
     }
 }

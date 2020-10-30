@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.discordmusic.service;
+package io.github.lxgaming.discordmusic.task;
 
-import io.github.lxgaming.common.service.Service;
-import io.github.lxgaming.common.service.ServiceType;
+import io.github.lxgaming.common.task.Task;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.MessageCategory;
@@ -26,12 +25,12 @@ import io.github.lxgaming.discordmusic.manager.MessageManager;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
-public class MessageService extends Service {
+public class MessageTask extends Task {
     
     @Override
     public boolean prepare() {
         interval(1L, TimeUnit.SECONDS);
-        serviceType(ServiceType.FIXED_DELAY);
+        type(Type.FIXED_DELAY);
         return true;
     }
     

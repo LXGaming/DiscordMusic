@@ -18,7 +18,7 @@ package io.github.lxgaming.discordmusic.util;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.manager.AccountManager;
-import io.github.lxgaming.discordmusic.manager.ServiceManager;
+import io.github.lxgaming.discordmusic.manager.TaskManager;
 import org.apache.logging.log4j.LogManager;
 
 public class ShutdownHook extends Thread {
@@ -28,7 +28,7 @@ public class ShutdownHook extends Thread {
         Thread.currentThread().setName("Shutdown Thread");
         DiscordMusic.getInstance().getLogger().info("Shutting down...");
         AccountManager.shutdown();
-        ServiceManager.shutdown();
+        TaskManager.shutdown();
         LogManager.shutdown();
     }
 }
