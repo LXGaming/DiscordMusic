@@ -27,7 +27,6 @@ import io.github.lxgaming.discordmusic.manager.TaskManager;
 import io.github.lxgaming.discordmusic.task.MessageTask;
 import io.github.lxgaming.discordmusic.util.ShutdownHook;
 import io.github.lxgaming.discordmusic.util.Toolbox;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -80,8 +79,7 @@ public class DiscordMusic {
     }
     
     public boolean reload() {
-        getConfiguration().loadConfiguration();
-        if (!getConfig().isPresent()) {
+        if (!getConfiguration().loadConfiguration()) {
             return false;
         }
         
@@ -92,10 +90,12 @@ public class DiscordMusic {
     
     public void reloadLogger() {
         if (getConfig().map(Config::getGeneralCategory).map(GeneralCategory::isDebug).orElse(false)) {
-            Configurator.setLevel(getLogger().getName(), Level.DEBUG);
+            System.setProperty("discordmusic.logging.console.level", "DEBUG");
+            Configurator.reconfigure();
             getLogger().debug("Debug mode enabled.");
         } else {
-            Configurator.setLevel(getLogger().getName(), Level.INFO);
+            System.setProperty("discordmusic.logging.console.level", "INFO");
+            Configurator.reconfigure();
             getLogger().info("Debug mode disabled.");
         }
     }

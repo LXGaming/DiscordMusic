@@ -16,10 +16,17 @@
 
 package io.github.lxgaming.discordmusic;
 
+import org.fusesource.jansi.AnsiConsole;
+
 public class Main {
     
     public static void main(String[] args) {
         Thread.currentThread().setName("Main Thread");
+        if (System.getProperty("log4j.skipJansi", "false").equalsIgnoreCase("false")) {
+            System.setProperty("log4j.skipJansi", "false");
+            AnsiConsole.systemInstall();
+        }
+        
         DiscordMusic discordMusic = new DiscordMusic();
         discordMusic.load();
     }

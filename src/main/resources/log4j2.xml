@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" shutdownHook="disable" packages="io.github.lxgaming.discordmusic.util">
+<Configuration status="WARN" shutdownHook="disable">
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%color{[%d{HH:mm:ss}] [%level] [%t]: %msg%n%xEx}"/>
+        <Console name="Console">
+            <PatternLayout pattern="%highlight{[%d{HH:mm:ss}] [%t/%level]: %msg%n%xEx}{WARN=BRIGHT YELLOW,INFO=RESET,DEBUG=BRIGHT CYAN,TRACE=BRIGHT MAGENTA}"/>
         </Console>
     </Appenders>
     <Loggers>
-        <Root level="INFO">
-            <AppenderRef ref="Console"/>
+        <Root level="ALL">
+            <AppenderRef ref="Console" level="${sys:discordmusic.logging.console.level:-info}"/>
         </Root>
     </Loggers>
 </Configuration>
