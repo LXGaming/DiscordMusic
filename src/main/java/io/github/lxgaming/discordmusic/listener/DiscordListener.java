@@ -29,6 +29,7 @@ import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.manager.TaskManager;
 import io.github.lxgaming.discordmusic.util.StringUtils;
 import io.github.lxgaming.discordmusic.util.Toolbox;
+import net.dv8tion.jda.api.entities.ApplicationInfo;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -46,15 +47,21 @@ public class DiscordListener {
     
     @SubscribeEvent
     public void onReady(ReadyEvent event) {
-        AccountCategory accountCategory = DiscordMusic.getInstance().getConfig().map(Config::getAccountCategory).orElse(null);
-        if (accountCategory != null) {
+        AccountCategory category = DiscordMusic.getInstance().getConfig().map(Config::getAccountCategory).orElse(null);
+        if (category != null) {
             long id = event.getJDA().getSelfUser().getIdLong();
             String name = Toolbox.filter(event.getJDA().getSelfUser().getName());
             
-            if (accountCategory.getId() != id || !StringUtils.equals(accountCategory.getName(), name)) {
-                DiscordMusic.getInstance().getLogger().info("Account {} ({}) -> {} ({})", accountCategory.getName(), accountCategory.getId(), name, id);
-                accountCategory.setId(id);
-                accountCategory.setName(name);
+            if (category.getId() != id || !StringUtils.equals(category.getName(), name)) {
+                DiscordMusic.getInstance().getLogger().info("Account {} ({}) -> {} ({})", category.getName(), category.getId(), name, id);
+                category.setId(id);
+                category.setName(name);
+            }
+            
+            if (category.getOwnerId() == 0L) {
+                ApplicationInfo applicationInfo = event.getJDA().retrieveApplicationInfo().complete();
+                DiscordMusic.getInstance().getLogger().info("OwnerId {} -> {}", category.getOwnerId(), applicationInfo.getOwner().getIdLong());
+                category.setOwnerId(applicationInfo.getOwner().getIdLong());
             }
         }
         

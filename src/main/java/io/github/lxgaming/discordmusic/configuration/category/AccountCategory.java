@@ -33,6 +33,9 @@ public class AccountCategory {
     @SerializedName("token")
     private String token = "";
     
+    @SerializedName("ownerId")
+    private long ownerId = 0L;
+    
     @SerializedName("activityTitle")
     private String activityTitle = DiscordMusic.NAME;
     
@@ -63,6 +66,14 @@ public class AccountCategory {
     
     public String getToken() {
         return token;
+    }
+    
+    public long getOwnerId() {
+        return ownerId;
+    }
+    
+    public void setOwnerId(long ownerId) {
+        this.ownerId = ownerId;
     }
     
     public String getActivityTitle() {

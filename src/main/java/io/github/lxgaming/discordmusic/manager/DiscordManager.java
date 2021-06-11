@@ -19,12 +19,14 @@ package io.github.lxgaming.discordmusic.manager;
 import com.google.common.collect.Sets;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
+import io.github.lxgaming.discordmusic.configuration.category.AccountCategory;
 import io.github.lxgaming.discordmusic.configuration.category.GuildCategory;
 import io.github.lxgaming.discordmusic.configuration.category.guild.RoleCategory;
 import io.github.lxgaming.discordmusic.configuration.category.guild.UserCategory;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
 
 import java.util.Map;
 import java.util.Set;
@@ -60,7 +62,21 @@ public final class DiscordManager {
         guildCategory.getRoleCategories().addAll(roleCategories);
     }
     
+    public static User getOwner() {
+        long ownerId = DiscordMusic.getInstance().getConfig().map(Config::getAccountCategory).map(AccountCategory::getOwnerId).orElse(0L);
+        return ownerId != 0L ? AccountManager.getJDA().getUserById(ownerId) : null;
+    }
+    
+    public static boolean isOwner(User user) {
+        long ownerId = DiscordMusic.getInstance().getConfig().map(Config::getAccountCategory).map(AccountCategory::getOwnerId).orElse(0L);
+        return ownerId != 0L && ownerId == user.getIdLong();
+    }
+    
     public static boolean hasPermission(Member member, String permission) {
+        if (isOwner(member.getUser())) {
+            return true;
+        }
+        
         UserCategory userCategory = getUserCategory(member);
         if (userCategory == null) {
             return false;
