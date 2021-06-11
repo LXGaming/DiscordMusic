@@ -49,12 +49,6 @@ public class GeneralCategory {
         // Bandcamp
         allowedSources.add("bandcamp.com");
         
-        // Mixer
-        allowedSources.add("beam.pro");
-        allowedSources.add("mixer.com");
-        allowedSources.add("www.beam.pro");
-        allowedSources.add("www.mixer.com");
-        
         // Nico
         allowedSources.add("nicovideo.jp");
         allowedSources.add("www.nicovideo.jp");
