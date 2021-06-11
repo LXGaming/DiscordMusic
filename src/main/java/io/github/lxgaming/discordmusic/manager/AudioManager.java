@@ -34,7 +34,7 @@ import io.github.lxgaming.discordmusic.entity.AudioTrackData;
 import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.handler.AudioPlayerSendHandler;
 import io.github.lxgaming.discordmusic.listener.AudioListener;
-import io.github.lxgaming.discordmusic.menu.CustomMenu;
+import io.github.lxgaming.discordmusic.menu.ReactionMenu;
 import io.github.lxgaming.discordmusic.util.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audio.SpeakingMode;
@@ -204,8 +204,8 @@ public final class AudioManager {
                             .append(" [").append(audioTrack.getInfo().title).append("](").append(audioTrack.getInfo().uri).append(")");
                 }
                 
-                CustomMenu.Builder menuBuilder = new CustomMenu.Builder();
-                menuBuilder.addChoices(Arrays.copyOf(OrderedMenu.NUMBERS, entry.getValue().size()));
+                ReactionMenu.Builder menuBuilder = new ReactionMenu.Builder();
+                menuBuilder.addReactions(Arrays.copyOf(OrderedMenu.NUMBERS, entry.getValue().size()));
                 menuBuilder.addUsers(entry.getKey().getUser());
                 menuBuilder.setAction(event -> {
                     int index = Arrays.binarySearch(OrderedMenu.NUMBERS, event.getReactionEmote().getName());

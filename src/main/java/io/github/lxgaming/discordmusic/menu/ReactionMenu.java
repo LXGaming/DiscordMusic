@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Alex Thomson
+ * Copyright 2021 Alex Thomson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,8 @@ package io.github.lxgaming.discordmusic.menu;
 
 import com.google.common.collect.Sets;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import com.jagrosh.jdautilities.menu.Menu;
+import io.github.lxgaming.discordmusic.DiscordMusic;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Message;
@@ -36,71 +37,49 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-/**
- * A Custom {@link com.jagrosh.jdautilities.menu.Menu Menu} implementation.
- */
-public class CustomMenu extends Menu {
+public class ReactionMenu extends Menu {
     
-    private final Set<String> choices;
+    private final Set<String> reactions;
     private final Function<MessageReactionAddEvent, Boolean> action;
     private final Consumer<Message> finalAction;
     
-    private CustomMenu(EventWaiter waiter, Set<User> users, Set<Role> roles, long timeout, TimeUnit unit,
-                       Set<String> choices, Function<MessageReactionAddEvent, Boolean> action,
-                       Consumer<Message> finalAction) {
+    private ReactionMenu(EventWaiter waiter, Set<User> users, Set<Role> roles, long timeout, TimeUnit unit,
+                         Set<String> reactions, Function<MessageReactionAddEvent, Boolean> action,
+                         Consumer<Message> finalAction) {
         super(waiter, users, roles, timeout, unit);
-        this.choices = choices;
+        this.reactions = reactions;
         this.action = action;
         this.finalAction = finalAction;
     }
     
-    /**
-     * Not supported.
-     *
-     * @deprecated Use {@link #display(MessageChannel, Message)} instead.
-     */
-    @Deprecated
     @Override
-    public void display(MessageChannel channel) {
-        throw new UnsupportedOperationException();
+    public final void display(MessageChannel channel, String content) {
+        initialize(channel.sendMessage(content));
     }
     
-    /**
-     * Not supported.
-     *
-     * @deprecated Use {@link #display(MessageChannel, Message)} instead.
-     */
-    @Deprecated
     @Override
-    public void display(Message message) {
-        throw new UnsupportedOperationException();
-    }
-    
-    public void display(MessageChannel channel, CharSequence charSequence) {
-        initialize(channel.sendMessage(charSequence));
-    }
-    
-    public void display(MessageChannel channel, MessageEmbed messageEmbed) {
+    public final void display(MessageChannel channel, MessageEmbed messageEmbed) {
         initialize(channel.sendMessage(messageEmbed));
     }
     
-    public void display(MessageChannel channel, Message message) {
+    public final void display(MessageChannel channel, Message message) {
         initialize(channel.sendMessage(message));
     }
     
-    private void initialize(RestAction<Message> restAction) {
+    @Override
+    protected final void initialize(RestAction<Message> restAction) {
         restAction.queue(success -> {
-            for (String choice : choices) {
-                Emote emote = getEmote(success.getJDA(), choice);
+            for (String reaction : reactions) {
+                Emote emote = getEmote(success.getJDA(), reaction);
                 if (emote != null) {
                     success.addReaction(emote).queue();
                 } else {
-                    success.addReaction(choice).queue();
+                    success.addReaction(reaction).queue();
                 }
             }
             
             waitForEvent(success);
-        });
+        }, failure -> DiscordMusic.getInstance().getLogger().error("Encountered an error while sending {}: {}", Toolbox.getClassSimpleName(getClass()), failure));
     }
     
     private void waitForEvent(Message message) {
@@ -116,7 +95,7 @@ public class CustomMenu extends Menu {
                 reaction = event.getReactionEmote().getName();
             }
             
-            if (!choices.contains(reaction)) {
+            if (!reactions.contains(reaction)) {
                 return false;
             }
             
@@ -138,30 +117,30 @@ public class CustomMenu extends Menu {
         }
     }
     
-    public static class Builder extends Menu.Builder<Builder, CustomMenu> {
+    public static class Builder extends Menu.Builder<Builder, ReactionMenu> {
         
-        private final Set<String> choices = Sets.newLinkedHashSet();
+        private final Set<String> reactions = Sets.newLinkedHashSet();
         private Function<MessageReactionAddEvent, Boolean> action;
         private Consumer<Message> finalAction = message -> {
         };
         
         @Override
-        public CustomMenu build() {
+        public ReactionMenu build() {
             Checks.check(waiter != null, "Must set an EventWaiter");
-            Checks.check(!choices.isEmpty(), "Must have at least one choice");
+            Checks.check(!reactions.isEmpty(), "Must have at least one reactions");
             Checks.check(action != null, "Must provide an action consumer");
             Checks.check(finalAction != null, "Must provide an final action consumer");
-            return new CustomMenu(waiter, users, roles, timeout, unit, choices, action, finalAction);
+            return new ReactionMenu(waiter, users, roles, timeout, unit, reactions, action, finalAction);
         }
         
-        public Builder addChoices(String... emojis) {
-            Collections.addAll(this.choices, emojis);
+        public Builder addReactions(String... emojis) {
+            Collections.addAll(this.reactions, emojis);
             return this;
         }
         
-        public Builder addChoices(Emote... emotes) {
+        public Builder addReactions(Emote... emotes) {
             for (Emote emote : emotes) {
-                addChoices(emote.getId());
+                addReactions(emote.getId());
             }
             
             return this;
