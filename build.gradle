@@ -22,6 +22,7 @@ configurations {
 }
 
 repositories {
+    jcenter()
     mavenCentral()
     maven {
         name = "dv8tion"
