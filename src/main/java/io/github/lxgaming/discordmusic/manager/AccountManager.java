@@ -88,15 +88,13 @@ public final class AccountManager {
             }
             
             JDABuilder jdaBuilder = JDABuilder.create(token, Sets.newHashSet(
-                    GatewayIntent.GUILD_MEMBERS,
                     GatewayIntent.GUILD_VOICE_STATES,
-                    GatewayIntent.GUILD_PRESENCES,
                     GatewayIntent.GUILD_MESSAGES,
                     GatewayIntent.GUILD_MESSAGE_REACTIONS
             ));
             
             jdaBuilder.addEventListeners(new DiscordListener(), new EventWaiterListener());
-            jdaBuilder.disableCache(CacheFlag.EMOTE);
+            jdaBuilder.disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS);
             jdaBuilder.setBulkDeleteSplittingEnabled(false);
             jdaBuilder.setEnableShutdownHook(false);
             jdaBuilder.setEventManager(new AnnotatedEventManager());
