@@ -29,6 +29,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
+import io.github.lxgaming.discordmusic.configuration.category.GuildCategory;
 import io.github.lxgaming.discordmusic.configuration.category.MessageCategory;
 import io.github.lxgaming.discordmusic.entity.AudioTrackData;
 import io.github.lxgaming.discordmusic.entity.Color;
@@ -41,6 +42,7 @@ import net.dv8tion.jda.api.audio.SpeakingMode;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 
 import java.util.Arrays;
 import java.util.List;
@@ -97,6 +99,21 @@ public final class AudioManager {
         } else {
             audioPlayer.setVolume(GeneralCategory.DEFAULT_VOLUME);
             guild.getAudioManager().setSpeakingMode(SpeakingMode.VOICE);
+        }
+        
+        GuildCategory guildCategory = DiscordManager.getGuildCategory(guild);
+        if (guildCategory != null && guildCategory.getAutoJoinChannel() != 0L) {
+            VoiceChannel voiceChannel = guild.getVoiceChannelById(guildCategory.getAutoJoinChannel());
+            if (voiceChannel != null) {
+                try {
+                    guild.getAudioManager().openAudioConnection(voiceChannel);
+                } catch (Exception ex) {
+                    DiscordMusic.getInstance().getLogger().error("Encountered an error while connecting to {} ({}): {}", voiceChannel.getName(), voiceChannel.getIdLong(), ex.getMessage());
+                }
+            } else {
+                DiscordMusic.getInstance().getLogger().warn("AutoJoinChannel does not exist");
+                guildCategory.setAutoJoinChannel(0L);
+            }
         }
         
         AUDIO_PLAYERS.put(guild.getIdLong(), audioPlayer);

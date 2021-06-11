@@ -18,6 +18,8 @@ package io.github.lxgaming.discordmusic.configuration.category;
 
 import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
+import io.github.lxgaming.discordmusic.configuration.category.guild.RoleCategory;
+import io.github.lxgaming.discordmusic.configuration.category.guild.UserCategory;
 
 import java.util.Set;
 
@@ -62,6 +64,10 @@ public class GuildCategory {
     
     public long getAutoJoinChannel() {
         return autoJoinChannel;
+    }
+    
+    public void setAutoJoinChannel(long autoJoinChannel) {
+        this.autoJoinChannel = autoJoinChannel;
     }
     
     public boolean isAutoPause() {

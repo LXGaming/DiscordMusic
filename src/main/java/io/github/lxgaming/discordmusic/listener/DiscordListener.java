@@ -24,8 +24,8 @@ import io.github.lxgaming.discordmusic.configuration.category.AccountCategory;
 import io.github.lxgaming.discordmusic.configuration.category.GuildCategory;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
 import io.github.lxgaming.discordmusic.manager.CommandManager;
+import io.github.lxgaming.discordmusic.manager.DiscordManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
-import io.github.lxgaming.discordmusic.manager.PermissionManager;
 import io.github.lxgaming.discordmusic.manager.TaskManager;
 import io.github.lxgaming.discordmusic.util.StringUtils;
 import io.github.lxgaming.discordmusic.util.Toolbox;
@@ -55,20 +55,16 @@ public class DiscordListener {
                 DiscordMusic.getInstance().getLogger().info("Account {} ({}) -> {} ({})", accountCategory.getName(), accountCategory.getId(), name, id);
                 accountCategory.setId(id);
                 accountCategory.setName(name);
-                DiscordMusic.getInstance().getConfiguration().saveConfiguration();
             }
         }
         
         AudioSourceManagers.registerRemoteSources(AudioManager.AUDIO_PLAYER_MANAGER);
         for (Guild guild : event.getJDA().getGuilds()) {
             AudioManager.register(guild);
-            PermissionManager.register(guild);
-            PermissionManager.getGuildCategory(guild)
-                    .map(GuildCategory::getAutoJoinChannel)
-                    .filter(id -> id > 0)
-                    .map(guild::getVoiceChannelById)
-                    .ifPresent(guild.getAudioManager()::openAudioConnection);
+            DiscordManager.register(guild);
         }
+        
+        DiscordMusic.getInstance().getConfiguration().saveConfiguration();
     }
     
     @SubscribeEvent
@@ -107,12 +103,18 @@ public class DiscordListener {
         DiscordMusic.getInstance().getLogger().debug("GuildVoiceJoinEvent - Joined: {} ({})",
                 event.getChannelJoined().getName(), event.getChannelJoined().getMembers().size());
         
+        GuildCategory guildCategory = DiscordManager.getGuildCategory(event.getGuild());
+        if (guildCategory == null) {
+            DiscordMusic.getInstance().getLogger().warn("GuildCategory is unavailable");
+            return;
+        }
+        
         if (event.getChannelJoined().getMembers().size() < 2) {
             return;
         }
         
         if (event.getMember() == event.getGuild().getSelfMember() || event.getChannelJoined() == event.getGuild().getAudioManager().getConnectedChannel()) {
-            if (PermissionManager.getGuildCategory(event.getGuild()).map(GuildCategory::isAutoPlay).orElse(false)) {
+            if (guildCategory.isAutoPlay()) {
                 AudioManager.play(event.getGuild());
             }
         }
@@ -123,15 +125,21 @@ public class DiscordListener {
         DiscordMusic.getInstance().getLogger().debug("GuildVoiceLeaveEvent - Left: {} ({})",
                 event.getChannelLeft().getName(), event.getChannelLeft().getMembers().size());
         
+        GuildCategory guildCategory = DiscordManager.getGuildCategory(event.getGuild());
+        if (guildCategory == null) {
+            DiscordMusic.getInstance().getLogger().warn("GuildCategory is unavailable");
+            return;
+        }
+        
         if (event.getMember() == event.getGuild().getSelfMember()) {
-            if (PermissionManager.getGuildCategory(event.getGuild()).map(GuildCategory::isAutoPause).orElse(false)) {
+            if (guildCategory.isAutoPause()) {
                 AudioManager.pause(event.getGuild());
             }
             return;
         }
         
         if (event.getChannelLeft() == event.getGuild().getAudioManager().getConnectedChannel() && event.getChannelLeft().getMembers().size() < 2) {
-            if (PermissionManager.getGuildCategory(event.getGuild()).map(GuildCategory::isAutoPlay).orElse(false)) {
+            if (guildCategory.isAutoPlay()) {
                 AudioManager.play(event.getGuild());
             }
         }
@@ -143,13 +151,19 @@ public class DiscordListener {
                 event.getChannelJoined().getName(), event.getChannelJoined().getMembers().size(),
                 event.getChannelLeft().getName(), event.getChannelLeft().getMembers().size());
         
+        GuildCategory guildCategory = DiscordManager.getGuildCategory(event.getGuild());
+        if (guildCategory == null) {
+            DiscordMusic.getInstance().getLogger().warn("GuildCategory is unavailable");
+            return;
+        }
+        
         if (event.getMember() == event.getGuild().getSelfMember()) {
             if (event.getChannelJoined().getMembers().size() < 2) {
-                if (PermissionManager.getGuildCategory(event.getGuild()).map(GuildCategory::isAutoPause).orElse(false)) {
+                if (guildCategory.isAutoPause()) {
                     AudioManager.pause(event.getGuild());
                 }
             } else {
-                if (PermissionManager.getGuildCategory(event.getGuild()).map(GuildCategory::isAutoPlay).orElse(false)) {
+                if (guildCategory.isAutoPlay()) {
                     AudioManager.play(event.getGuild());
                 }
             }
@@ -158,14 +172,14 @@ public class DiscordListener {
         }
         
         if (event.getChannelLeft() == event.getGuild().getAudioManager().getConnectedChannel() && event.getChannelLeft().getMembers().size() < 2) {
-            if (PermissionManager.getGuildCategory(event.getGuild()).map(GuildCategory::isAutoPause).orElse(false)) {
+            if (guildCategory.isAutoPause()) {
                 AudioManager.pause(event.getGuild());
             }
             return;
         }
         
         if (event.getChannelJoined() == event.getGuild().getAudioManager().getConnectedChannel()) {
-            if (PermissionManager.getGuildCategory(event.getGuild()).map(GuildCategory::isAutoPlay).orElse(false)) {
+            if (guildCategory.isAutoPlay()) {
                 AudioManager.play(event.getGuild());
             }
         }

@@ -16,9 +16,9 @@
 
 package io.github.lxgaming.discordmusic.command;
 
-import io.github.lxgaming.discordmusic.command.permission.AddPermissionCommand;
 import io.github.lxgaming.discordmusic.command.permission.ListPermissionCommand;
-import io.github.lxgaming.discordmusic.command.permission.RemovePermissionCommand;
+import io.github.lxgaming.discordmusic.command.permission.SetPermissionCommand;
+import io.github.lxgaming.discordmusic.command.permission.UnsetPermissionCommand;
 import io.github.lxgaming.discordmusic.manager.CommandManager;
 import net.dv8tion.jda.api.entities.Message;
 
@@ -29,9 +29,9 @@ public class PermissionCommand extends Command {
     @Override
     public boolean prepare() {
         addAlias("permission");
-        addChild(AddPermissionCommand.class);
         addChild(ListPermissionCommand.class);
-        addChild(RemovePermissionCommand.class);
+        addChild(SetPermissionCommand.class);
+        addChild(UnsetPermissionCommand.class);
         description("Base permission command");
         permission("permission.base");
         return true;

@@ -32,8 +32,6 @@ import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
-import java.util.Optional;
-
 public final class AccountManager {
     
     public static final EventWaiter EVENT_WAITER = new EventWaiter(TaskManager.SCHEDULED_EXECUTOR_SERVICE, false);
@@ -52,7 +50,7 @@ public final class AccountManager {
             return false;
         }
         
-        JDA jda = getJDA().orElse(null);
+        JDA jda = getJDA();
         if (jda == null) {
             DiscordMusic.getInstance().getLogger().warn("JDA is unavailable");
             return false;
@@ -77,7 +75,10 @@ public final class AccountManager {
     }
     
     public static void shutdown() {
-        getJDA().ifPresent(JDA::shutdown);
+        JDA jda = getJDA();
+        if (jda != null) {
+            jda.shutdown();
+        }
     }
     
     private static void createJDA(String token) {
@@ -99,14 +100,13 @@ public final class AccountManager {
             jdaBuilder.setBulkDeleteSplittingEnabled(false);
             jdaBuilder.setEnableShutdownHook(false);
             jdaBuilder.setEventManager(new AnnotatedEventManager());
-            jdaBuilder.setToken(token);
             jda = jdaBuilder.build();
         } catch (Exception ex) {
             DiscordMusic.getInstance().getLogger().error("Encountered an error while creating JDA", ex);
         }
     }
     
-    public static Optional<JDA> getJDA() {
-        return Optional.ofNullable(jda);
+    public static JDA getJDA() {
+        return jda;
     }
 }

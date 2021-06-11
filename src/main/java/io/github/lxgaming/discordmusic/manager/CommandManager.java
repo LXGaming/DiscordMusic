@@ -74,12 +74,12 @@ public final class CommandManager {
     }
     
     public static boolean execute(Message message) {
-        String content = parseMessage(MessageManager.getMessageContent(message));
+        String content = MessageManager.getMessageContent(message);
         if (StringUtils.isBlank(content)) {
             return false;
         }
         
-        List<String> arguments = getArguments(content);
+        List<String> arguments = parseMessage(content);
         if (arguments == null || arguments.isEmpty()) {
             return false;
         }
@@ -97,7 +97,7 @@ public final class CommandManager {
             message.getChannel().sendTyping().queue();
         }
         
-        if (StringUtils.isBlank(command.getPermission()) || !PermissionManager.hasPermission(message.getMember(), command.getPermission())) {
+        if (StringUtils.isBlank(command.getPermission()) || !DiscordManager.hasPermission(message.getMember(), command.getPermission())) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("You do not have permission to execute this command");
@@ -106,9 +106,7 @@ public final class CommandManager {
             return false;
         }
         
-        DiscordMusic.getInstance().getLogger().debug("Processing {} for {}#{} ({})",
-                content,
-                message.getAuthor().getName(), message.getAuthor().getDiscriminator(), message.getAuthor().getIdLong());
+        DiscordMusic.getInstance().getLogger().debug("Processing {} for {} ({})", content, message.getAuthor().getAsTag(), message.getAuthor().getIdLong());
         
         try {
             command.execute(message, arguments);
@@ -254,23 +252,19 @@ public final class CommandManager {
         return parentCommand;
     }
     
-    private static List<String> getArguments(String string) {
-        return Lists.newArrayList(StringUtils.split(string, " "));
-    }
-    
-    private static String parseMessage(String message) {
+    private static List<String> parseMessage(String string) {
         String commandPrefix = DiscordMusic.getInstance().getConfig()
                 .map(Config::getGeneralCategory)
                 .map(GeneralCategory::getCommandPrefix)
                 .orElse(null);
-        if (StringUtils.startsWithIgnoreCase(message, commandPrefix)) {
-            return StringUtils.stripStart(StringUtils.removeStartIgnoreCase(message, commandPrefix), null);
+        if (StringUtils.isBlank(commandPrefix)) {
+            return null;
         }
         
-        if (StringUtils.startsWithIgnoreCase(message, "/")) {
-            return StringUtils.stripStart(StringUtils.removeStartIgnoreCase(message, "/"), null);
+        if (!StringUtils.startsWithIgnoreCase(string, commandPrefix)) {
+            return null;
         }
         
-        return null;
+        return Lists.newArrayList(StringUtils.split(StringUtils.removeStartIgnoreCase(string, commandPrefix)));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Alex Thomson
+ * Copyright 2021 Alex Thomson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.discordmusic.configuration.category;
+package io.github.lxgaming.discordmusic.configuration.category.guild;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Set;
+import java.util.Map;
 
 public class RoleCategory {
     
@@ -33,7 +33,7 @@ public class RoleCategory {
     private boolean inheritable = false;
     
     @SerializedName("permissions")
-    private Set<String> permissions = Sets.newConcurrentHashSet();
+    private Map<String, Boolean> permissions = Maps.newConcurrentMap();
     
     public long getId() {
         return id;
@@ -59,7 +59,7 @@ public class RoleCategory {
         this.inheritable = inheritable;
     }
     
-    public Set<String> getPermissions() {
+    public Map<String, Boolean> getPermissions() {
         return permissions;
     }
 }

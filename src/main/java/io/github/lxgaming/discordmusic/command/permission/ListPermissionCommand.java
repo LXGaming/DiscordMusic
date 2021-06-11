@@ -17,17 +17,20 @@
 package io.github.lxgaming.discordmusic.command.permission;
 
 import io.github.lxgaming.discordmusic.command.Command;
-import io.github.lxgaming.discordmusic.configuration.category.RoleCategory;
-import io.github.lxgaming.discordmusic.configuration.category.UserCategory;
+import io.github.lxgaming.discordmusic.configuration.category.guild.RoleCategory;
+import io.github.lxgaming.discordmusic.configuration.category.guild.UserCategory;
 import io.github.lxgaming.discordmusic.entity.Color;
+import io.github.lxgaming.discordmusic.manager.DiscordManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
-import io.github.lxgaming.discordmusic.manager.PermissionManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.Role;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ListPermissionCommand extends Command {
@@ -35,20 +38,20 @@ public class ListPermissionCommand extends Command {
     @Override
     public boolean prepare() {
         addAlias("list");
-        description("List permission");
+        addAlias("l");
+        description("List permissions");
         permission("permission.list");
-        usage("[@User | @Role]");
+        usage("[@Role | @User]");
         return true;
     }
     
     @Override
     public void execute(Message message, List<String> arguments) throws Exception {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        
         List<Member> members = message.getMentionedMembers(message.getGuild());
         List<Role> roles = message.getMentionedRoles();
         
-        if ((!members.isEmpty() || !roles.isEmpty()) && !PermissionManager.hasPermission(message.getMember(), "permission.list.others")) {
+        if ((!members.isEmpty() || !roles.isEmpty()) && !DiscordManager.hasPermission(message.getMember(), "permission.list.others")) {
+            EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
             embedBuilder.setTitle("You do not have permission to execute this command");
             embedBuilder.setFooter("Missing permission: permission.list.others", null);
@@ -56,50 +59,66 @@ public class ListPermissionCommand extends Command {
             return;
         }
         
-        Set<String> permissions;
         if (!roles.isEmpty()) {
             Role role = roles.get(0);
-            RoleCategory roleCategory = PermissionManager.getRoleCategory(role).orElse(null);
-            if (roleCategory == null) {
-                embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-                embedBuilder.setTitle("Failed to get RoleCategory for " + role.getName());
-                MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
-                return;
-            }
-            
-            permissions = roleCategory.getPermissions();
+            RoleCategory roleCategory = DiscordManager.getRoleCategory(role);
+            execute(message.getChannel(), Collections.singleton(roleCategory), null);
         } else if (!members.isEmpty()) {
             Member member = members.get(0);
-            UserCategory userCategory = PermissionManager.getUserCategory(member).orElse(null);
-            if (userCategory == null) {
-                embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-                embedBuilder.setTitle("Failed to get UserCategory for " + member.getEffectiveName());
-                MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
-                return;
+            UserCategory userCategory = DiscordManager.getUserCategory(member);
+            execute(message.getChannel(), null, userCategory);
+        } else {
+            Set<RoleCategory> roleCategories;
+            UserCategory userCategory;
+            if (message.getMember() != null) {
+                roleCategories = DiscordManager.getRoleCategories(message.getMember());
+                userCategory = DiscordManager.getUserCategory(message.getMember());
+            } else {
+                roleCategories = null;
+                userCategory = null;
             }
             
-            permissions = userCategory.getPermissions();
-        } else {
-            permissions = PermissionManager.getPermissions(message.getMember());
+            execute(message.getChannel(), roleCategories, userCategory);
+        }
+    }
+    
+    private void execute(MessageChannel channel, Iterable<RoleCategory> roleCategories, UserCategory userCategory) {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        if (roleCategories != null) {
+            for (RoleCategory roleCategory : roleCategories) {
+                if (roleCategory == null || roleCategory.getPermissions().isEmpty()) {
+                    continue;
+                }
+                
+                embedBuilder.addField(roleCategory.getName(), join(roleCategory.getPermissions()), false);
+            }
         }
         
-        if (permissions.isEmpty()) {
+        if (userCategory != null && !userCategory.getPermissions().isEmpty()) {
+            embedBuilder.addField(userCategory.getName(), join(userCategory.getPermissions()), false);
+        }
+        
+        if (!embedBuilder.getFields().isEmpty()) {
+            embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
+            embedBuilder.setTitle("Permissions");
+        } else {
             embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("No permissions");
-            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
-            return;
         }
         
-        embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
-        embedBuilder.setTitle("Permissions");
-        for (String permission : permissions) {
-            if (embedBuilder.getDescriptionBuilder().length() != 0) {
-                embedBuilder.getDescriptionBuilder().append("\n");
+        MessageManager.sendTemporaryMessage(channel, embedBuilder.build());
+    }
+    
+    private String join(Map<String, Boolean> map) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Map.Entry<String, Boolean> entry : map.entrySet()) {
+            if (stringBuilder.length() != 0) {
+                stringBuilder.append("\n");
             }
             
-            embedBuilder.getDescriptionBuilder().append(permission);
+            stringBuilder.append(entry.getKey()).append(": ").append(entry.getValue());
         }
         
-        MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+        return stringBuilder.toString();
     }
 }
