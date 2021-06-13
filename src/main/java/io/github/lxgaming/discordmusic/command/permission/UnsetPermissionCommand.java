@@ -25,6 +25,7 @@ import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.manager.CommandManager;
 import io.github.lxgaming.discordmusic.manager.DiscordManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
+import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -48,6 +49,7 @@ public class UnsetPermissionCommand extends Command {
     
     @Override
     public void execute(Message message, List<String> arguments) throws Exception {
+        Toolbox.removeMentions(message, arguments);
         if (arguments.isEmpty()) {
             Command command = CommandManager.getCommand(HelpCommand.class);
             if (command != null) {

@@ -17,12 +17,17 @@
 package io.github.lxgaming.discordmusic.util;
 
 import io.github.lxgaming.common.concurrent.BasicThreadFactory;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.utils.MarkdownSanitizer;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +47,20 @@ public class Toolbox {
         return MarkdownSanitizer.sanitize(sequence)
                 .replace("[", "\\[").replace("]", "\\]")
                 .replace("(", "\\(").replace(")", "\\)");
+    }
+    
+    public static void removeMentions(Message message, List<String> arguments) {
+        for (MessageChannel channel : message.getMentionedChannels()) {
+            arguments.removeIf(argument -> argument.equals("#" + channel.getName()));
+        }
+        
+        for (Role role : message.getMentionedRoles()) {
+            arguments.removeIf(argument -> argument.equals("@" + role.getName()));
+        }
+        
+        for (User user : message.getMentionedUsers()) {
+            arguments.removeIf(argument -> argument.equals("@" + user.getName()));
+        }
     }
     
     public static String getDuration(long value, TimeUnit unit, boolean abbreviate, TimeUnit precision) {
