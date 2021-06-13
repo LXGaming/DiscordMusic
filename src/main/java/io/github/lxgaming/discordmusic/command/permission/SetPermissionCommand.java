@@ -49,7 +49,6 @@ public class SetPermissionCommand extends Command {
     
     @Override
     public void execute(Message message, List<String> arguments) throws Exception {
-        
         if (arguments.isEmpty()) {
             Command command = CommandManager.getCommand(HelpCommand.class);
             if (command != null) {
@@ -82,11 +81,9 @@ public class SetPermissionCommand extends Command {
     }
     
     private void execute(MessageChannel channel, Role role, String permission, boolean value) {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
         RoleCategory roleCategory = DiscordManager.getOrCreateRoleCategory(role);
         if (roleCategory == null) {
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("Failed to get RoleCategory for " + role.getName());
+            EmbedBuilder embedBuilder = MessageManager.createErrorEmbed("Failed to get RoleCategory for " + role.getName());
             MessageManager.sendTemporaryMessage(channel, embedBuilder.build());
             return;
         }
@@ -95,6 +92,7 @@ public class SetPermissionCommand extends Command {
             DiscordMusic.getInstance().getConfiguration().saveConfiguration();
         }
         
+        EmbedBuilder embedBuilder = new EmbedBuilder();
         if (value) {
             embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
             embedBuilder.setTitle("Set " + permission + " to true for " + role.getName());
@@ -107,11 +105,9 @@ public class SetPermissionCommand extends Command {
     }
     
     private void execute(MessageChannel channel, Member member, String permission, boolean value) {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
         UserCategory userCategory = DiscordManager.getOrCreateUserCategory(member);
         if (userCategory == null) {
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("Failed to get UserCategory for " + member.getUser().getAsTag());
+            EmbedBuilder embedBuilder = MessageManager.createErrorEmbed("Failed to get UserCategory for " + member.getUser().getAsTag());
             MessageManager.sendTemporaryMessage(channel, embedBuilder.build());
             return;
         }
@@ -120,6 +116,7 @@ public class SetPermissionCommand extends Command {
             DiscordMusic.getInstance().getConfiguration().saveConfiguration();
         }
         
+        EmbedBuilder embedBuilder = new EmbedBuilder();
         if (value) {
             embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
             embedBuilder.setTitle("Set " + permission + " to true for " + member.getUser().getAsTag());

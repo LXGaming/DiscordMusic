@@ -23,7 +23,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 import java.util.concurrent.ThreadFactory;
 
 public class Toolbox {
@@ -81,27 +80,27 @@ public class Toolbox {
         return plural;
     }
     
-    public static Optional<Integer> parseInteger(String string) {
+    public static Integer parseInteger(String string) {
         try {
-            return Optional.of(Integer.parseInt(string));
+            return Integer.parseInt(string);
         } catch (NumberFormatException ex) {
-            return Optional.empty();
+            return null;
         }
     }
     
-    public static Optional<Long> parseLong(String string) {
+    public static Long parseLong(String string) {
         try {
-            return Optional.of(Long.parseLong(string));
+            return Long.parseLong(string);
         } catch (NumberFormatException ex) {
-            return Optional.empty();
+            return null;
         }
     }
     
-    public static Optional<URL> parseUrl(String url) {
+    public static URL parseUrl(String url) {
         try {
-            return Optional.of(new URL(url));
+            return new URL(url);
         } catch (MalformedURLException ex) {
-            return Optional.empty();
+            return null;
         }
     }
     

@@ -38,16 +38,14 @@ public class ClearCommand extends Command {
     
     @Override
     public void execute(Message message, List<String> arguments) throws Exception {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        
         BlockingQueue<AudioTrack> audioQueue = AudioManager.getAudioQueue(message.getGuild());
         if (audioQueue == null) {
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("AudioQueue is unavailable");
+            EmbedBuilder embedBuilder = MessageManager.createErrorEmbed("AudioQueue is unavailable");
             MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
+        EmbedBuilder embedBuilder = new EmbedBuilder();
         if (!audioQueue.isEmpty()) {
             audioQueue.clear();
             AudioManager.playNext(message.getGuild());

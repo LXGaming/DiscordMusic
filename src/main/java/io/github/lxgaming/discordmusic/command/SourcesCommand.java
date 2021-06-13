@@ -39,22 +39,22 @@ public class SourcesCommand extends Command {
     
     @Override
     public void execute(Message message, List<String> arguments) throws Exception {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        
         Set<String> allowedSources = DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).map(GeneralCategory::getAllowedSources).orElse(null);
-        if (allowedSources != null) {
-            embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
-            embedBuilder.setTitle("Sources");
-            for (String source : allowedSources) {
-                if (embedBuilder.getDescriptionBuilder().length() != 0) {
-                    embedBuilder.getDescriptionBuilder().append("\n");
-                }
-                
-                embedBuilder.getDescriptionBuilder().append(source);
+        if (allowedSources == null) {
+            EmbedBuilder embedBuilder = MessageManager.createErrorEmbed("AllowedSources is unavailable");
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+            return;
+        }
+        
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
+        embedBuilder.setTitle("Sources");
+        for (String source : allowedSources) {
+            if (embedBuilder.getDescriptionBuilder().length() != 0) {
+                embedBuilder.getDescriptionBuilder().append("\n");
             }
-        } else {
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("AllowedSources is unavailable");
+            
+            embedBuilder.getDescriptionBuilder().append(source);
         }
         
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());

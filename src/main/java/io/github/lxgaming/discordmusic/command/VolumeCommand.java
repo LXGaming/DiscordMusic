@@ -41,24 +41,25 @@ public class VolumeCommand extends Command {
     
     @Override
     public void execute(Message message, List<String> arguments) throws Exception {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
         if (arguments.isEmpty()) {
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
             embedBuilder.setTitle("Volume - " + AudioManager.getAudioPlayer(message.getGuild()).getVolume());
             MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
-        Integer volume = Toolbox.parseInteger(arguments.get(0)).orElse(null);
+        String argument = arguments.remove(0);
+        Integer volume = Toolbox.parseInteger(argument);
         if (volume == null) {
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("Failed to parse argument");
+            EmbedBuilder embedBuilder = MessageManager.createErrorEmbed(String.format("Failed to parse %s as a integer", Toolbox.escapeMarkdown(argument)));
             MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
         int maxVolume = Math.min(1000, DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).map(GeneralCategory::getMaxVolume).orElse(GeneralCategory.DEFAULT_MAX_VOLUME));
         if (volume < 0 || volume > maxVolume) {
+            EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
             embedBuilder.setTitle("Value is outside of the allowed range (0 ~ " + maxVolume + ")");
             MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
@@ -68,6 +69,7 @@ public class VolumeCommand extends Command {
         int previousVolume = AudioManager.getAudioPlayer(message.getGuild()).getVolume();
         AudioManager.getAudioPlayer(message.getGuild()).setVolume(volume);
         
+        EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
         embedBuilder.setTitle("Volume - " + previousVolume + " -> " + AudioManager.getAudioPlayer(message.getGuild()).getVolume());
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());

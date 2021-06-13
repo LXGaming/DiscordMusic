@@ -23,6 +23,7 @@ import io.github.lxgaming.discordmusic.entity.AudioTrackData;
 import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.handler.AudioPlayerLoadResultHandler;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
+import io.github.lxgaming.discordmusic.manager.CommandManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.util.StringUtils;
 import io.github.lxgaming.discordmusic.util.Toolbox;
@@ -31,7 +32,6 @@ import net.dv8tion.jda.api.entities.Message;
 
 import java.net.URL;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 public class PlayCommand extends Command {
@@ -47,31 +47,32 @@ public class PlayCommand extends Command {
     
     @Override
     public void execute(Message message, List<String> arguments) throws Exception {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        
         if (arguments.isEmpty()) {
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("Invalid arguments");
-            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+            Command command = CommandManager.getCommand(HelpCommand.class);
+            if (command != null) {
+                command.execute(message, getPath());
+            }
+            
             return;
         }
         
+        EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
         embedBuilder.setTitle("Play");
         for (String string : arguments) {
-            Optional<URL> url = Toolbox.parseUrl(string);
-            if (!url.isPresent()) {
+            URL url = Toolbox.parseUrl(string);
+            if (url == null) {
                 embedBuilder.getDescriptionBuilder().append("**Invalid:** ").append(string).append("\n");
                 continue;
             }
             
-            if (!StringUtils.equals(url.get().getProtocol(), "https")) {
+            if (!StringUtils.equals(url.getProtocol(), "https")) {
                 embedBuilder.getDescriptionBuilder().append("**Unsecure:** ").append(string).append("\n");
                 continue;
             }
             
-            Optional<Set<String>> allowedSources = DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).map(GeneralCategory::getAllowedSources);
-            if (!allowedSources.isPresent() || !allowedSources.get().contains(url.get().getHost())) {
+            Set<String> allowedSources = DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).map(GeneralCategory::getAllowedSources).orElse(null);
+            if (allowedSources == null || !allowedSources.contains(url.getHost())) {
                 embedBuilder.getDescriptionBuilder().append("**Forbidden:** ").append(string).append("\n");
                 continue;
             }

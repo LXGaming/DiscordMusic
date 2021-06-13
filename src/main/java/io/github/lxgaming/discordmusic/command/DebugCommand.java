@@ -20,7 +20,6 @@ import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
 import io.github.lxgaming.discordmusic.entity.Color;
-import io.github.lxgaming.discordmusic.exception.CommandException;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.util.StringUtils;
 import io.github.lxgaming.discordmusic.util.Toolbox;
@@ -45,7 +44,9 @@ public class DebugCommand extends Command {
     public void execute(Message message, List<String> arguments) throws Exception {
         GeneralCategory generalCategory = DiscordMusic.getInstance().getConfig().map(Config::getGeneralCategory).orElse(null);
         if (generalCategory == null) {
-            throw new CommandException("GeneralCategory is unavailable");
+            EmbedBuilder embedBuilder = MessageManager.createErrorEmbed("GeneralCategory is unavailable");
+            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+            return;
         }
         
         Boolean state;
@@ -54,7 +55,9 @@ public class DebugCommand extends Command {
             if (StringUtils.isNotBlank(argument)) {
                 state = BooleanUtils.toBooleanObject(argument);
                 if (state == null) {
-                    throw new CommandException(String.format("Failed to parse %s as a boolean", Toolbox.escapeMarkdown(argument)));
+                    EmbedBuilder embedBuilder = MessageManager.createErrorEmbed(String.format("Failed to parse %s as a boolean", Toolbox.escapeMarkdown(argument)));
+                    MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+                    return;
                 }
             } else {
                 state = null;

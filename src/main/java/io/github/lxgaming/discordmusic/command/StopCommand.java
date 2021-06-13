@@ -37,16 +37,14 @@ public class StopCommand extends Command {
     
     @Override
     public void execute(Message message, List<String> arguments) throws Exception {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        
         AudioPlayer audioPlayer = AudioManager.getAudioPlayer(message.getGuild());
         if (audioPlayer == null) {
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("AudioPlayer is unavailable");
+            EmbedBuilder embedBuilder = MessageManager.createErrorEmbed("AudioPlayer is unavailable");
             MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
         
+        EmbedBuilder embedBuilder = new EmbedBuilder();
         if (audioPlayer.getPlayingTrack() != null) {
             audioPlayer.stopTrack();
             embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));

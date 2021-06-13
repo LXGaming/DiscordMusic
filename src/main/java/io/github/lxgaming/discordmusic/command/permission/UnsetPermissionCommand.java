@@ -18,14 +18,17 @@ package io.github.lxgaming.discordmusic.command.permission;
 
 import io.github.lxgaming.discordmusic.DiscordMusic;
 import io.github.lxgaming.discordmusic.command.Command;
+import io.github.lxgaming.discordmusic.command.HelpCommand;
 import io.github.lxgaming.discordmusic.configuration.category.guild.RoleCategory;
 import io.github.lxgaming.discordmusic.configuration.category.guild.UserCategory;
 import io.github.lxgaming.discordmusic.entity.Color;
+import io.github.lxgaming.discordmusic.manager.CommandManager;
 import io.github.lxgaming.discordmusic.manager.DiscordManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.Role;
 
 import java.util.List;
@@ -45,11 +48,12 @@ public class UnsetPermissionCommand extends Command {
     
     @Override
     public void execute(Message message, List<String> arguments) throws Exception {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
         if (arguments.isEmpty()) {
-            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
-            embedBuilder.setTitle("Invalid Arguments: " + getUsage());
-            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+            Command command = CommandManager.getCommand(HelpCommand.class);
+            if (command != null) {
+                command.execute(message, getPath());
+            }
+            
             return;
         }
         
@@ -59,63 +63,54 @@ public class UnsetPermissionCommand extends Command {
         String permission = arguments.remove(0);
         if (!roles.isEmpty()) {
             Role role = roles.get(0);
-            RoleCategory roleCategory = DiscordManager.getRoleCategory(role);
-            if (roleCategory == null) {
-                embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-                embedBuilder.setTitle("Failed to get RoleCategory for " + role.getName());
-                MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
-                return;
-            }
-            
-            if (roleCategory.getPermissions().remove(permission)) {
-                DiscordMusic.getInstance().getConfiguration().saveConfiguration();
-                embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
-                embedBuilder.setTitle("Revoked " + permission + " for " + role.getName());
-            } else {
-                embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-                embedBuilder.setTitle(permission + " is not set for " + role.getName());
-            }
-            
-            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+            execute(message.getChannel(), role, permission);
         } else if (!members.isEmpty()) {
             Member member = members.get(0);
-            UserCategory userCategory = DiscordManager.getUserCategory(member);
-            if (userCategory == null) {
-                embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-                embedBuilder.setTitle("Failed to get UserCategory for " + member.getEffectiveName());
-                MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
-                return;
-            }
-            
-            if (userCategory.getPermissions().remove(permission)) {
-                DiscordMusic.getInstance().getConfiguration().saveConfiguration();
-                embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
-                embedBuilder.setTitle("Revoked " + permission + " for " + member.getEffectiveName());
-            } else {
-                embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-                embedBuilder.setTitle(permission + " is not set for " + member.getEffectiveName());
-            }
-            
-            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+            execute(message.getChannel(), member, permission);
         } else {
-            UserCategory userCategory = DiscordManager.getUserCategory(message.getMember());
-            if (userCategory == null) {
-                embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-                embedBuilder.setTitle("Failed to get UserCategory for " + message.getMember().getEffectiveName());
-                MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
-                return;
-            }
-            
-            if (userCategory.getPermissions().remove(permission)) {
-                DiscordMusic.getInstance().getConfiguration().saveConfiguration();
-                embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
-                embedBuilder.setTitle("Revoked " + permission + " for " + message.getMember().getEffectiveName());
-            } else {
-                embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-                embedBuilder.setTitle(permission + " is not set for " + message.getMember().getEffectiveName());
-            }
-            
-            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+            execute(message.getChannel(), message.getMember(), permission);
         }
+    }
+    
+    private void execute(MessageChannel channel, Role role, String permission) {
+        RoleCategory roleCategory = DiscordManager.getOrCreateRoleCategory(role);
+        if (roleCategory == null) {
+            EmbedBuilder embedBuilder = MessageManager.createErrorEmbed("Failed to get RoleCategory for " + role.getName());
+            MessageManager.sendTemporaryMessage(channel, embedBuilder.build());
+            return;
+        }
+        
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        if (roleCategory.getPermissions().remove(permission) != null) {
+            DiscordMusic.getInstance().getConfiguration().saveConfiguration();
+            embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
+            embedBuilder.setTitle("Unset " + permission + " for " + role.getName());
+        } else {
+            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
+            embedBuilder.setTitle(permission + " is not set for " + role.getName());
+        }
+        
+        MessageManager.sendTemporaryMessage(channel, embedBuilder.build());
+    }
+    
+    private void execute(MessageChannel channel, Member member, String permission) {
+        UserCategory userCategory = DiscordManager.getOrCreateUserCategory(member);
+        if (userCategory == null) {
+            EmbedBuilder embedBuilder = MessageManager.createErrorEmbed("Failed to get UserCategory for " + member.getUser().getAsTag());
+            MessageManager.sendTemporaryMessage(channel, embedBuilder.build());
+            return;
+        }
+        
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        if (userCategory.getPermissions().remove(permission) != null) {
+            DiscordMusic.getInstance().getConfiguration().saveConfiguration();
+            embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
+            embedBuilder.setTitle("Unset " + permission + " for " + member.getUser().getAsTag());
+        } else {
+            embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
+            embedBuilder.setTitle(permission + " is not set for " + member.getUser().getAsTag());
+        }
+        
+        MessageManager.sendTemporaryMessage(channel, embedBuilder.build());
     }
 }

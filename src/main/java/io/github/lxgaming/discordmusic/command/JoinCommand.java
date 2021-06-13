@@ -80,8 +80,8 @@ public class JoinCommand extends Command {
             } catch (IllegalArgumentException | UnsupportedOperationException ex) {
                 embedBuilder.getDescriptionBuilder().setLength(0);
                 embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-                embedBuilder.setTitle("Encountered an error");
-                embedBuilder.getDescriptionBuilder().append(StringUtils.defaultIfBlank(ex.getMessage(), "Unknown"));
+                embedBuilder.setTitle("An error has occurred.");
+                embedBuilder.getDescriptionBuilder().append("```").append(StringUtils.defaultIfBlank(ex.getMessage(), "Unknown")).append("```");
                 MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
                 return;
             } catch (InsufficientPermissionException ex) {

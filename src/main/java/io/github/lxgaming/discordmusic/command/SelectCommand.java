@@ -22,13 +22,13 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
+import io.github.lxgaming.discordmusic.manager.CommandManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 
 import java.util.List;
-import java.util.Optional;
 
 public class SelectCommand extends Command {
     
@@ -43,14 +43,16 @@ public class SelectCommand extends Command {
     
     @Override
     public void execute(Message message, List<String> arguments) throws Exception {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        
         if (arguments.isEmpty()) {
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("Invalid arguments");
-            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+            Command command = CommandManager.getCommand(HelpCommand.class);
+            if (command != null) {
+                command.execute(message, getPath());
+            }
+            
             return;
         }
+        
+        EmbedBuilder embedBuilder = new EmbedBuilder();
         
         List<AudioTrack> searchResult = AudioManager.getSearchResult(message.getMember());
         if (searchResult == null) {
@@ -66,18 +68,18 @@ public class SelectCommand extends Command {
                 embedBuilder.getDescriptionBuilder().append("\n");
             }
             
-            Optional<Integer> selection = Toolbox.parseInteger(string);
-            if (!selection.isPresent()) {
+            Integer selection = Toolbox.parseInteger(string);
+            if (selection == null) {
                 embedBuilder.getDescriptionBuilder().append("**Invalid**: ").append(string);
                 continue;
             }
             
-            if (selection.get() < 1 || selection.get() > searchResult.size()) {
-                embedBuilder.getDescriptionBuilder().append("**OutOfBounds**: ").append(selection.get());
+            if (selection < 1 || selection > searchResult.size()) {
+                embedBuilder.getDescriptionBuilder().append("**OutOfBounds**: ").append(selection);
                 continue;
             }
             
-            AudioTrack audioTrack = searchResult.get(selection.get() - 1);
+            AudioTrack audioTrack = searchResult.get(selection - 1);
             audioTracks.add(audioTrack);
             embedBuilder.getDescriptionBuilder().append("**Processing**: ").append(audioTrack.getInfo().title);
         }

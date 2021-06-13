@@ -40,7 +40,6 @@ import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.GeneralCategory;
 import io.github.lxgaming.discordmusic.configuration.category.MessageCategory;
 import io.github.lxgaming.discordmusic.entity.Color;
-import io.github.lxgaming.discordmusic.exception.CommandException;
 import io.github.lxgaming.discordmusic.util.StringUtils;
 import io.github.lxgaming.discordmusic.util.Toolbox;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -111,17 +110,6 @@ public final class CommandManager {
         try {
             command.execute(message, arguments);
             return true;
-        } catch (CommandException ex) {
-            EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("An error has occurred.");
-            embedBuilder.getDescriptionBuilder()
-                    .append("```")
-                    .append(ex.getMessage())
-                    .append("```");
-            embedBuilder.setFooter("Exception: " + ex.getClass().getName(), "https://repo.lxgaming.me/assets/discord/error.png");
-            MessageManager.sendMessage(message.getTextChannel(), embedBuilder.build());
-            return false;
         } catch (Exception ex) {
             DiscordMusic.getInstance().getLogger().error("Encountered an error while executing {}", Toolbox.getClassSimpleName(command.getClass()), ex);
             EmbedBuilder embedBuilder = new EmbedBuilder();

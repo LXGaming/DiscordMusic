@@ -22,6 +22,7 @@ import io.github.lxgaming.discordmusic.configuration.Config;
 import io.github.lxgaming.discordmusic.configuration.category.MessageCategory;
 import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.entity.Emote;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -60,6 +61,14 @@ public final class MessageManager {
         for (Emote emote : Emote.values()) {
             messageCategory.getEmotes().putIfAbsent(emote, DEFAULT_EMOTE);
         }
+    }
+    
+    public static EmbedBuilder createErrorEmbed(String message) {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setColor(getColor(Color.ERROR));
+        embedBuilder.setTitle("An error has occurred.");
+        embedBuilder.getDescriptionBuilder().append("```").append(message).append("```");
+        return embedBuilder;
     }
     
     public static void sendTemporaryMessage(MessageChannel channel, MessageEmbed messageEmbed) {

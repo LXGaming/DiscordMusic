@@ -20,6 +20,7 @@ import io.github.lxgaming.discordmusic.entity.AudioTrackData;
 import io.github.lxgaming.discordmusic.entity.Color;
 import io.github.lxgaming.discordmusic.handler.AudioPlayerLoadResultHandler;
 import io.github.lxgaming.discordmusic.manager.AudioManager;
+import io.github.lxgaming.discordmusic.manager.CommandManager;
 import io.github.lxgaming.discordmusic.manager.MessageManager;
 import io.github.lxgaming.discordmusic.util.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -41,19 +42,18 @@ public class SearchCommand extends Command {
     
     @Override
     public void execute(Message message, List<String> arguments) throws Exception {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        
         if (arguments.isEmpty()) {
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("Invalid arguments");
-            MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+            Command command = CommandManager.getCommand(HelpCommand.class);
+            if (command != null) {
+                command.execute(message, getPath());
+            }
+            
             return;
         }
         
         String query = String.join(" ", arguments);
         if (StringUtils.isBlank(query)) {
-            embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
-            embedBuilder.setTitle("Invalid query");
+            EmbedBuilder embedBuilder = MessageManager.createErrorEmbed("Invalid query");
             MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
             return;
         }
@@ -61,6 +61,7 @@ public class SearchCommand extends Command {
         AudioManager.AUDIO_PLAYER_MANAGER.loadItem("ytsearch: " + query, new AudioPlayerLoadResultHandler(AudioTrackData.of(message)));
         
         String sanitizedQuery = sanitize(query);
+        EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
         embedBuilder.getDescriptionBuilder()
                 .append("**Searching for **")
