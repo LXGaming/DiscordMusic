@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.entities.Message;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ShutdownCommand extends Command {
     
@@ -42,8 +43,12 @@ public class ShutdownCommand extends Command {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(MessageManager.getColor(Color.WARNING));
         embedBuilder.setTitle("Shutting down...");
-        embedBuilder.setFooter("Uptime: " + Toolbox.getDuration(Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis()), null);
+        embedBuilder.setFooter("Uptime: " + Toolbox.getDuration(getUptime(), TimeUnit.MILLISECONDS, false, TimeUnit.SECONDS), null);
         MessageManager.sendMessage(message.getChannel(), embedBuilder.build());
         Runtime.getRuntime().exit(0);
+    }
+    
+    private long getUptime() {
+        return Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis();
     }
 }

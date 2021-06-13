@@ -25,6 +25,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class PlayingCommand extends Command {
     
@@ -53,9 +54,12 @@ public class PlayingCommand extends Command {
         embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
         embedBuilder.setTitle(audioTrack.getInfo().title, audioTrack.getInfo().uri);
         if (audioTrack.getInfo().isStream) {
-            embedBuilder.setFooter(Toolbox.getDuration(audioTrack.getPosition()), null);
+            embedBuilder.setFooter(Toolbox.getDuration(audioTrack.getPosition(), TimeUnit.MILLISECONDS, false, TimeUnit.SECONDS));
         } else {
-            embedBuilder.setFooter(Toolbox.getDuration(audioTrack.getPosition()) + " / " + Toolbox.getDuration(audioTrack.getDuration()), null);
+            embedBuilder.setFooter(""
+                    + Toolbox.getDuration(audioTrack.getPosition(), TimeUnit.MILLISECONDS, false, TimeUnit.SECONDS)
+                    + " / "
+                    + Toolbox.getDuration(audioTrack.getDuration(), TimeUnit.MILLISECONDS, false, TimeUnit.SECONDS));
         }
         
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());

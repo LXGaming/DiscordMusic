@@ -24,6 +24,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 public class Toolbox {
     
@@ -43,41 +44,80 @@ public class Toolbox {
                 .replace("(", "\\(").replace(")", "\\)");
     }
     
-    public static String getDuration(long millisecond) {
-        long second = Math.abs(millisecond) / 1000;
-        long minute = second / 60;
-        long hour = minute / 60;
-        long day = hour / 24;
-        
+    public static String getDuration(long value, TimeUnit unit, boolean abbreviate, TimeUnit precision) {
+        return getDuration(precision.convert(value, unit), precision, abbreviate);
+    }
+    
+    public static String getDuration(long value, TimeUnit unit, boolean abbreviate) {
         StringBuilder stringBuilder = new StringBuilder();
-        appendUnit(stringBuilder, day, "day", "days");
-        appendUnit(stringBuilder, hour % 24, "hour", "hours");
-        appendUnit(stringBuilder, minute % 60, "minute", "minutes");
-        appendUnit(stringBuilder, second % 60, "second", "seconds");
+        if (TimeUnit.DAYS.compareTo(unit) >= 0) {
+            append(stringBuilder, unit.toDays(value), TimeUnit.DAYS, abbreviate);
+        }
         
-        if (stringBuilder.length() == 0) {
-            stringBuilder.append("just now");
+        if (TimeUnit.HOURS.compareTo(unit) >= 0) {
+            append(stringBuilder, unit.toHours(value) % 24, TimeUnit.HOURS, abbreviate);
+        }
+        
+        if (TimeUnit.MINUTES.compareTo(unit) >= 0) {
+            append(stringBuilder, unit.toMinutes(value) % 60, TimeUnit.MINUTES, abbreviate);
+        }
+        
+        if (TimeUnit.SECONDS.compareTo(unit) >= 0) {
+            append(stringBuilder, unit.toSeconds(value) % 60, TimeUnit.SECONDS, abbreviate);
+        }
+        
+        if (TimeUnit.MILLISECONDS.compareTo(unit) >= 0) {
+            append(stringBuilder, unit.toMillis(value) % 1000, TimeUnit.MILLISECONDS, abbreviate);
+        }
+        
+        if (TimeUnit.MICROSECONDS.compareTo(unit) >= 0) {
+            append(stringBuilder, unit.toMicros(value) % 1000, TimeUnit.MICROSECONDS, abbreviate);
+        }
+        
+        if (TimeUnit.NANOSECONDS.compareTo(unit) >= 0) {
+            append(stringBuilder, unit.toNanos(value) % 1000, TimeUnit.NANOSECONDS, abbreviate);
         }
         
         return stringBuilder.toString();
     }
     
-    public static void appendUnit(StringBuilder stringBuilder, long unit, String singular, String plural) {
-        if (unit > 0) {
-            if (stringBuilder.length() > 0) {
-                stringBuilder.append(", ");
-            }
-            
-            stringBuilder.append(unit).append(" ").append(formatUnit(unit, singular, plural));
-        }
-    }
-    
-    public static String formatUnit(long unit, String singular, String plural) {
-        if (unit == 1) {
-            return singular;
+    public static void append(StringBuilder stringBuilder, long value, TimeUnit unit, boolean abbreviate) {
+        if (value <= 0) {
+            return;
         }
         
-        return plural;
+        if (stringBuilder.length() > 0) {
+            stringBuilder.append(abbreviate ? " " : ", ");
+        }
+        
+        stringBuilder.append(value);
+        if (!abbreviate) {
+            stringBuilder.append(" ");
+        }
+        
+        switch (unit) {
+            case NANOSECONDS:
+                stringBuilder.append(abbreviate ? "ns" : value == 1 ? "nanosecond" : "nanoseconds");
+                break;
+            case MICROSECONDS:
+                stringBuilder.append(abbreviate ? "\u03BCs" : value == 1 ? "microsecond" : "microseconds");
+                break;
+            case MILLISECONDS:
+                stringBuilder.append(abbreviate ? "ms" : value == 1 ? "millisecond" : "milliseconds");
+                break;
+            case SECONDS:
+                stringBuilder.append(abbreviate ? "s" : value == 1 ? "second" : "seconds");
+                break;
+            case MINUTES:
+                stringBuilder.append(abbreviate ? "min" : value == 1 ? "minute" : "minutes");
+                break;
+            case HOURS:
+                stringBuilder.append(abbreviate ? "h" : value == 1 ? "hour" : "hours");
+                break;
+            case DAYS:
+                stringBuilder.append(abbreviate ? "d" : value == 1 ? "day" : "days");
+                break;
+        }
     }
     
     public static Integer parseInteger(String string) {

@@ -29,6 +29,7 @@ import net.dv8tion.jda.api.entities.Message;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class InfoCommand extends Command {
     
@@ -47,7 +48,7 @@ public class InfoCommand extends Command {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setAuthor(DiscordMusic.NAME + " v" + DiscordMusic.VERSION, DiscordMusic.SOURCE, message.getJDA().getSelfUser().getEffectiveAvatarUrl());
         embedBuilder.setColor(MessageManager.getColor(Color.DEFAULT));
-        embedBuilder.addField("Uptime", Toolbox.getDuration(Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis()), false);
+        embedBuilder.addField("Uptime", Toolbox.getDuration(getUptime(), TimeUnit.MILLISECONDS, false, TimeUnit.SECONDS), false);
         embedBuilder.addField("Authors", DiscordMusic.AUTHORS, false);
         embedBuilder.addField("Source", DiscordMusic.SOURCE, false);
         embedBuilder.addField("Website", DiscordMusic.WEBSITE, false);
@@ -57,5 +58,9 @@ public class InfoCommand extends Command {
                 + "\n- " + "JDA-Utilities v" + JDAUtilitiesInfo.VERSION
                 + "\n- " + "LavaPlayer v" + PlayerLibrary.VERSION, false);
         MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
+    }
+    
+    private long getUptime() {
+        return Duration.between(DiscordMusic.getInstance().getStartTime(), Instant.now()).toMillis();
     }
 }
