@@ -6,6 +6,9 @@
         </Console>
     </Appenders>
     <Loggers>
+        <Logger level="${sys:discordmusic.logging.jda.level:-info}" name="net.dv8tion.jda"/>
+        <Logger level="${sys:discordmusic.logging.lava.level:-warn}" name="com.sedmelluq.lava"/>
+        <Logger level="${sys:discordmusic.logging.lavaplayer.level:-info}" name="com.sedmelluq.discord.lavaplayer"/>
         <Root level="ALL">
             <AppenderRef ref="Console" level="${sys:discordmusic.logging.console.level:-info}"/>
         </Root>
