@@ -26,13 +26,13 @@ import java.util.Map;
 public class MessageCategory {
     
     @SerializedName("actionTimeout")
-    private long actionTimeout = 900000L;
+    private long actionTimeout = 900000L; // 15 Minute
     
     @SerializedName("colors")
     private Map<Color, String> colors = Maps.newHashMap();
     
     @SerializedName("deleteInterval")
-    private long deleteInterval = 60000L;
+    private long deleteInterval = 300000L; // 5 Minute
     
     @SerializedName("deleteInvoking")
     private boolean deleteInvoking = true;
