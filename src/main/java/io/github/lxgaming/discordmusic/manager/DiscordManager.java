@@ -78,11 +78,7 @@ public final class DiscordManager {
         }
         
         UserCategory userCategory = getUserCategory(member);
-        if (userCategory == null) {
-            return false;
-        }
-        
-        if (userCategory.getPermissions() != null) {
+        if (userCategory != null) {
             Boolean userPermission = hasPermission(userCategory.getPermissions(), permission);
             if (userPermission != null) {
                 return userPermission;
