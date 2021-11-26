@@ -9,7 +9,7 @@ targetCompatibility = 1.8
 
 group = "io.github.lxgaming"
 archivesBaseName = "DiscordMusic"
-version = "2.5.1"
+version = "2.5.2"
 
 blossom {
     replaceToken("@version@", version)
