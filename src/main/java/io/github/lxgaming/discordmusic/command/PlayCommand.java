@@ -60,7 +60,13 @@ public class PlayCommand extends Command {
         embedBuilder.setColor(MessageManager.getColor(Color.SUCCESS));
         embedBuilder.setTitle("Play");
         for (String string : arguments) {
-            URL url = Toolbox.parseUrl(string);
+            URL url;
+            if (string.contains("://")) {
+                url = Toolbox.parseUrl(string);
+            } else {
+                url = Toolbox.parseUrl("https://" + string);
+            }
+            
             if (url == null) {
                 embedBuilder.getDescriptionBuilder().append("**Invalid:** ").append(string).append("\n");
                 continue;
