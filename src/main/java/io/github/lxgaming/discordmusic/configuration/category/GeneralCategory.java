@@ -26,6 +26,7 @@ public class GeneralCategory {
     public static final int DEFAULT_VOLUME = 50;
     public static final int DEFAULT_MAX_VOLUME = 200;
     public static final int DEFAULT_SEARCH_LIMIT = 5;
+    public static final int DEFAULT_TRACK_STUCK_THRESHOLD = 10000; // 10 Seconds
     
     @SerializedName("debug")
     private boolean debug = false;
@@ -41,6 +42,9 @@ public class GeneralCategory {
     
     @SerializedName("searchLimit")
     private int searchLimit = DEFAULT_SEARCH_LIMIT;
+    
+    @SerializedName("trackStuckThreshold")
+    private int trackStuckThreshold = DEFAULT_TRACK_STUCK_THRESHOLD;
     
     @SerializedName("allowedSources")
     private Set<String> allowedSources = Sets.newLinkedHashSet();
@@ -108,6 +112,14 @@ public class GeneralCategory {
     
     public void setSearchLimit(int searchLimit) {
         this.searchLimit = searchLimit;
+    }
+    
+    public int getTrackStuckThreshold() {
+        return trackStuckThreshold;
+    }
+    
+    public void setTrackStuckThreshold(int trackStuckThreshold) {
+        this.trackStuckThreshold = trackStuckThreshold;
     }
     
     public Set<String> getAllowedSources() {

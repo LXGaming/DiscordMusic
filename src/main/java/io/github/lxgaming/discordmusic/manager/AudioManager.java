@@ -80,6 +80,13 @@ public final class AudioManager {
             DiscordMusic.getInstance().getLogger().warn("SearchLimit is out of bounds. Resetting to {}", GeneralCategory.DEFAULT_SEARCH_LIMIT);
             generalCategory.setDefaultVolume(GeneralCategory.DEFAULT_SEARCH_LIMIT);
         }
+        
+        if (generalCategory.getTrackStuckThreshold() <= 0) {
+            DiscordMusic.getInstance().getLogger().warn("TrackStuckThreshold is out of bounds. Resetting to {}", GeneralCategory.DEFAULT_TRACK_STUCK_THRESHOLD);
+            generalCategory.setTrackStuckThreshold(GeneralCategory.DEFAULT_TRACK_STUCK_THRESHOLD);
+        }
+        
+        AUDIO_PLAYER_MANAGER.setTrackStuckThreshold(generalCategory.getTrackStuckThreshold());
     }
     
     public static void register(Guild guild) {
