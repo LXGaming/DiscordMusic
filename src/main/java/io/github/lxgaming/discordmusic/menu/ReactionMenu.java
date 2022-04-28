@@ -59,7 +59,7 @@ public class ReactionMenu extends Menu {
     
     @Override
     public final void display(MessageChannel channel, MessageEmbed messageEmbed) {
-        initialize(channel.sendMessage(messageEmbed));
+        initialize(channel.sendMessageEmbeds(messageEmbed));
     }
     
     public final void display(MessageChannel channel, Message message) {

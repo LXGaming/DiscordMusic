@@ -62,7 +62,7 @@ public class ButtonMenu extends Menu {
     public final void display(MessageChannel channel, MessageEmbed messageEmbed) {
         MessageBuilder messageBuilder = new MessageBuilder();
         messageBuilder.setActionRows(actionRows);
-        messageBuilder.setEmbed(messageEmbed);
+        messageBuilder.setEmbeds(messageEmbed);
         initialize(channel.sendMessage(messageBuilder.build()));
     }
     

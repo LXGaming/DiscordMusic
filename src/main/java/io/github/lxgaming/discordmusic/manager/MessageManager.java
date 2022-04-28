@@ -72,7 +72,7 @@ public final class MessageManager {
     }
     
     public static void sendTemporaryMessage(MessageChannel channel, MessageEmbed messageEmbed) {
-        sendTemporaryMessage(channel, new MessageBuilder().setEmbed(messageEmbed).build());
+        sendTemporaryMessage(channel, new MessageBuilder().setEmbeds(messageEmbed).build());
     }
     
     public static void sendTemporaryMessage(MessageChannel channel, Message message) {
@@ -84,7 +84,7 @@ public final class MessageManager {
     }
     
     public static void sendMessage(MessageChannel channel, MessageEmbed messageEmbed) {
-        sendMessage(channel, new MessageBuilder().setEmbed(messageEmbed).build());
+        sendMessage(channel, new MessageBuilder().setEmbeds(messageEmbed).build());
     }
     
     public static void sendMessage(MessageChannel channel, Message message) {
