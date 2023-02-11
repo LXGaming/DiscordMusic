@@ -67,7 +67,7 @@ public final class MessageManager {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(getColor(Color.ERROR));
         embedBuilder.setTitle("An error has occurred.");
-        embedBuilder.getDescriptionBuilder().append("```").append(message).append("```");
+        embedBuilder.getDescriptionBuilder().append("```\n").append(message).append("\n```");
         return embedBuilder;
     }
     

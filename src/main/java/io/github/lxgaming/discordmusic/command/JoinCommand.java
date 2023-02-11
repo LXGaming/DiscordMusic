@@ -81,7 +81,7 @@ public class JoinCommand extends Command {
                 embedBuilder.getDescriptionBuilder().setLength(0);
                 embedBuilder.setColor(MessageManager.getColor(Color.ERROR));
                 embedBuilder.setTitle("An error has occurred.");
-                embedBuilder.getDescriptionBuilder().append("```").append(StringUtils.defaultIfBlank(ex.getMessage(), "Unknown")).append("```");
+                embedBuilder.getDescriptionBuilder().append("```\n").append(StringUtils.defaultIfBlank(ex.getMessage(), "Unknown")).append("\n```");
                 MessageManager.sendTemporaryMessage(message.getChannel(), embedBuilder.build());
                 return;
             } catch (InsufficientPermissionException ex) {
